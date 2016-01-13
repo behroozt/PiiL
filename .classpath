@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/vectorgraphics-2.1.1/lib/freehep-export-2.1.1.jar" sourcepath="/Users/Behrooz/eclipse workspace/vectorgraphics-2.1.1 2/src"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/vectorgraphics-2.1.1/lib/freehep-graphics2d-2.1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/vectorgraphics-2.1.1/lib/freehep-graphicsio-2.1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/vectorgraphics-2.1.1/lib/freehep-graphicsio-emf-2.1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/vectorgraphics-2.1.1/lib/freehep-graphicsio-java-2.1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/vectorgraphics-2.1.1/lib/freehep-graphicsio-pdf-2.1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/vectorgraphics-2.1.1/lib/freehep-graphicsio-ps-2.1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/vectorgraphics-2.1.1/lib/freehep-graphicsio-svg-2.1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/vectorgraphics-2.1.1/lib/freehep-graphicsio-swf-2.1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/vectorgraphics-2.1.1/lib/freehep-graphicsio-tests-2.1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/vectorgraphics-2.1.1/lib/freehep-io-2.0.2.jar"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/vectorgraphics-2.1.1/lib/freehep-swing-2.0.3.jar"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/vectorgraphics-2.1.1/lib/freehep-util-2.0.2.jar"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/vectorgraphics-2.1.1/lib/freehep-xml-2.1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/vectorgraphics-2.1.1/lib/jas-plotter-2.2.jar"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/vectorgraphics-2.1.1/lib/jdom-1.0.jar"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/vectorgraphics-2.1.1/lib/junit-3.8.2.jar"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/vectorgraphics-2.1.1/lib/openide-lookup-1.9-patched-1.0.jar"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/jfreechart-1.0.19/lib/jcommon-1.0.23.jar"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/jfreechart-1.0.19/lib/jfreechart-1.0.19.jar"/>
+	<classpathentry kind="lib" path="/Users/Behrooz/eclipse workspace/jfreechart-1.0.19/lib/jfreesvg-2.0.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
