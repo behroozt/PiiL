@@ -25,11 +25,12 @@ public class Interface extends JFrame{
 	static JPanel backgroundPanel;
 	static JLabel sampleInfoLabel;
 	GridBagConstraints gridConstraints = new GridBagConstraints();
+	{//dfdf	
 	static PiilMenubar mainMenu;
 	static CustomTabPane tabPane;
 	static ArrayList<JScrollPane> scrollPaneHolder;
 	static ArrayList<JPanel> panelHolder;
-	
+	}
 	public static void main(String[] args) {
 		new Interface();
 	}
@@ -190,7 +191,7 @@ public class Interface extends JFrame{
 		gridConstraints.gridheight = compHeight;
 		gridConstraints.weightx = compWx;
 		gridConstraints.weighty = compWy;
-//		gridConstraints.insets = new Insets(1,1,1,1);
+		gridConstraints.insets = new Insets(1,1,1,1);
 		gridConstraints.anchor = place;
 		gridConstraints.fill = stretch;
 		
