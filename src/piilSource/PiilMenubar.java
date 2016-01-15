@@ -1,6 +1,6 @@
 /*  
     PiiL: Pathways Interactive vIsualization tooL
-    Copyright (C) 2016  Behrooz Torabi Moghadam
+    Copyright (C) 2015  Behrooz Torabi Moghadam
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -493,6 +493,8 @@ public class PiilMenubar extends JMenuBar{
 							final File file = fileSelector.getSelectedFile();
 							try {
 								pathway.highlightInPathway(file);
+								pathway.setMetaType('H');  // H for highlight genes
+								pathway.setMetaFilePath(file);
 							} catch (IOException e) {
 								JOptionPane.showMessageDialog(Interface.bodyFrame, "Error reading the file!");
 							}
@@ -502,7 +504,7 @@ public class PiilMenubar extends JMenuBar{
 				else { // no open tab
 					JOptionPane.showMessageDialog(Interface.bodyFrame,"You need to open a KGML file first!");
 				}
-			}
+			} // end of highlightGenes
 			
 			/* export visible item clicked */
 			else if (ice.getSource() == exportVisible){
@@ -543,7 +545,7 @@ public class PiilMenubar extends JMenuBar{
 				else {
 					boolean metaExists = false;
 					for (int i = 0; i < ParseKGML.tabInfoTracker.size(); i ++){
-						if (ParseKGML.getTabInfo(i).getMapedGeneData().size() > 0){
+						if (ParseKGML.getTabInfo(i).getMetaType() != ' '){
 							metaExists = true;
 						}
 					}
@@ -768,12 +770,17 @@ public class PiilMenubar extends JMenuBar{
 			
 			/* about item clicked */
 			else if (ice.getSource() == aboutAction){
-				new AboutPiil();
+//				new AboutPiil();
 			}
 			
 			/* manual item clicked */
 			else if (ice.getSource() == manualAction){
-				
+				String URL = "http://behroozt.github.io/PiiL/";
+				try {
+					java.awt.Desktop.getDesktop().browse(java.net.URI.create(URL));
+				} catch (IOException e1) {
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "Problem opening the online documentation page!");
+				}
 			}
 			
 			/* report a bug item clicked */

@@ -1,6 +1,6 @@
 /*  
     PiiL: Pathways Interactive vIsualization tooL
-    Copyright (C) 2016  Behrooz Torabi Moghadam
+    Copyright (C) 2015  Behrooz Torabi Moghadam
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 
-public class OpenFromWeb extends JFrame{
+public class OpenFromWeb extends JDialog{
 
 	JButton loadButton, cancelButton;
 	JComboBox organismCombo, pathwayCombo;

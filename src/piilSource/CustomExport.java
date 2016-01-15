@@ -1,6 +1,6 @@
 /*  
     PiiL: Pathways Interactive vIsualization tooL
-    Copyright (C) 2016  Behrooz Torabi Moghadam
+    Copyright (C) 2015  Behrooz Torabi Moghadam
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,8 +15,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/***** This code has been developed based on VectorGraphics package of the FreeHEP Java Library
-       available at http://java.freehep.org/vectorgraphics/index.html  *****/
+/* **** This code has been developed based on VectorGraphics package of the FreeHEP Java Library
+       available at http://java.freehep.org/vectorgraphics/index.html  **** */
        
 package piilSource;
 
@@ -56,15 +56,10 @@ import org.freehep.util.export.ExportFileType;
 import org.freehep.util.export.ExportFileTypeGroups;
 
 
-/**
-* An "Export" dialog for saving components as graphic files.
-*
-* @author tonyj
-*/
 public class CustomExport extends JOptionPane
 {
-	private static final long serialVersionUID = -6297626389977751810L;
-	private static final String rootKey = CustomExport.class.getName();
+private static final long serialVersionUID = -6297626389977751810L;
+private static final String rootKey = CustomExport.class.getName();
 private static final String SAVE_AS_TYPE = rootKey +".SaveAsType";
 private static final String SAVE_AS_FILE = rootKey +".SaveAsFile";
 

@@ -1,6 +1,6 @@
 /*  
     PiiL: Pathways Interactive vIsualization tooL
-    Copyright (C) 2016  Behrooz Torabi Moghadam
+    Copyright (C) 2015  Behrooz Torabi Moghadam
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ public class Interface extends JFrame{
 		int scrHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
 		bodyFrame = new JFrame();
 		bodyFrame.setSize(scrWidth, scrHeight);
-		bodyFrame.setTitle(" PiiL - Pathway interactive visualization tooL ");
+		bodyFrame.setTitle(" PiiL - Pathways interactive visualization tooL ");
 		bodyFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		sampleInfoPanel = new JPanel();
