@@ -25,12 +25,12 @@ public class Interface extends JFrame{
 	static JPanel backgroundPanel;
 	static JLabel sampleInfoLabel;
 	GridBagConstraints gridConstraints = new GridBagConstraints();
-	{//dfdf	
+		
 	static PiilMenubar mainMenu;
 	static CustomTabPane tabPane;
 	static ArrayList<JScrollPane> scrollPaneHolder;
 	static ArrayList<JPanel> panelHolder;
-	}
+	
 	public static void main(String[] args) {
 		new Interface();
 	}
