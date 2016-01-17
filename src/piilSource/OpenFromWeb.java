@@ -139,6 +139,8 @@ public class OpenFromWeb extends JDialog{
 		
 		containerPanel.add(webPanel, BorderLayout.CENTER);
 		webFrame.add(containerPanel);
+		webFrame.pack();
+		webFrame.setAlwaysOnTop(true);
 		webFrame.setVisible(true);
 	}
 	

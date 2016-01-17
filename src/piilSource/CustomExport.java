@@ -81,6 +81,7 @@ public void addExportFileType(ExportFileType fileType)
  list.addElement(fileType);
 }
  
+@SuppressWarnings("unchecked")
 public void addAllExportFileTypes()
 {
 	   ExportFileTypeGroups groups = new ExportFileTypeGroups(ExportFileType.getExportFileTypes());

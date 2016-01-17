@@ -806,9 +806,7 @@ public class PiilMenubar extends JMenuBar{
 			
 			/* how to cite item clicked */
 			else if (ice.getSource() == citeUs){
-				for (int i = 0; i < Interface.tabPane.getTabCount(); i++){
-					System.out.println("size::" + ParseKGML.getTabInfo(i).getMapedGeneLabel().size());
-				}
+				JOptionPane.showMessageDialog(Interface.bodyFrame, "Please cite our publication.");
 			}
 				
 		}
