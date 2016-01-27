@@ -492,7 +492,7 @@ public class TabsInfo {
 		while ((line = br.readLine()) != null){
 			String geneName = line.trim();
 			for (Entry<String, Genes> oneNode : genes.entrySet()){
-				if (geneName.equals(oneNode.getValue().getText())){
+				if (match(geneName,oneNode.getValue().getAllNames())){
 					oneNode.getValue().setTag(true);
 					entryID = oneNode.getKey();
 					mapedGeneLabel.put(oneNode.getKey(), oneNode.getValue());
