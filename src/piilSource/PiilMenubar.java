@@ -77,6 +77,7 @@ public class PiilMenubar extends JMenuBar{
 	JMenuBar menu;
 	OpenFromWeb webLoad;
 	CustomExport export;
+	String openedDirectory = System.getProperty("user.home");
 	
 	public PiilMenubar(){
 		 menu = makeMenubar();		 
@@ -207,8 +208,8 @@ public class PiilMenubar extends JMenuBar{
 			dialog.setLocationRelativeTo(Interface.bodyFrame);
 			
 			/* get the home directory */
-			String home = System.getProperty("user.home");
-			File directory = new File(home + "/PerspolisFiles");
+			
+			File directory = new File(openedDirectory);
 			
 			/* open KGML from hard item clicked */ 
 			if (ice.getSource() == openAction){
@@ -220,7 +221,7 @@ public class PiilMenubar extends JMenuBar{
 				
         		if (returnVal == JFileChooser.APPROVE_OPTION) { 
         			final File file = fileSelector.getSelectedFile();
-        			
+        			openedDirectory = fileSelector.getSelectedFile().getAbsolutePath();
         			final String tabCaption = file.getName().toString();
         			       				
         			waitMessage.setText(" Loading the pathway ... ");
@@ -292,6 +293,7 @@ public class PiilMenubar extends JMenuBar{
 					} else {
 						fileSelector = new JFileChooser();
 						fileSelector.setFileFilter(null);
+						directory = new File(openedDirectory);
 						fileSelector.setCurrentDirectory(directory);
 						int returnVal = fileSelector.showOpenDialog(null);
 						if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -367,10 +369,12 @@ public class PiilMenubar extends JMenuBar{
 					} else {
 						fileSelector = new JFileChooser();
 						fileSelector.setFileFilter(null);
+						directory = new File(openedDirectory);
 						fileSelector.setCurrentDirectory(directory);
 						int returnVal = fileSelector.showOpenDialog(null);
 						if (returnVal == JFileChooser.APPROVE_OPTION) {
 							final File file = fileSelector.getSelectedFile();
+							openedDirectory = fileSelector.getSelectedFile().getAbsolutePath();
 							theTab.setMetaType('E');
 							theTab.setMetaFilePath(file);
 

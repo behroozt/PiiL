@@ -157,7 +157,7 @@ public class JOptionPaneMultiInput {
 				fileChooser = new JFileChooser();
 				fileChooser.setFileFilter(null);
 				String home = System.getProperty("user.home");
-				File directory = new File(home + "/PerspolisFiles");
+				File directory = new File(home);
 				fileChooser.setCurrentDirectory(directory);
 				int returnVal = fileChooser.showOpenDialog(null);
 				if (returnVal == JFileChooser.APPROVE_OPTION) { 

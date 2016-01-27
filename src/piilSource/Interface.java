@@ -175,7 +175,7 @@ public class Interface extends JFrame{
 		gridConstraints.insets = new Insets(1,15,4,1);
 		addComp(sampleInfoPanel, sampleInfoLabel, 1, 1, 1, 1, 500,1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
 		bodyFrame.add(backgroundPanel,BorderLayout.CENTER);
-		new Splash(5000);	
+		new Splash(20000);	
 		bodyFrame.setVisible(true);
 	}
 	
