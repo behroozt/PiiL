@@ -76,7 +76,7 @@ public class Interface extends JFrame{
 		int scrHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
 		bodyFrame = new JFrame();
 		bodyFrame.setSize(scrWidth, scrHeight);
-		bodyFrame.setTitle(" PiiL - Pathways interactive visualization tooL ");
+		bodyFrame.setTitle(" PiiL - Pathway interactive visualization tooL ");
 		bodyFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		sampleInfoPanel = new JPanel();
@@ -175,8 +175,9 @@ public class Interface extends JFrame{
 		gridConstraints.insets = new Insets(1,15,4,1);
 		addComp(sampleInfoPanel, sampleInfoLabel, 1, 1, 1, 1, 500,1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
 		bodyFrame.add(backgroundPanel,BorderLayout.CENTER);
-		new Splash(20000);	
+		new Splash(3000);	
 		bodyFrame.setVisible(true);
+		
 	}
 	
 	public static void setSampleInfoLabel(String text, boolean enable){

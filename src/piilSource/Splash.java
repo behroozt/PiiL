@@ -1,6 +1,7 @@
 package piilSource;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
@@ -24,6 +25,7 @@ public class Splash extends JWindow {
 		
 		ImageIcon splashImage = new ImageIcon(getClass().getResource("/resources/splash-piil.png"));
 		ImagePanel panel = new ImagePanel(splashImage.getImage());
+		panel.setBackground(Color.white);
 		
 		JPanel content = (JPanel) getContentPane();
 		
