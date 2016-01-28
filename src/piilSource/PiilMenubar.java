@@ -774,7 +774,7 @@ public class PiilMenubar extends JMenuBar{
 			
 			/* about item clicked */
 			else if (ice.getSource() == aboutAction){
-//				new AboutPiil();
+				new AboutPiil();
 			}
 			
 			/* manual item clicked */
