@@ -118,7 +118,7 @@ public class PiilMenubar extends JMenuBar{
 		
 		// Tools menu items
 		menuTools = new JMenu("Tools");
-		duplicateAction = new JMenuItem("Ducplicate the current pathway");
+		duplicateAction = new JMenuItem("Duplicate the current pathway");
 		snapShot = new JMenuItem("Take a snapshot of PiiL");
 		multiSampleView = new JMenuItem("Show multiple-sample view for the selected genes");
 		singleSampleView = new JMenuItem("Show single-sample view for all genes");
