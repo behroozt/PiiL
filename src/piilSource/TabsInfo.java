@@ -1,5 +1,5 @@
 /*  
-    PiiL: Pathways Interactive vIsualization tooL
+    PiiL: Pathway Interactive vIsualization tooL
     Copyright (C) 2015  Behrooz Torabi Moghadam
 
     This program is free software: you can redistribute it and/or modify
@@ -27,7 +27,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map.Entry;
 
 import javax.swing.JOptionPane;
@@ -41,6 +43,8 @@ public class TabsInfo {
 	HashMap<String, Genes> mapedGeneLabel;
 	HashMap<String,List<List<String>>> mapedGeneData;
 	HashMap<String, List<String>> samplesInfo;
+	HashMap<String, List<String>> idsInGroups;
+	HashMap<String, List<String>> idsInBaseGroup;
 	ArrayList<String> samplesIds;
 	HashMap<String, Collection<String>> mapedGeneRegion;
 	String caption;
@@ -50,6 +54,7 @@ public class TabsInfo {
 	String organismName;
 	File loadedFilePath;
 	File metaFilePath;
+	static String loadedSamplesInfoFile;
 	Character metaType;
 	Character loadSource;
 	static HashMap<String,File> loadedFilesMap;
@@ -61,6 +66,10 @@ public class TabsInfo {
 	List<Shape> graphicNode;
 	float scrollX;
 	float scrollY;
+	byte viewMode; // 0 for single, 1 for multiple, 2 for group-wise
+	int selectedGenes;
+	int groupingIndex;
+	List<String> showableGroups;
 	
 	public TabsInfo(String tabCaption, File path, Character source, String pathway) {
 		pointer = 0;
@@ -86,6 +95,50 @@ public class TabsInfo {
 		mapedGeneRegion = new HashMap<String, Collection<String>>();
 		samplesInfo = new HashMap<String, List<String>>();
 		samplesIds = new ArrayList<String>();
+		viewMode = 0;
+		selectedGenes = 0;
+		groupingIndex = 0;
+		
+	}
+	
+	public void setGroupingIndex(int index){
+		groupingIndex = index;
+	}
+	
+	public int getGroupingIndex(){
+		return groupingIndex;
+	}
+	
+	public void setShowableGroups(List<String> list){
+		if (showableGroups == null){
+			showableGroups = new ArrayList<String>();
+		}
+		showableGroups = list;
+	}
+	
+	public List<String> getShowableGroups(){
+		return showableGroups;
+	}
+	
+	public void setSelectedGenesCount(int value){
+		if (value == 0){
+			selectedGenes = 0;
+		}
+		else {
+			selectedGenes = selectedGenes + value;
+		}
+	}
+	
+	public int getSelectedGenesCount(){
+		return selectedGenes;
+	}
+	
+	public byte getViewMode(){
+		return viewMode;
+	}
+	
+	public void setViewMode(byte mode){
+		viewMode = mode;
 	}
 	
 	public static File getLoadedFilePath(String fileName){
@@ -135,62 +188,129 @@ public class TabsInfo {
 		return samplesInfo;
 	}
 	
+	public HashMap<String, List<String>> getIDsInGroups() {
+		return idsInGroups;
+	}
+	
+	public HashMap<String, List<String>> resetIDsInGroups(int newGroupingIndex){
+		if (idsInGroups == null){
+			idsInGroups = new HashMap<String, List<String>>();
+		}
+		else {
+			idsInGroups.clear();
+		}
+		
+		for (int i = 0 ; i < (samplesIds.size()) ; i ++){
+			String id = samplesIds.get(i);
+			String group = samplesInfo.get(samplesIds.get(i)).get(newGroupingIndex);
+			
+			if (idsInGroups.get(group) == null){
+				idsInGroups.put(group,new ArrayList<String>());
+			}
+			idsInGroups.get(group).add(id);
+		}
+		
+		return idsInGroups;
+	}
+	
+//	public HashMap<String, List<String>> setIDsInBase(int selectedIndex) {
+//		
+//		if (idsInBaseGroup == null){
+//			idsInBaseGroup = new HashMap<String, List<String>>();
+//		}
+//		else {
+//			idsInBaseGroup.clear();
+//		}
+//		
+//		for (int i = 0 ; i < (samplesIds.size()) ; i ++){
+//			String id = samplesIds.get(i);
+//			String group = samplesInfo.get(samplesIds.get(i)).get(selectedIndex);
+//			
+//			if (idsInBaseGroup.get(group) == null){
+//				idsInBaseGroup.put(group,new ArrayList<String>());
+//			}
+//			idsInBaseGroup.get(group).add(id);
+//		}
+//		
+//		return idsInBaseGroup;
+//		
+//	}
 	
 	
-	public boolean extractSamplesInfo(File file, int sampleIdIndex, String separator, int fieldCount, int[] selectedIndexes) throws IOException{
+	
+	public boolean extractSamplesInfo(File file, int sampleIdIndex, String seperator, String[] fileHeader, int[] selectedIndexes, int sampleGroupIndex) throws IOException{
 		
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		String line = null;
 		String inputFileHeader = br.readLine();
-		boolean matchingID = false;
-		
+				
 		String splitBy;
-		if (separator.equals("tab")){
+		if (seperator.equals("tab")){
 			splitBy = "\t";
-		} else if (separator.equals("space")){
+		} else if (seperator.equals("space")){
 			splitBy = " ";
-		} else {
+		} else if (seperator.equals("comma")){
 			splitBy = ",";
+		}
+		else if (seperator.equals("dash")){
+			splitBy = " ";
+		}
+		else {
+			splitBy = ";";
 		}
 		
 		List<String> selectedColumns = new ArrayList<String>();
-		String[] columnNames = inputFileHeader.split(splitBy);
+		List<String> header = new ArrayList<String>();
+		String[] columnNames = fileHeader;
 		
 		for (int i = 0; i< selectedIndexes.length; i ++){
 						
 			selectedColumns.add(columnNames[selectedIndexes[i]]);
 		}
 		
+		for (int i = 0 ; i < columnNames.length ; i ++){
+			header.add(columnNames[i]);
+		}
+		
+		samplesInfo.put(Integer.toString(-1), header);	
 		samplesInfo.put(Integer.toString(0), selectedColumns);
-				
+		
 		while ((line = br.readLine()) != null){
 			String[] currentLine = line.split(splitBy);
 			String id = currentLine[sampleIdIndex - 1];
-			if (samplesIds.contains(id)){
-				matchingID = true;
-				List<String> selectedValues = new ArrayList<String>(); 
-				for (int i = 0; i< selectedIndexes.length; i ++){
-					selectedValues.add(currentLine[selectedIndexes[i]]);
+			
+			
+			if (sampleGroupIndex != 0 & samplesIds.contains(id)){
+				String sampleGroup = currentLine[sampleGroupIndex - 1];
+				if (idsInGroups.get(sampleGroup) == null){
+					idsInGroups.put(sampleGroup,new ArrayList<String>());
 				}
-				samplesInfo.put(id, selectedValues);
+				idsInGroups.get(sampleGroup).add(id);
+				PiilMenubar.groupWiseView.setEnabled(true);
 			}
-		}
+			
+				
+			List<String> selectedValues = new ArrayList<String>(); 
+			// the first item in selectedValues keeps the sample group
+				
+			for (int i = 0; i< selectedIndexes.length; i ++){
+				selectedValues.add(currentLine[selectedIndexes[i]]);
+			}
+			samplesInfo.put(id, selectedValues);
+			
+		} // end of while
 		
-		if (matchingID){
-			ControlPanel.setSampleInfoLabel(pointer);
-			return true;
+		if (sampleGroupIndex == 0){
+			idsInGroups = null;
 		}
-		else {
-			JOptionPane.showMessageDialog(Interface.bodyFrame, "The sample IDs in the loaded file do not match with the IDs in the loaded methylation/expression file!");
-			return false;
-		}
-		
+		ControlPanel.setSampleInfoLabel(pointer);
+		return true;
 		
 	}
 
-	public void setSamplesInfo(HashMap<String, List<String>> sampleInformation) {
+	public void setSamplesInfo(String key, List<String> items) {
 		
-		samplesInfo = sampleInformation;
+		samplesInfo.put(key, items);
 	}
 
 	public HashMap<String, Collection<String>> getMapedGeneRegion() {
@@ -279,6 +399,12 @@ public class TabsInfo {
 			sampleInfoFiles = new HashMap<String, SampleInformation>();
 		}
 		sampleInfoFiles.put(fileName, sample);
+		loadedSamplesInfoFile = fileName;
+		
+	}
+	
+	public SampleInformation getSamplesInformation(){
+		return sampleInfoFiles.get(loadedSamplesInfoFile);
 	}
 	
 	public static SampleInformation getSamplesInformationFile(String fileName){
@@ -298,7 +424,7 @@ public class TabsInfo {
 		for (int i = 1; i < test.length ; i++){
 			samplesIds.add(test[i]);
 		}
-
+		
 		while ((line = br.readLine()) != null){
 			validity = searchPathway(line,numOfColumns);
 			if (validity != 0){
@@ -328,6 +454,7 @@ public class TabsInfo {
 			JOptionPane.showMessageDialog(Interface.bodyFrame, "The loaded list has no overlap with this pathway");
 //			setMapedGeneData(null);
 		}
+		
 		return validity;
 	} // end getGenesList
 
@@ -355,6 +482,7 @@ public class TabsInfo {
 		
 		for (Entry<String, Genes> oneNode : genes.entrySet()){
 			if (match(geneName,oneNode.getValue().getAllNames())){
+				
 				oneNode.getValue().setTag(true);
 				entryID = oneNode.getKey();
 				mapedGeneLabel.put(oneNode.getKey(), oneNode.getValue());
@@ -405,6 +533,7 @@ public class TabsInfo {
 		    		mapedGeneData.get(entryID).add(new ArrayList<String>(dataValues));
 		    	}
 			}
+			
 		} // end for
 		return validData;
 	} // end of searchPathway 
@@ -520,7 +649,5 @@ public class TabsInfo {
 		}
 		
 	}
-	
-	
 
 }

@@ -1,5 +1,5 @@
 /*  
-    PiiL: Pathways Interactive vIsualization tooL
+    PiiL: Pathway Interactive vIsualization tooL
     Copyright (C) 2015  Behrooz Torabi Moghadam
 
     This program is free software: you can redistribute it and/or modify
@@ -79,7 +79,7 @@ public class Genes {
 		geneNode = theLabel;
 		geneTitle = nodeLabel; 
 		matchTag = false;
-		selected = s;
+		selected = false;
 		allNames = nameAlternatives;
 		borderStyle = BorderFactory.createLineBorder(Color.BLACK);
 		expanded = false;
@@ -87,11 +87,14 @@ public class Genes {
 	
 	public void setSelectedStatus(Point point){
 		if (matchTag) {
+			TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
 			if (selected) {
 				selected = false;
+				pathway.setSelectedGenesCount(-1);
 				geneNode.setBorder(borderStyle);
 			} else {
 				selected = true;
+				pathway.setSelectedGenesCount(1);
 				geneNode.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, Color.ORANGE, Color.YELLOW));
 				setSelectionPoint(point);
 			}
@@ -277,6 +280,7 @@ public class Genes {
 			r = 255; b = 255 - Math.round(510 * (value - 0.5)); g = 255 - Math.round(510 * (value - 0.5));
 		}
 		Color myColor = new Color((int) (r),(int) (g), (int) (b));
+		
 		return myColor;
 	}
 	

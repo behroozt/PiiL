@@ -1,5 +1,5 @@
 /*  
-    PiiL: Pathways Interactive vIsualization tooL
+    PiiL: Pathway Interactive vIsualization tooL
     Copyright (C) 2015  Behrooz Torabi Moghadam
 
     This program is free software: you can redistribute it and/or modify
@@ -19,20 +19,22 @@
 package piilSource;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SampleInformation {
 	
 	private int idIndex;
 	private String separator;
-	private int fieldCount;
+	private String[] samplesInfoHeader;
 	private int[] chosenColumns;
 	private File chosenFile;
 
-	public SampleInformation(int index, String sep, int counter, int[] cols, File theFile){
+	public SampleInformation(int index, String sep, String[] header, int[] cols, File theFile){
 		
 		idIndex = index;
 		separator = sep;
-		fieldCount = counter;
+		samplesInfoHeader = header;
 		chosenColumns = cols;
 		chosenFile = theFile;
 	}
@@ -45,8 +47,8 @@ public class SampleInformation {
 		return separator;
 	}
 	
-	public int getFieldCount(){
-		return fieldCount;
+	public String[] getHeader(){
+		return samplesInfoHeader;
 	}
 	
 	public int[] getColumns(){
@@ -56,5 +58,6 @@ public class SampleInformation {
 	public File getFile(){
 		return chosenFile;
 	}
+	
 }
 

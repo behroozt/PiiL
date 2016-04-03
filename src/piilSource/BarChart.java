@@ -1,5 +1,5 @@
 /*  
-    PiiL: Pathways Interactive vIsualization tooL
+    PiiL: Pathway Interactive vIsualization tooL
     Copyright (C) 2015  Behrooz Torabi Moghadam
 
     This program is free software: you can redistribute it and/or modify
@@ -125,8 +125,17 @@ public class BarChart extends ApplicationFrame {
         // create the dataset...
         final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         
-        for (int i=0; i < list.get(0).size(); i++){
-        	float value = Float.parseFloat(list.get(0).get(i));
+//        for (int i=0; i < list.get(0).size(); i++){
+//        	float value = Float.parseFloat(list.get(0).get(i));
+//        	dataset.addValue(value, series1, categories.get(i));
+//        }
+        
+        for (int i = 0; i < list.get(0).size() ; i ++){
+        	float sum = 0;
+        	for (int j = 0; j < list.size() ; j ++){
+        		sum += Float.parseFloat(list.get(j).get(i));
+        	}
+        	double value = sum / list.size();
         	dataset.addValue(value, series1, categories.get(i));
         }
 

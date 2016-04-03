@@ -1,5 +1,5 @@
 /*  
-    PiiL: Pathways Interactive vIsualization tooL
+    PiiL: Pathway Interactive vIsualization tooL
     Copyright (C) 2015  Behrooz Torabi Moghadam
 
     This program is free software: you can redistribute it and/or modify
@@ -25,7 +25,12 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -48,6 +53,7 @@ public class Interface extends JFrame{
 	static CustomTabPane tabPane;
 	static ArrayList<JScrollPane> scrollPaneHolder;
 	static ArrayList<JPanel> panelHolder;
+	static JButton editFields;
 	
 	public static void main(String[] args) {
 		new Interface();
@@ -81,13 +87,22 @@ public class Interface extends JFrame{
 		
 		sampleInfoPanel = new JPanel();
 		sampleInfoPanel.setSize(new Dimension(1000, 18));
-		sampleInfoLabel = new JLabel("Sample Info");
+		sampleInfoLabel = new JLabel(" Sample Info");
 		sampleInfoLabel.setEnabled(false);
 		sampleInfoLabel.setPreferredSize(new Dimension(1000,18));
-		sampleInfoPanel.setLayout(new GridBagLayout());
+		sampleInfoPanel.setLayout(new BorderLayout());
 		sampleInfoPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 		sampleInfoLabel.setForeground(sampleInfoPanel.getBackground());
-		
+		editFields = new JButton("Edit Fields");
+		editFields.setPreferredSize(new Dimension(100,20));
+		editFields.setEnabled(false);
+		editFields.setVisible(true);
+		editFields.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent bc) {
+				new ModifySampleFields();
+			}
+		});
 		/* backgroundPanel keeps menuPanel and bodyPanel */
 		backgroundPanel = new JPanel();
 		backgroundPanel.setLayout(new BorderLayout());
@@ -120,7 +135,7 @@ public class Interface extends JFrame{
 		tabPane = new CustomTabPane();
 		tabPane.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 		tabPane.setUI(new BasicTabbedPaneUI() {
-			   @Override
+			   
 			   protected void installDefaults() {
 			       super.installDefaults();
 			       highlight = Color.pink;
@@ -139,11 +154,11 @@ public class Interface extends JFrame{
 				int selectedTab = sourceTabbedPane.getSelectedIndex();
 				
 				if (ParseKGML.tabInfoTracker.size() == 0) {
-					ControlPanel.disableControlPanel();
+					ControlPanel.disableControlPanel(false);
 				}
 				else {
 					if (ParseKGML.tabInfoTracker.size() < sourceTabbedPane.getTabCount()){
-						ControlPanel.disableControlPanel();
+						ControlPanel.disableControlPanel(false);
 					}
 					else {
 						if (tabPane.getTabCount() > 0) {
@@ -153,11 +168,11 @@ public class Interface extends JFrame{
 							if (thisTab.getMapedGeneLabel().size() > 0) {
 								ControlPanel.enableControlPanel(tabPointer);
 							} else {
-								ControlPanel.disableControlPanel();
+								ControlPanel.disableControlPanel(false);
 							}
 						}
 						else {
-							ControlPanel.disableControlPanel();
+							ControlPanel.disableControlPanel(false);
 							sampleInfoLabel.setForeground(sampleInfoPanel.getBackground());
 						}
 					}
@@ -173,9 +188,12 @@ public class Interface extends JFrame{
 		addComp(drawingPanel, tabPane, 0, 1, 1, 1, 1, 500, GridBagConstraints.CENTER, GridBagConstraints.BOTH);
 
 		gridConstraints.insets = new Insets(1,15,4,1);
-		addComp(sampleInfoPanel, sampleInfoLabel, 1, 1, 1, 1, 500,1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
+		sampleInfoPanel.add(sampleInfoLabel, BorderLayout.WEST);
+		sampleInfoPanel.add(editFields, BorderLayout.EAST);
+//		addComp(sampleInfoPanel, sampleInfoLabel, 0, 0, 1, 1, 500,1, GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL);
+//		addComp(sampleInfoPanel, editFields, 1, 0, 1, 1, 100,1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
 		bodyFrame.add(backgroundPanel,BorderLayout.CENTER);
-		new Splash(3000);	
+//		new Splash(3000);	
 		bodyFrame.setVisible(true);
 		
 	}
@@ -184,6 +202,20 @@ public class Interface extends JFrame{
 		sampleInfoLabel.setText(text);
 		sampleInfoLabel.setEnabled(enable);
 		sampleInfoLabel.setForeground(Color.BLACK);
+	}
+	
+	public static void setSampleInfoLabel(List<String> hints, boolean enable) {
+		String groups = "";
+		for (String group : hints ){
+			int members = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getIDsInGroups().get(group).size();
+			groups += (String) group + " (" + members + ") " + ", ";
+		}
+		
+		groups = groups.substring(0, groups.length()-2);
+		sampleInfoLabel.setText(" Samples grouping (top to buttom): " + groups);
+		sampleInfoLabel.setEnabled(enable);
+		sampleInfoLabel.setForeground(Color.BLACK);
+		
 	}
 	
 	public static void addNewPanel(JPanel panel){

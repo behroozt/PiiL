@@ -1,5 +1,5 @@
 /*  
-    PiiL: Pathways Interactive vIsualization tooL
+    PiiL: Pathway Interactive vIsualization tooL
     Copyright (C) 2015  Behrooz Torabi Moghadam
 
     This program is free software: you can redistribute it and/or modify
@@ -202,7 +202,6 @@ public class OpenFromWeb extends JDialog{
             if (lineTokenizer.hasMoreTokens())
                 organismMap.put(lineTokenizer.nextToken(), lineTokenizer.nextToken());
         }
-
     }
 	
 	public static StringBuffer sendRestRequest(String url) throws Exception {
@@ -322,7 +321,6 @@ public class OpenFromWeb extends JDialog{
 					protected Void doInBackground() {
 						
 						if (! downloaded.exists()){
-							
 								valid = true;
 								PrintWriter writer = null;
 								try {
@@ -336,7 +334,6 @@ public class OpenFromWeb extends JDialog{
 									writer.println(s.nextLine());
 						        s.close();
 						        writer.close();
-						
 						}
 						return null;
 					}
@@ -350,10 +347,7 @@ public class OpenFromWeb extends JDialog{
 					message.setText(" Downloading from KEGG pathway database ... ");
 					dialog.setVisible(true);
 				
-				
 					final String tabCaption = pathwayCombo.getSelectedItem().toString();
-					
-//                    Interface.newTabSetup(tabIndex);
                     					
 					try {
 
@@ -395,13 +389,6 @@ public class OpenFromWeb extends JDialog{
 						message.setText(" Loading pathway ... ");
 						dialog.setVisible(true);
 						
-//						TabInfoHandler.addedTabInfo(tabIndex, new Character('W'),downloaded.getName(), downloaded, organismName, organism, tabCaption, pathway, null, null, null);
-
-//						if (RangrazMenu.tabInfoHandler == null){
-//							RangrazMenu.tabInfoHandler = new ArrayList<LoadedFileHandler>();
-//	            		}
-//						RangrazMenu.tabInfoHandler.add(tabIndex, new LoadedFileHandler(new Character('W'),downloaded.getName(), downloaded, organismName, organism, tabCaption, pathway, null, null, null));
-					
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

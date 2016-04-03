@@ -1,5 +1,5 @@
 /*  
-    PiiL: Pathways Interactive vIsualization tooL
+    PiiL: Pathway Interactive vIsualization tooL
     Copyright (C) 2015  Behrooz Torabi Moghadam
 
     This program is free software: you can redistribute it and/or modify
@@ -228,13 +228,14 @@ public class ParseKGML {
 				});
 				
 				theLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-				if (labelWidth >= 50){
-					theLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
-					if (labelWidth >= 70){
-						theLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 9));
-					}
-				}
-			}
+				theLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 9));
+//				if (labelWidth >= 50){
+//					theLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
+//					if (labelWidth >= 70){
+//						theLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 9));
+//					}
+//				}
+			} // end of if a 'gene'
 			
 			Genes geneNodeLabel = new Genes(theLabel, nodeLabel	, nameAlternatives, false, false);
 			geneHandler.put(nodeID, geneNodeLabel);

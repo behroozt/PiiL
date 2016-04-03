@@ -1,5 +1,5 @@
 /*  
-    PiiL: Pathways Interactive vIsualization tooL
+    PiiL: Pathway Interactive vIsualization tooL
     Copyright (C) 2015  Behrooz Torabi Moghadam
 
     This program is free software: you can redistribute it and/or modify
@@ -238,8 +238,7 @@ public class ControlPanel extends JPanel{
 	public static void enableControlPanel(int tabPointer) {
 		
 		int activeTab = Interface.tabPane.getSelectedIndex();
-		
-		
+		TabsInfo pathway = ParseKGML.getTabInfo(activeTab);
 		
 		fillMatchedGenes(activeTab);
 		fillSamplesIDs(activeTab);
@@ -256,14 +255,17 @@ public class ControlPanel extends JPanel{
 		}
 		else {
 			matchedGenesCombo.setEnabled(true);
-			
 		}
 		
 		if (ParseKGML.getTabInfo(activeTab).getSamplesInfo().size() > 0){
 			ControlPanel.setSampleInfoLabel(tabPointer);
+			Interface.editFields.setEnabled(true);
+			PiilMenubar.groupWiseView.setEnabled(true);
 		}
 		else {
-			Interface.setSampleInfoLabel("Sample Info", false);
+			Interface.setSampleInfoLabel(" Sample Info", false);
+			Interface.editFields.setEnabled(false);
+			PiilMenubar.groupWiseView.setEnabled(false);
 		}
 		
 		PiilMenubar.setSampleIdMenu(true);
@@ -272,6 +274,13 @@ public class ControlPanel extends JPanel{
 		colorMap.setVisible(true);
 		PiilMenubar.multiSampleView.setEnabled(true);
 		PiilMenubar.singleSampleView.setEnabled(true);
+		if (pathway.getIDsInGroups() != null && pathway.getIDsInGroups().size() > 0){
+			PiilMenubar.groupWiseView.setEnabled(true);
+			if (pathway.getViewMode() == 2){
+				ControlPanel.disableControlPanel(true);
+			}
+		}
+		
 	}
 
 	private static void setMatchNumberLabel(int tabPointer) {
@@ -330,7 +339,7 @@ public class ControlPanel extends JPanel{
 		timerSpeed.setEnabled(true);
 	}
 
-	public static void disableControlPanel() {
+	public static void disableControlPanel(boolean enabled) {
 		
 		for (Component theComponent: buttonsPanel.getComponents()){
 			theComponent.setEnabled(false);
@@ -341,11 +350,26 @@ public class ControlPanel extends JPanel{
 		samplesIDsCombo.setPrototypeDisplayValue("XXXXXXXX");
 		matchedNumberLabel.setForeground(new Color(185,185,185));
 		sampleIndexLabel.setForeground(new Color(185,185,185));
-		Interface.setSampleInfoLabel("Sample Info", false);
+		
+		if (enabled){
+//			Object[] hints = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getIDsInGroups().keySet().toArray();
+			List<String> hints = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getShowableGroups();
+			Interface.setSampleInfoLabel(hints, true);
+			PiilMenubar.groupWiseView.setEnabled(true);
+		}
+		else {
+			Interface.setSampleInfoLabel(" Sample Info", false);
+			Interface.editFields.setEnabled(false);
+			PiilMenubar.groupWiseView.setEnabled(false);
+		}
+		
 		PiilMenubar.setSampleIdMenu(false);
-		colorMap.setVisible(false);
+		colorMap.setVisible(enabled);
 		PiilMenubar.multiSampleView.setEnabled(false);
-		PiilMenubar.singleSampleView.setEnabled(false);
+		PiilMenubar.singleSampleView.setEnabled(enabled);
+		
+		
+		
 		if (Interface.tabPane.getTabCount() == 0){
 			relationMap.setVisible(false);
 		}
@@ -359,7 +383,7 @@ public class ControlPanel extends JPanel{
 		int tab = Interface.tabPane.getSelectedIndex();
 		TabsInfo thisTab = ParseKGML.getTabInfo(tab);
 		
-		String info = "";
+		String info = " ";
 		String id = thisTab.getSamplesIDs().get(tabPointer);
 		
 		List<String> metaValues = thisTab.getSamplesInfo().get(id);
@@ -371,13 +395,12 @@ public class ControlPanel extends JPanel{
 			if (metaValues != null){
 				info += colNames.get(i) + " : " + metaValues.get(i);
 				if (i < (fieldCount - 1)) {
-					info += " / ";
+					info += " | ";
 				}
 			}
 			else {
 				info = "No additional information";
 			}
-			
 		}
 		Interface.setSampleInfoLabel(info, true);
 		return info;

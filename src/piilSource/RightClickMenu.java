@@ -1,5 +1,5 @@
 /*  
-    PiiL: Pathways Interactive vIsualization tooL
+    PiiL: Pathway Interactive vIsualization tooL
     Copyright (C) 2015  Behrooz Torabi Moghadam
 
     This program is free software: you can redistribute it and/or modify
@@ -62,6 +62,7 @@ public class RightClickMenu {
 		geneCards = new JMenuItem("GeneCards");
 		pubmed = new JMenuItem("Pubmed");
 		ensembl = new JMenuItem("Ensembl");
+		
 		menu.add(geneInfo);
 		menu.add(histogram);
 		menu.add(rawData);
@@ -112,7 +113,7 @@ public class RightClickMenu {
 		ensembl.addActionListener(lForClick);
 		multipleSamples.addActionListener(lForClick);
 	}
-	
+
 	private class ListenForClick implements ActionListener{
 		
 		String geneName = pathway.getGenes().get(entryID).getText();
@@ -195,9 +196,10 @@ public class RightClickMenu {
 					Interface.scrollPaneHolder.get(activeTab).getHorizontalScrollBar().setUnitIncrement(16);
 					
 				}
+				gene.getLabel().setVisible(true);
 				gene.setExpandStatus();
 			}
-		}
+		} // end of actionPerformed
 	} // end of listenForClick
 
 	public void multiSampleView(Genes gene) {

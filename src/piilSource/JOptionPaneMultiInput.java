@@ -1,5 +1,5 @@
 /*  
-    PiiL: Pathways Interactive vIsualization tooL
+    PiiL: Pathway Interactive vIsualization tooL
     Copyright (C) 2015  Behrooz Torabi Moghadam
 
     This program is free software: you can redistribute it and/or modify
@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -54,105 +55,47 @@ import javax.swing.event.ChangeListener;
 
 public class JOptionPaneMultiInput {
 
-	String[] choices = {"tab", "comma", "space"};
+	String[] choices = {"comma","tab","space","semicolon","dash"};
 	JComboBox separatorCombo = new JComboBox(choices);
-	SpinnerModel spinID = new SpinnerNumberModel(1,1,1,1);
-	SpinnerModel spinField = new SpinnerNumberModel(1,1,20,1);
+	SpinnerModel spinID = new SpinnerNumberModel(1,1,50,1);
+	
 	JFileChooser fileChooser;
 	JSpinner idIndexSpinner = new JSpinner(spinID);
-	JSpinner fieldSpinner = new JSpinner(spinField);
-	JList fieldsList;
-	JButton loadData = new JButton("Load samples Info file");
+	JButton loadData = new JButton("Choose another file");
 	DefaultListModel listModel;
 	JPanel myPanel, containerPanel;
-	JLabel separatorLabel, indexLabel, numberLabel, filedsLabel ;
+	JLabel separatorLabel, indexLabel, fileLabel;
 	File selectedFile;
 	boolean validFileLoaded = true;
-	static CheckBoxList fieldCheckBox;
-	List<Integer> selectedColumns = new ArrayList<Integer>();
+	String[] header;
+	final ImageIcon icon = new ImageIcon("/Users/Behrooz/PiiLFiles/logoIcon.png");
 	
-	public JOptionPaneMultiInput() {
+	public JOptionPaneMultiInput(File file) {
 
-		fieldCheckBox = new CheckBoxList();
-		int activeTab = Interface.tabPane.getSelectedIndex();
 		myPanel = new JPanel();
 		myPanel.setLayout(new GridBagLayout());
 		containerPanel= new JPanel();
 		containerPanel.setLayout(new BorderLayout());
 		separatorLabel = new JLabel("The columns are separated by:");
 		indexLabel = new JLabel("Sample ID appears in column:");
-		numberLabel = new JLabel("Number of fileds (columns):");
-		filedsLabel = new JLabel("Fields to be shown:");
-	   
 		listModel = new DefaultListModel();
 		listModel.addElement(1);
+		selectedFile = file;
+		fileLabel = new JLabel(file.getName() + " was selected.");
 		
-		JCheckBox check1 = new JCheckBox("1");
-		JCheckBox[] myList = { check1};
-		fieldCheckBox.setListData(myList);
-	   
-		fieldsList = new JList(listModel);
-		fieldsList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		fieldsList.setLayoutOrientation(JList.VERTICAL);
-		fieldsList.setVisibleRowCount(3);
-		fieldsList.setEnabled(false);
-		JScrollPane listScrollPane = new JScrollPane(fieldCheckBox);
-		listScrollPane.setPreferredSize(new Dimension(50,55));
-		listScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-	   
-		fieldSpinner.addChangeListener(new ChangeListener() {
-			
-			int i = 0;
-			public void stateChanged(ChangeEvent arg0) {
-				int numberOfFields = Integer.parseInt(fieldSpinner.getValue().toString());
-				JCheckBox[] myList = new JCheckBox[numberOfFields];
-				for (i = 0; i < numberOfFields ; i++){
-					int j = i + 1;
-					final JCheckBox check = new JCheckBox("" + j);
-					check.addChangeListener(new ChangeListener() {
-						
-						@Override
-						public void stateChanged(ChangeEvent e) {
-							if (check.isSelected()){
-								selectedColumns.add(Integer.parseInt(check.getText()));
-							}
-							else{
-								Iterator<Integer> search = selectedColumns.iterator();
-								while (search.hasNext()){
-									Integer field = search.next();
-									if (field == Integer.parseInt(check.getText())){
-										search.remove();
-									}
-								}
-							}
-						}
-					});
-					myList[i] = check;
-				}
-				
-				fieldCheckBox.setListData(myList);
-				int maxValue = (Integer) fieldSpinner.getValue();
-				SpinnerModel newSpin = new SpinnerNumberModel(1,1,maxValue,1);
-				idIndexSpinner.setModel(newSpin);
-			}
-		});
-	   
-		addComp(myPanel, separatorLabel, 0, 0, 1, 1, GridBagConstraints.EAST, GridBagConstraints.NONE);
-		addComp(myPanel, separatorCombo, 1, 0, 2, 1, GridBagConstraints.WEST, GridBagConstraints.NONE);
-		addComp(myPanel, numberLabel, 0, 1, 1, 1, GridBagConstraints.EAST, GridBagConstraints.NONE);
-		addComp(myPanel, fieldSpinner, 1, 1, 2, 1, GridBagConstraints.WEST, GridBagConstraints.NONE);
+		addComp(myPanel, fileLabel, 0, 0, 2, 1, GridBagConstraints.WEST, GridBagConstraints.NONE);
+		addComp(myPanel, separatorLabel, 0, 1, 1, 1, GridBagConstraints.EAST, GridBagConstraints.NONE);
+		addComp(myPanel, separatorCombo, 1, 1, 2, 1, GridBagConstraints.WEST, GridBagConstraints.NONE);
 		addComp(myPanel, indexLabel, 0, 2, 1, 1, GridBagConstraints.EAST, GridBagConstraints.NONE);
 		addComp(myPanel, idIndexSpinner, 1, 2, 2, 1, GridBagConstraints.WEST, GridBagConstraints.NONE);
-		addComp(myPanel, filedsLabel, 0, 3, 1, 1, GridBagConstraints.EAST, GridBagConstraints.NONE);
-		addComp(myPanel, listScrollPane, 1, 3, 2, 1, GridBagConstraints.WEST, GridBagConstraints.NONE);
-		addComp(myPanel, loadData, 0, 4, 2, 1, GridBagConstraints.LINE_END, GridBagConstraints.NONE);
+		addComp(myPanel, loadData, 0, 3, 2, 1, GridBagConstraints.LINE_END, GridBagConstraints.NONE);
 		
 		containerPanel.add(myPanel, BorderLayout.CENTER);
 	   
 		loadData.addActionListener(new ActionListener() {
 		
 		public void actionPerformed(ActionEvent bc) {
-			
+			File newFile;
 			if (bc.getSource() == loadData) {
 				fileChooser = new JFileChooser();
 				fileChooser.setFileFilter(null);
@@ -161,36 +104,26 @@ public class JOptionPaneMultiInput {
 				fileChooser.setCurrentDirectory(directory);
 				int returnVal = fileChooser.showOpenDialog(null);
 				if (returnVal == JFileChooser.APPROVE_OPTION) { 
-					selectedFile = fileChooser.getSelectedFile();
-					if (selectedFile == null){
+					newFile = fileChooser.getSelectedFile();
+					if (newFile == null){
 						JOptionPane.showMessageDialog(Interface.bodyFrame, "No file was loaded!");
 					}
 					else {
-						try {
-							validFileLoaded = checkInputFile(selectedFile);
-							if (validFileLoaded){
-								JOptionPane.showMessageDialog(myPanel, selectedFile.getName() + " loaded successfully.");
-							}
-							
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						fileLabel.setText(selectedFile.getName() + " was selected.");
+						selectedFile = newFile;
 					}
 				}
 			}
 		}
-
-		
 		});
 
-		int result = JOptionPane.showConfirmDialog(null, containerPanel, 
-               "Please choose ...", JOptionPane.OK_CANCEL_OPTION);
+		int result = JOptionPane.showConfirmDialog(null, containerPanel, "Please choose ...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, icon);
+		
 		if (result == JOptionPane.OK_OPTION) {
+			
 			try {
 				validFileLoaded = checkInputFile(selectedFile);
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			if (selectedFile == null || validFileLoaded == false){
@@ -199,22 +132,14 @@ public class JOptionPaneMultiInput {
 			else {
 				int sampleIdIndex = Integer.parseInt(idIndexSpinner.getValue().toString());
 				String separator = separatorCombo.getSelectedItem().toString();
-				int fieldCount = Integer.parseInt(fieldSpinner.getValue().toString());
-				int[] fields = new int[selectedColumns.size()];
+				
+				int[] fields = new int[header.length];
 
-				for (int i = 0; i < selectedColumns.size() ; i++){
-					fields[i] = selectedColumns.get(i) - 1;
+				for (int i = 0; i < header.length ; i++){
+					fields[i] = i;
 				}
 				
-				TabsInfo.setSamplesInformationFile(selectedFile.getName().toString(), new SampleInformation(sampleIdIndex, separator, fieldCount, fields,selectedFile));
-				try {
-					TabsInfo theTab = ParseKGML.getTabInfo(activeTab);
-					theTab.extractSamplesInfo(selectedFile, sampleIdIndex, separator, fieldCount, fields);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
+				TabsInfo.setSamplesInformationFile(selectedFile.getName().toString(), new SampleInformation(sampleIdIndex,separator, header, fields,selectedFile));
 			}
 		}
 	}
@@ -225,47 +150,51 @@ public class JOptionPaneMultiInput {
 	
 	private boolean checkInputFile(File selectedFile) throws IOException{
 		
-		boolean columnSelected = true;
 		String[] currentLine;
+		boolean matchingID = false;
+		TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
 		BufferedReader br = new BufferedReader(new FileReader(selectedFile));
 		String line = null;
 		String inputFileHeader = br.readLine();
 		
 		String splitBy;
 		String seperator = separatorCombo.getSelectedItem().toString();
+				
 		if (seperator.equals("tab")){
 			splitBy = "\t";
 		} else if (seperator.equals("space")){
 			splitBy = " ";
-		} else {
+		} else if (seperator.equals("comma")){
 			splitBy = ",";
 		}
-		
-		if (fieldCheckBox.getSelectedIndices().length == 0){
-			JOptionPane.showMessageDialog(Interface.bodyFrame, "None of the columns are selected to be shown!");
-			br.close();
-			return false;
-		}
-		String[] columnNames = inputFileHeader.split(splitBy);
-		int fieldCount = Integer.parseInt(fieldSpinner.getValue().toString());
-		if (columnNames.length != fieldCount){
-			JOptionPane.showMessageDialog(Interface.bodyFrame, "Selected number of fileds does not match with the loaded file!");
-			br.close();
-			return false;
+		else if (seperator.equals("dash")){
+			splitBy = " ";
 		}
 		else {
-			while ((line = br.readLine()) != null){
-				currentLine = line.split(splitBy);
-				if (currentLine.length != fieldCount){
-					JOptionPane.showMessageDialog(Interface.bodyFrame, "Some rows have different number of columns!");
-					br.close();
-					return false;
+			splitBy = ";";
+		}
+		
+		header = inputFileHeader.split(splitBy);
+		
+		while ((line = br.readLine()) != null){
+			currentLine = line.split(splitBy);
+			if (currentLine.length != header.length){
+				JOptionPane.showMessageDialog(Interface.bodyFrame, "Some rows have different number of columns! Make sure you have chosen a correct separator and then check your input file.");
+				br.close();
+				return false;
+			}
+			else{
+				if (pathway.getSamplesIDs().contains(currentLine[Integer.parseInt(idIndexSpinner.getValue().toString())-1])){
+					matchingID = true;
 				}
 			}
 		}
 		br.close();
+		if (!matchingID){
+			JOptionPane.showMessageDialog(Interface.bodyFrame, "The sample IDs in the loaded file do not match with the IDs in the loaded methylation/expression file!");
+			return false;
+		}
 		return true;
-		
 	} // end of checkInputFile
    
 	private void addComp(JPanel thePanel, JComponent comp, int xPos, int yPos, int compWidth, int compHeight, int place, int stretch){
