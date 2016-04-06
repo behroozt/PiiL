@@ -322,6 +322,7 @@ public class PiilMenubar extends JMenuBar{
 								protected Void doInBackground() {
 									try {
 										validInput = theTab.getGenesList(file);
+										
 									} catch (IOException e) {
 										JOptionPane.showMessageDialog(Interface.bodyFrame,"Error loading the file!");
 									}
@@ -487,11 +488,47 @@ public class PiilMenubar extends JMenuBar{
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					JOptionPaneMultiInput patientsInfo  = new JOptionPaneMultiInput(fileSelector.getSelectedFile());
 					selectedSampleInfoFile = patientsInfo.getSelectedFile();
-					if (patientsInfo.validFileLoaded){
+					
+					if (patientsInfo.validFileLoaded & selectedSampleInfoFile != null){
+						
 						SampleInformation inform = TabsInfo.getSamplesInformationFile(selectedSampleInfoFile.getName());
 						TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
 						try {
 							validSampleInfo = pathway.extractSamplesInfo(inform.getFile(), inform.getIndex(), inform.getSeparator(), inform.getHeader(), inform.getColumns(), pathway.getGroupingIndex());
+							final JMenuItem loadedInfoFile = new JMenuItem(selectedSampleInfoFile.getName());
+							if (validFormat) {
+								
+								loadedInfoFile.addActionListener(new ActionListener() {
+
+											public void actionPerformed(ActionEvent ev) {
+												SampleInformation inform = TabsInfo.getSamplesInformationFile(ev.getActionCommand());
+
+												try {
+													TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
+													validSampleInfo = pathway.extractSamplesInfo(inform.getFile(),inform.getIndex(),inform.getSeparator(),inform.getHeader(),inform.getColumns(),pathway.getGroupingIndex());
+													if (validSampleInfo) {
+														loadSamplesInfo.add(loadedInfoFile);
+														Interface.bodyFrame.setJMenuBar(menubar);
+														Interface.editFields.setVisible(true);
+														Interface.editFields.setEnabled(true);
+														groupWiseView.setEnabled(true);
+													}
+												} catch (IOException e) {
+													// TODO Auto-generated catch block
+													e.printStackTrace();
+												}
+											}
+										});
+							}
+							
+							if (validSampleInfo){
+								loadSamplesInfo.add(loadedInfoFile);
+								Interface.bodyFrame.setJMenuBar(menubar);
+								Interface.editFields.setVisible(true);
+								Interface.editFields.setEnabled(true);
+								groupWiseView.setEnabled(true);
+							}
+							
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -501,48 +538,7 @@ public class PiilMenubar extends JMenuBar{
 				}
 				
 				
-				if (selectedSampleInfoFile != null){
-					SampleInformation inform = TabsInfo.getSamplesInformationFile(selectedSampleInfoFile.getName());
-					TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
-					try {
-						validSampleInfo = pathway.extractSamplesInfo(inform.getFile(), inform.getIndex(), inform.getSeparator(), inform.getHeader(), inform.getColumns(), pathway.getGroupingIndex());
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					
-					final JMenuItem loadedInfoFile = new JMenuItem(selectedSampleInfoFile.getName());
-					
-					loadedInfoFile.addActionListener(new ActionListener() {
-						
-						public void actionPerformed(ActionEvent ev) {
-							SampleInformation inform = TabsInfo.getSamplesInformationFile(ev.getActionCommand());
-							
-							try {
-								TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
-								validSampleInfo = pathway.extractSamplesInfo(inform.getFile(), inform.getIndex(), inform.getSeparator(), inform.getHeader(), inform.getColumns(), pathway.getGroupingIndex());
-								if (validSampleInfo){
-									loadSamplesInfo.add(loadedInfoFile);
-									Interface.bodyFrame.setJMenuBar(menubar);
-									Interface.editFields.setVisible(true);
-									Interface.editFields.setEnabled(true);
-									groupWiseView.setEnabled(true);
-								}
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					});
-					
-					if (validSampleInfo){
-						loadSamplesInfo.add(loadedInfoFile);
-						Interface.bodyFrame.setJMenuBar(menubar);
-						Interface.editFields.setVisible(true);
-						Interface.editFields.setEnabled(true);
-						groupWiseView.setEnabled(true);
-					}
-				}
+				
 			} // end of newSampleInfo
 			
 			/* load list of genes item clicked */
@@ -930,8 +926,7 @@ public class PiilMenubar extends JMenuBar{
 				return builder.parse(new InputSource(docString));						
 			}
 			catch (Exception e){
-				System.err.println(e.getMessage());
-				e.printStackTrace();
+				
 			}
 			return null;
 		}

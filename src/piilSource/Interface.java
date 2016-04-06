@@ -86,11 +86,12 @@ public class Interface extends JFrame{
 		bodyFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		sampleInfoPanel = new JPanel();
-		sampleInfoPanel.setSize(new Dimension(1000, 18));
+		sampleInfoPanel.setPreferredSize(new Dimension(1000, 30));
+		sampleInfoPanel.setLayout(new BorderLayout());
 		sampleInfoLabel = new JLabel(" Sample Info");
 		sampleInfoLabel.setEnabled(false);
 		sampleInfoLabel.setPreferredSize(new Dimension(1000,18));
-		sampleInfoPanel.setLayout(new BorderLayout());
+		
 		sampleInfoPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 		sampleInfoLabel.setForeground(sampleInfoPanel.getBackground());
 		editFields = new JButton("Edit Fields");
@@ -113,7 +114,7 @@ public class Interface extends JFrame{
 		backgroundPanel.add(menuPanel,BorderLayout.NORTH);	
 		backgroundPanel.add(bodyPanel);
 		drawingPanel= new JPanel();
-		drawingPanel.setLayout(new GridBagLayout());
+		drawingPanel.setLayout(new BorderLayout());
 		
 		/* controlPanel holds the sidePanel */
 		controlPanel = new JPanel();
@@ -184,14 +185,12 @@ public class Interface extends JFrame{
 		
 		tabPane.addChangeListener(changeListener);
 
-		addComp(drawingPanel, sampleInfoPanel, 0, 0, 1, 1, 500, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL);
-		addComp(drawingPanel, tabPane, 0, 1, 1, 1, 1, 500, GridBagConstraints.CENTER, GridBagConstraints.BOTH);
-
-		gridConstraints.insets = new Insets(1,15,4,1);
 		sampleInfoPanel.add(sampleInfoLabel, BorderLayout.WEST);
 		sampleInfoPanel.add(editFields, BorderLayout.EAST);
-//		addComp(sampleInfoPanel, sampleInfoLabel, 0, 0, 1, 1, 500,1, GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL);
-//		addComp(sampleInfoPanel, editFields, 1, 0, 1, 1, 100,1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
+		drawingPanel.add(sampleInfoPanel, BorderLayout.NORTH);
+		drawingPanel.add(tabPane);
+		gridConstraints.insets = new Insets(1,15,4,1);
+		
 		bodyFrame.add(backgroundPanel,BorderLayout.CENTER);
 //		new Splash(3000);	
 		bodyFrame.setVisible(true);

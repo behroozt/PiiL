@@ -359,10 +359,10 @@ public class ControlPanel extends JPanel{
 		}
 		else {
 			Interface.setSampleInfoLabel(" Sample Info", false);
-			Interface.editFields.setEnabled(false);
+			
 			PiilMenubar.groupWiseView.setEnabled(false);
 		}
-		
+		Interface.editFields.setEnabled(false);
 		PiilMenubar.setSampleIdMenu(false);
 		colorMap.setVisible(enabled);
 		PiilMenubar.multiSampleView.setEnabled(false);
@@ -389,17 +389,18 @@ public class ControlPanel extends JPanel{
 		List<String> metaValues = thisTab.getSamplesInfo().get(id);
 		
 		List<String> colNames = thisTab.getSamplesInfo().get("0");
+		List<String> header = thisTab.getSamplesInfo().get("-1");
 		int fieldCount = colNames.size();
 		
 		for (int i = 0; i < fieldCount; i++) {
 			if (metaValues != null){
-				info += colNames.get(i) + " : " + metaValues.get(i);
+				info += colNames.get(i) + " : " + metaValues.get(header.indexOf(colNames.get(i)));
 				if (i < (fieldCount - 1)) {
 					info += " | ";
 				}
 			}
 			else {
-				info = "No additional information";
+				info = " No additional information";
 			}
 		}
 		Interface.setSampleInfoLabel(info, true);

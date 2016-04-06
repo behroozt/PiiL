@@ -28,6 +28,8 @@ import java.awt.Toolkit;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,8 +40,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.StringTokenizer;
@@ -56,6 +60,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -70,13 +75,17 @@ public class OpenFromWeb extends JDialog{
 	JComboBox organismCombo, pathwayCombo;
 	JFrame webFrame;
 	JPanel webPanel, containerPanel;
-	JLabel organismLabel, pathwayLabel;
+	JLabel organismLabel, pathwayLabel, searchOrgLabel, searchPathLabel;
+	JTextField searchOrganism, searchPathway;
 	private HashMap <String, String> organismMap = new HashMap<String, String>();
 	private HashMap <String, String> pathwayMap = new HashMap<String, String>();
 	boolean valid = true;
 	Scanner s;
 	URL url;
 	boolean successful= false;
+	GridBagConstraints gridConstraints = new GridBagConstraints();
+	String organismDefault = "Select Organism";
+	String pathwayDefault = "Select Pathway";
 	
 	public boolean getSuccess(){
 		return successful;
@@ -85,7 +94,7 @@ public class OpenFromWeb extends JDialog{
 	public OpenFromWeb(){
 		
 		webFrame = new JFrame();
-		webFrame.setSize(700, 100);
+		webFrame.setSize(700, 150);
 		
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		Dimension dim = tk.getScreenSize();
@@ -101,6 +110,12 @@ public class OpenFromWeb extends JDialog{
 		organismLabel = new JLabel("Organism:");
 		organismCombo = new JComboBox();
 		organismCombo.setPreferredSize(new Dimension(250,35));
+		searchOrgLabel = new JLabel("Search:");
+		searchPathLabel = new JLabel("Search:");
+		searchOrganism = new JTextField();
+		searchPathway = new JTextField();
+		searchOrganism.setPreferredSize(organismCombo.getPreferredSize());
+		searchPathway.setPreferredSize(organismCombo.getPreferredSize());
 		
 		try {
 			retrieveOrganismlist();
@@ -111,14 +126,14 @@ public class OpenFromWeb extends JDialog{
 			return;
 		}
 		successful = true;
-		organismCombo.setModel(new DefaultComboBoxModel(getOrganismList()));
-		
+		organismCombo.setModel(new DefaultComboBoxModel(getOrganismList("")));
+//		
 		pathwayLabel = new JLabel("Pathway:");
 		pathwayCombo = new JComboBox();
 		pathwayCombo.setPreferredSize(new Dimension(250,35));
 		
 		
-		pathwayCombo.setModel(new DefaultComboBoxModel(getPathwayList()));
+		pathwayCombo.setModel(new DefaultComboBoxModel(getPathwayList("")));
 		
 		ListenForButton lForButton = new ListenForButton();
 		loadButton = new JButton("Load");
@@ -127,15 +142,56 @@ public class OpenFromWeb extends JDialog{
 		cancelButton.addActionListener(lForButton);
 		loadButton.setPreferredSize(new Dimension(100,30));
 		cancelButton.setPreferredSize(new Dimension(100,30));
+		gridConstraints.insets = new Insets(5,5,1,1);
 		addComp(webPanel,organismLabel,0,0,1,1,GridBagConstraints.EAST, GridBagConstraints.NONE);
+		gridConstraints.insets = new Insets(5,1,1,1);
 		addComp(webPanel,organismCombo,1,0,1,1,GridBagConstraints.WEST, GridBagConstraints.NONE);
 		addComp(webPanel,pathwayLabel,2,0,1,1,GridBagConstraints.EAST, GridBagConstraints.NONE);
+		gridConstraints.insets = new Insets(5,1,1,5);
 		addComp(webPanel,pathwayCombo,3,0,1,1,GridBagConstraints.WEST, GridBagConstraints.NONE);
-		addComp(webPanel,loadButton,1,1,1,2,GridBagConstraints.EAST, GridBagConstraints.NONE);
-		addComp(webPanel,cancelButton,2,1,1,2,GridBagConstraints.WEST, GridBagConstraints.NONE);
+		gridConstraints.insets = new Insets(1,5,1,1);
+		addComp(webPanel,searchOrgLabel,0,1,1,1,GridBagConstraints.EAST, GridBagConstraints.NONE);
+		gridConstraints.insets = new Insets(1,1,1,1);
+		addComp(webPanel,searchOrganism,1,1,1,1,GridBagConstraints.WEST, GridBagConstraints.NONE);
+		addComp(webPanel,searchPathLabel,2,1,1,1,GridBagConstraints.EAST, GridBagConstraints.NONE);
+		gridConstraints.insets = new Insets(1,1,1,5);
+		addComp(webPanel,searchPathway,3,1,1,1,GridBagConstraints.WEST, GridBagConstraints.NONE);
+		gridConstraints.insets = new Insets(5,1,5,1);
+		addComp(webPanel,loadButton,1,2,1,2,GridBagConstraints.EAST, GridBagConstraints.NONE);
+		addComp(webPanel,cancelButton,2,2,1,2,GridBagConstraints.WEST, GridBagConstraints.NONE);
 		
-		organismCombo.setSelectedItem("Select Organism");
-		pathwayCombo.setSelectedItem("Select Pathway");
+		searchOrganism.addKeyListener(new KeyListener() {
+			public void keyTyped(KeyEvent arg0) {
+			}
+			
+			public void keyReleased(KeyEvent arg0) {
+				String searchItem = searchOrganism.getText();
+				organismCombo.removeAllItems();
+				organismCombo.setModel(new DefaultComboBoxModel(getOrganismList(searchItem)));
+				organismCombo.setSelectedItem(organismDefault);
+			}
+			
+			public void keyPressed(KeyEvent arg0) {
+			}
+		});
+		
+		searchPathway.addKeyListener(new KeyListener() {
+			public void keyTyped(KeyEvent arg0) {
+			}
+			
+			public void keyReleased(KeyEvent arg0) {
+				String searchItem = searchPathway.getText();
+				pathwayCombo.removeAllItems();
+				pathwayCombo.setModel(new DefaultComboBoxModel(getPathwayList(searchItem)));
+				pathwayCombo.setSelectedItem(pathwayDefault);
+			}
+			
+			public void keyPressed(KeyEvent arg0) {
+			}
+		});
+		
+		organismCombo.setSelectedItem(organismDefault);
+		pathwayCombo.setSelectedItem(pathwayDefault);
 		
 		containerPanel.add(webPanel, BorderLayout.CENTER);
 		webFrame.add(containerPanel);
@@ -148,26 +204,56 @@ public class OpenFromWeb extends JDialog{
 		webFrame.setVisible(true);
 	}
 	
-	public String[] getPathwayList() {
-        String[] list = new String[pathwayMap.size() + 1];
-        list[0] = "Select Pathway";
-        int index = 1;
-        for (Map.Entry entry : pathwayMap.entrySet()) {
-            list[index++] = (String) entry.getValue();
+	public String[] getPathwayList(String item) {
+        List<String> list = new ArrayList<String>();
+        
+        if (item.equals("")){
+        	list.add(pathwayDefault);
+            for (Map.Entry entry : pathwayMap.entrySet()) {
+                list.add(entry.getValue().toString());
+            }
         }
-        Arrays.sort(list);
-        return list;
+        else {
+        	for (Map.Entry entry : pathwayMap.entrySet()) {
+        		String value = entry.getValue().toString();
+        		if (value.contains(item)){
+        			list.add(value);
+        		}
+        	}
+        	
+        }
+        String[] itemsList = new String[list.size()];
+        for (int i = 0; i < list.size() ; i ++){
+        	itemsList[i] = list.get(i).toString();
+        }
+        Arrays.sort(itemsList);
+        return itemsList;
     }
 	
-	private String[] getOrganismList() {
-        String[] list = new String[organismMap.size() + 1];
-        list[0] = "Select Organism";
-        int index = 1;
-        for (Map.Entry entry : organismMap.entrySet()) {
-            list[index++] = (String) entry.getValue();
+	private String[] getOrganismList(String item) {
+		List<String> list = new ArrayList<String>();
+        
+        if (item.equals("")){
+        	list.add(organismDefault);
+            for (Map.Entry entry : organismMap.entrySet()) {
+                list.add(entry.getValue().toString());
+            }
         }
-        Arrays.sort(list);
-        return list;
+        else {
+        	for (Map.Entry entry : organismMap.entrySet()) {
+        		String value = entry.getValue().toString();
+        		if (value.contains(item)){
+        			list.add(value);
+        		}
+        	}
+        	
+        }
+        String[] itemsList = new String[list.size()];
+        for (int i = 0; i < list.size() ; i ++){
+        	itemsList[i] = list.get(i).toString();
+        }
+        Arrays.sort(itemsList);
+        return itemsList;
     }
 	
 	private void retrievePathwayList() throws Exception {
@@ -237,9 +323,21 @@ public class OpenFromWeb extends JDialog{
 			
 			if (be.getSource() == loadButton){
 				
+				if ((organismCombo.getSelectedIndex() == -1) | (pathwayCombo.getSelectedIndex() == -1)){
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "Please select a pathway/organism from the list!");
+					webFrame.setVisible(true);
+				}
+				else if (organismCombo.getSelectedItem().equals(organismDefault) | pathwayCombo.getSelectedItem().equals(pathwayDefault)){
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "Please select a pathway/organism from the list!");
+					webFrame.setVisible(true);
+				}
+
+				else {
+
 				final File downloaded;
 				final String keggURL;
 				JLabel message; 
+				
 				
 				final JDialog dialog = new JDialog(Interface.bodyFrame, "Loading data",ModalityType.APPLICATION_MODAL);
 				dialog.setUndecorated(true);
@@ -393,14 +491,12 @@ public class OpenFromWeb extends JDialog{
 						e.printStackTrace();
 					}
 				webFrame.setVisible(false);
-				
-			}
+				}
+			} //  end of loadButton
 		}
 	}
 	
 	private void addComp(JPanel thePanel, JComponent comp, int xPos, int yPos, int compWidth, int compHeight, int place, int stretch){
-		
-		GridBagConstraints gridConstraints = new GridBagConstraints();
 		
 		gridConstraints.gridx = xPos;
 		gridConstraints.gridy = yPos;
@@ -408,7 +504,7 @@ public class OpenFromWeb extends JDialog{
 		gridConstraints.gridheight = compHeight;
 		gridConstraints.weightx = 1;
 		gridConstraints.weighty = 1;
-		gridConstraints.insets = new Insets(1,1,1,1);
+		
 		gridConstraints.anchor = place;
 		gridConstraints.fill = stretch;
 		

@@ -153,19 +153,34 @@ public class Genes {
 			for (Entry<String, Genes> oneNode : matchedGenes.entrySet()){
 				data = thisTab.getDataForGene(oneNode.getKey());
 				int multiRegion = data.size();
-				
 				if (multiRegion == 1){
 					value = data.get(0).get(newPointer);
-					oneNode.getValue().setBgColor(Double.parseDouble(value));
+					if (!isNumeric(value)){
+						oneNode.getValue().setBgColor(-1);
+					}
+					else {
+						oneNode.getValue().setBgColor(Double.parseDouble(value));
+					}
+					
 				}
 				else { // there are multipel regions
 					double sum = 0, average = 0;
 					for (int i = 0; i < multiRegion; i++){
 						String val = data.get(i).get(newPointer);
+						
+						if (!isNumeric(val)){
+							continue;
+						}
 						sum += Double.parseDouble(val);
 					}
+					
 					average = sum / multiRegion;
-					oneNode.getValue().setSpecialBgColor(average);
+					if (Double.isNaN(average)){
+						oneNode.getValue().setSpecialBgColor(-1);
+					}
+					else {
+						oneNode.getValue().setSpecialBgColor(average);
+					}
 				}
 			}
 		}
@@ -173,30 +188,65 @@ public class Genes {
 			for (Entry<String, Genes> oneNode : matchedGenes.entrySet()){
 				data = thisTab.getDataForGene(oneNode.getKey());
 				value = data.get(0).get(newPointer);
-				oneNode.getValue().setBgColor(Double.parseDouble(value), data);
+				if (isNumeric(value)){
+					oneNode.getValue().setBgColor(Double.parseDouble(value), data);
+				}
+				else {
+					oneNode.getValue().setBgColor(-1, data);
+				}
+				
 			}
 		}
 	} // end of changeBgColor
 
+	private static boolean isNumeric(String str) {
+		try {  
+		    double d = Double.parseDouble(str);  
+		}  
+		catch(NumberFormatException nfe){  
+		    return false;  
+		}  
+		return true;
+	}
+
 	private void setBgColor(double parseDouble) {
-		Color bgColor = null; 
-		bgColor = getColor(parseDouble);
+		Color bgColor = null;
+		if (parseDouble == -1){
+			bgColor = Color.BLACK;
+			geneNode.setForeground(Color.WHITE);
+		}
+		else {
+			bgColor = getColor(parseDouble);
+		}
 		geneNode.setBackground(bgColor);
 		geneNode.setBorder(BorderFactory.createLineBorder(new Color(139,69,19), 2));
 		borderStyle = BorderFactory.createLineBorder(new Color(139,69,19), 2);
 	}
 	
 	private void setSpecialBgColor(double parseDouble) {
-		Color bgColor = null; 
-		bgColor = getColor(parseDouble);
+		Color bgColor = null;
+		if (parseDouble == -1){
+			bgColor = Color.BLACK;
+			geneNode.setForeground(Color.WHITE);
+		}
+		else {
+			bgColor = getColor(parseDouble);
+		}
 		geneNode.setBackground(bgColor);
 		geneNode.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.MAGENTA));
 		borderStyle = BorderFactory.createMatteBorder(2, 2, 2, 2, Color.MAGENTA);
 	}
 	
 	private void setBgColor(double value, List<List<String>> values) {
-		Color bgColor = null; 
-		bgColor = getExpressionLevel(value, values);
+		Color bgColor = null;
+		if (value == -1){
+			bgColor = Color.BLACK;
+			geneNode.setForeground(Color.WHITE);
+		}
+		else {
+			bgColor = getExpressionLevel(value, values);
+		}
+		
 		geneNode.setBackground(bgColor);
 		geneNode.setBorder(BorderFactory.createLineBorder(new Color(139,69,19), 2));
 		borderStyle = BorderFactory.createLineBorder(new Color(139,69,19), 2);
@@ -244,6 +294,7 @@ public class Genes {
 		}
 		
 		Color expressionColor = new Color((int)r, (int) g, (int) b);
+		changeTextColor(expressionColor);
 		return expressionColor;
 	}
 	
@@ -352,17 +403,40 @@ class Statistics {
     double getMean()
     {
         double sum = 0.0;
-        for(String a : data)
-        	sum += Double.parseDouble(a);
+        for(String a : data){
+        	if (!isNumeric(a)){
+        		continue;
+        	}
+        	else {
+        		sum += Double.parseDouble(a);
+        	}
+        }
         return sum/size;
     }
 
-    double getVariance()
+    private boolean isNumeric(String str) {
+    	try {  
+		    double d = Double.parseDouble(str);  
+		}  
+		catch(NumberFormatException nfe){  
+		    return false;  
+		}  
+		return true;
+	}
+
+	double getVariance()
     {
         double mean = getMean();
         double temp = 0;
-        for(String a :data)
-            temp += (mean-Double.parseDouble(a))*(mean-Double.parseDouble(a));
+        for(String a :data){
+        	if (Double.isNaN(Double.parseDouble(a))){
+        		continue;
+        	}
+        	else {
+        		temp += (mean-Double.parseDouble(a))*(mean-Double.parseDouble(a));
+        	}
+        }
+            
         return temp/size;
     }
 

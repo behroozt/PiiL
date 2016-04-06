@@ -52,7 +52,6 @@ public class ModifySampleFields{
 			}
 			
 			if (selectedItems.size() > 0){
-				
 				pathway.setSamplesInfo("0",selectedItems);
 			}
 			else {

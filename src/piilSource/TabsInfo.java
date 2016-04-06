@@ -34,6 +34,7 @@ import java.util.Map.Entry;
 
 import javax.swing.JOptionPane;
 
+import org.jfree.util.StringUtils;
 import org.w3c.dom.Document;
 
 
@@ -426,7 +427,9 @@ public class TabsInfo {
 		}
 		
 		while ((line = br.readLine()) != null){
+			
 			validity = searchPathway(line,numOfColumns);
+			
 			if (validity != 0){
 				emptyStack();
 				br.close();
@@ -448,7 +451,9 @@ public class TabsInfo {
 			loadedFilesMap.put(file.getName(), file);
 			
 			Character metaType = this.getMetaType();
+			
 			Genes.changeBgColor(0, metaType);
+			
 		}
 		else {
 			JOptionPane.showMessageDialog(Interface.bodyFrame, "The loaded list has no overlap with this pathway");
@@ -482,7 +487,6 @@ public class TabsInfo {
 		
 		for (Entry<String, Genes> oneNode : genes.entrySet()){
 			if (match(geneName,oneNode.getValue().getAllNames())){
-				
 				oneNode.getValue().setTag(true);
 				entryID = oneNode.getKey();
 				mapedGeneLabel.put(oneNode.getKey(), oneNode.getValue());
@@ -500,26 +504,39 @@ public class TabsInfo {
 		    	if (mapedGeneData.get(entryID) == null){
 		    		mapedGeneData.put(entryID, new ArrayList<List<String>>());
 		    		dataValues.clear();
+		    		
 		    		for (int i = 1; i < elements.length; i++){
+		    			
 		    			if (metaType.equals('M')){
-		    				if (Double.parseDouble(elements[i]) > 1 || Double.parseDouble(elements[i]) < 0){
-		    					JOptionPane.showMessageDialog(Interface.bodyFrame, "Invalid values in the input file! Beta values range is between 0 and 1.");
-			    				validData = 2; // return 2 for invalid beta value
-			    				return validData;
-			    			}
-			    			else{
-			    				dataValues.add(elements[i]);
+		    				if (isNumeric(elements[i])){
+		    					if (Double.parseDouble(elements[i]) > 1 || Double.parseDouble(elements[i]) < 0){
+	    							JOptionPane.showMessageDialog(Interface.bodyFrame, "Invalid values in the input file! Beta values range is between 0 and 1.");
+	    							validData = 2; // return 2 for invalid beta value
+	    							return validData;
+	    						}
+	    						else{
+	    							dataValues.add(elements[i]);
+	    						}
+		    				}
+		    				else {
+		    					dataValues.add(elements[i]);
 			    			}
 		    			}
 		    			else if (metaType.equals('E')){
-		    				if (Double.parseDouble(elements[i]) < 0){
-		    					JOptionPane.showMessageDialog(Interface.bodyFrame, "Invalid values in the input file! Expression values can not be negative.");
-		    					validData = 3; // return 3 for invalid expression value
-			    				return validData;
+		    				if (isNumeric(elements[i])){
+		    					if (Double.parseDouble(elements[i]) < 0){
+			    					JOptionPane.showMessageDialog(Interface.bodyFrame, "Invalid values in the input file! Expression values can not be negative.");
+			    					validData = 3; // return 3 for invalid expression value
+				    				return validData;
+			    				}
+			    				else {
+			    					dataValues.add(elements[i]);
+			    				}
 		    				}
 		    				else {
 		    					dataValues.add(elements[i]);
 		    				}
+		    				
 		    			}
 		    			
 					}
@@ -535,8 +552,19 @@ public class TabsInfo {
 			}
 			
 		} // end for
+		
 		return validData;
 	} // end of searchPathway 
+
+	private boolean isNumeric(String str) {
+		try {  
+		    double d = Double.parseDouble(str);  
+		}  
+		catch(NumberFormatException nfe){  
+		    return false;  
+		}  
+		return true;
+	}
 
 	private boolean match(String geneName, String[] allNames) {
 		boolean found = false;

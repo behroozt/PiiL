@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -40,6 +41,7 @@ public class ModifyGroup extends JOptionPane{
 	
 	ModifyGroup(){
 		pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
+		final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
 		myPanel = new JPanel();
 		myPanel.setLayout(new FlowLayout());
 		fields = new JLabel("Group the samples by:");
@@ -127,7 +129,7 @@ public class ModifyGroup extends JOptionPane{
 		myPanel.add(baseCheck);
 		myPanel.add(baseCombo);
 		
-		int result = JOptionPane.showConfirmDialog(null, myPanel, "Please choose ...", JOptionPane.OK_CANCEL_OPTION);
+		int result = JOptionPane.showConfirmDialog(null, myPanel, "Please choose ...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, icon);
 		
 		if (result == JOptionPane.OK_OPTION){
 			List<String> chosenGroups = new ArrayList<String>();
