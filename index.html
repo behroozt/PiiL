@@ -5,10 +5,8 @@
     <title>PiiL tutorial</title>
   </head>
   <body>
-    
-    <div align="center"><img alt="logo"
-        src="images/tutorialHeader.png" height="370"
-        width="614"><br>
+    <div align="center"><img alt="logo" src="images/tutorialHeader.png"
+        height="370" width="614"><br>
     </div>
     <h1 align="left">Welcome to PiiL!</h1>
     <h1> </h1>
@@ -53,9 +51,13 @@
     <p><br>
     </p>
     <h2><a name="Run_PiiL_"></a>Run PiiL</h2>
-    <p>To run PiiL on Mac just double-click on the PiiL.jar file. For
-      Windows and Linux platforms, open a terminal, go to the directory
-      that you have PiiL.jar file and run "java -jar PiiL.jar".<br>
+    <p>Get the latest version of PiiL from <b><a
+          href="https://github.com/behroozt/PiiL.git">here</a></b>.
+      Click on the PiiL-vx.xx file and then on the 'Raw' button to
+      download the file. To run PiiL on Mac just double-click on the
+      PiiL-vx.xx.jar file. For Windows and Linux platforms, open a
+      terminal, go to the directory that you have PiiL-vx.xx.jar file
+      and run "java -jar PiiL.jar".<br>
     </p>
     <h3><a href="#How_to">back to top</a></h3>
     <p><br>
@@ -63,15 +65,19 @@
     <h2> </h2>
     <h2><a name="Open_a_KGML_file_"></a>Open a KGML file</h2>
     <p>There are two options to open a KGML file:<br>
-      <img alt="open KGML" src="images/openKGML.png" height="700"
+      <img alt="open KGML" src="images/openKGMLHard.png" height="700"
         width="1050"><br>
     </p>
     <p>1) Open an already downloaded KGML file from your hard drive.<br>
       2) Open it from by selecting the pathway and organism name from
       the KEGG database. This will download the file and for the next
       time will use the downloaded file.<br>
-      <img alt="open from web" src="images/openFromWeb.png" height="250"
-        width="910"><br>
+      By typing in the boxes labeled as 'Search', the comboboxes list
+      only the pathways / organisms that contain the string typed in the
+      box.<br>
+    </p>
+    <p> <img alt="open from web" src="images/openKGMLWeb.png"
+        height="250" width="910"><br>
     </p>
     <h3><a href="#How_to">back to top</a></h3>
     <h6> </h6>
@@ -81,10 +87,10 @@
       sites in the first column with their annotated gene name.
       Additional annotation data (for example if the CpG site lies in a
       exonic, intronic, ... region of the gene) can come after an
-      underscore in the first column. Columns must be tab separated and
-      the first row lists the samples IDs. The beta values are between 0
-      and 1.<br>
-      A valid input file lookes like the following:<br>
+      underscore in the first column. <b>Columns must be tab separated
+        and the first row lists the samples IDs. The beta values are
+        between 0 and 1</b>.<br>
+      A valid input file looks like the following:<br>
       <br>
     </p>
     <table height="142" border="0" cellpadding="2" cellspacing="2"
@@ -94,6 +100,11 @@
           <td valign="top">sampleIDS<br>
           </td>
           <td valign="top">sample1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
 
 
 
@@ -155,9 +166,19 @@
 
 
 
+
+
+
+
+
             <br>
           </td>
           <td valign="top">...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
 
 
 
@@ -239,7 +260,10 @@
     </table>
     <p><br>
       To load your methylation data, you can either click on New or any
-      of previously loaded methylation files listed under <b><big>Load
+      of the previously loaded methylation files listed under <b><big>Load
+
+
+
           -&gt; Methylation</big>.</b><br>
     </p>
     <img alt="load methylation" src="images/loadMethylation.png"
@@ -247,9 +271,8 @@
     The genes in the input file that match with the genes in the pathway
     are colored according to their beta values. Blue color codes the
     hypo-methylation status (the closer the beta value is to zero the
-    color is darker blue) and color red color codes the
-    hyper-methylation status (the closer the beta value is to 1 the
-    color is darker red).<br>
+    color is darker blue) and red color codes the hyper-methylation
+    status (the closer the beta value is to 1 the color is darker red).<br>
     The samples IDs are listed in the first combobox and the matched
     genes are listed in the second combobox where the number of matches
     is shown by the lable below it.<br>
@@ -259,10 +282,10 @@
     </p>
     <h2><a name="Load_expression_data_"></a>Load expression data</h2>
     <p>Genes and their expression values are the second type of
-      meta-data that you can load on your pathway of interest. Make sure
-      the input file is tab separated with sample IDs on the first row
-      and gene names on the first column. For each gene, the expression
-      values appear on its following columns. <br>
+      meta-data that you can load on your pathway of interest. <b>Make
+        sure the input file is tab separated with sample IDs on the
+        first row and gene names on the first column</b>. For each gene,
+      the expression values appear on its following columns. <br>
       A valid input file lookes like the following:<br>
       <br>
     </p>
@@ -303,12 +326,22 @@
 
 
 
+
+
+
+
+
             &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <br>
           </td>
           <td valign="top">sample2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
 
 
 
@@ -390,7 +423,12 @@
     </table>
     <p><br>
       To load your gene expression data, you can either click on New or
-      any of previously loaded expression files listed under <b><big>Load
+      any of the previously loaded expression files listed under <b><big>Load
+
+
+
+
+
 
 
 
@@ -446,19 +484,20 @@
       file with matched sample IDs and the additional data will be shown
       for each sample.<br>
       Samples information can be loaded from <b><big>Load -&gt; Samples
-          information</big> </b>menu, by choosing new or a previously
-      loaded samples information file. In the form that shows up choose
-      the columns separator, number of fileds (columns), the column
-      containing sample IDs, and the fileds that you like to be shown.<br>
+          information</big> </b>menu, by choosing New or a previously
+      loaded samples information file. In the form that shows up after
+      selecting the input file, you can change the default choices for
+      the 'columns separator' and the column containing sample IDs.<br>
     </p>
-    <img alt="samples info dialog" src="images/samplesInfo.png"
+    <img alt="samples info dialog" src="images/loadSamplesInfo.png"
       height="427" width="567"><br>
     If a valid file is loaded and the samples IDs in the input file
     matches with the ones loaded on the pathway, the additional
     information for each sample is displayed when you navigate through
-    samples.<br>
+    samples. You can select which fields to be shown by clicking on the
+    'Edit Fields' button (in the top right corner).<br>
     <br>
-    <img alt="sample info example" src="images/samplesInfoExample.png"
+    <img alt="sample info example" src="images/editSamplesInfo.png"
       height="700" width="1050"><br>
     <br>
     <h3><a href="#How_to">back to top</a></h3>
@@ -471,10 +510,14 @@
       a tab in the default browser and checks the target gene's
       information on your selected database: GeneCards, Pubmed or
       Ensemble.</p>
-    <img alt="right-click menu options"
-      src="images/rightClickMenu.png" height="700"
-      width="1050">
+    <img alt="right-click menu options" src="images/rightClickMenu.png"
+      height="700" width="1050">
     <p>The second option <big><b>Histogram for all samples </b></big>makes
+
+
+
+
+
 
 
 
@@ -563,6 +606,11 @@
     each tab containing the pathway, the meta data loaded over that and
     the list of genes that were matched in each pathway. By clicking on
     <b><big>Export -&gt; List of matched genes in each pathway</big> </b>you
+
+
+
+
+
 
 
 
