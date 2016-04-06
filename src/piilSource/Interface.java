@@ -55,6 +55,7 @@ public class Interface extends JFrame{
 	static ArrayList<JPanel> panelHolder;
 	static JButton editFields;
 	
+	
 	public static void main(String[] args) {
 		new Interface();
 	}

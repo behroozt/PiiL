@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -18,6 +19,7 @@ public class ModifySampleFields{
 	JPanel myPanel;
 	JLabel choose;
 	TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
 	
 	public ModifySampleFields() {
 		
@@ -42,7 +44,7 @@ public class ModifySampleFields{
 		myPanel.add(choose);
 		myPanel.add(fieldCheckBox);
 		
-		int result = JOptionPane.showConfirmDialog(null, myPanel, "Please choose ...", JOptionPane.OK_CANCEL_OPTION);
+		int result = JOptionPane.showConfirmDialog(null, myPanel, "Please choose ...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, icon);
 		if (result == JOptionPane.OK_OPTION) {
 			List<String> selectedItems = new ArrayList<String>();
 			for (JCheckBox chosen : myList){
