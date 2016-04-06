@@ -629,7 +629,7 @@
       side of it.<br>
     </p>
     <img alt="multiple-sample view"
-      src="images/multipleSampleView.png"
+      src="file:///Users/Behrooz/PiiLFiles/images/multipleSampleView.png"
       height="700" width="1050"><br>
     If you hover the mouse over the extended rectangles, a tooltip shows
     the sample that rectangle is representing.<br>
