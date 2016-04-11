@@ -249,7 +249,7 @@ public class TabsInfo {
 		if (seperator.equals("tab")){
 			splitBy = "\t";
 		} else if (seperator.equals("space")){
-			splitBy = " ";
+			splitBy = "\\s+";
 		} else if (seperator.equals("comma")){
 			splitBy = ",";
 		}

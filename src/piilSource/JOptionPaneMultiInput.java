@@ -109,7 +109,7 @@ public class JOptionPaneMultiInput {
 						JOptionPane.showMessageDialog(Interface.bodyFrame, "No file was loaded!");
 					}
 					else {
-						fileLabel.setText(selectedFile.getName() + " was selected.");
+						fileLabel.setText(newFile.getName() + " was selected.");
 						selectedFile = newFile;
 					}
 				}
@@ -163,7 +163,7 @@ public class JOptionPaneMultiInput {
 		if (seperator.equals("tab")){
 			splitBy = "\t";
 		} else if (seperator.equals("space")){
-			splitBy = " ";
+			splitBy = "\\s+";
 		} else if (seperator.equals("comma")){
 			splitBy = ",";
 		}

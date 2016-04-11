@@ -390,6 +390,7 @@ public class PiilMenubar extends JMenuBar{
 			/* load new expression item clicked */
 			else if (ice.getSource() == newExpression){
 				validInput = 0;
+				
 				if (Interface.tabPane.getTabCount() > 0) {
 					int currentTab = Interface.tabPane.getSelectedIndex();
 					final TabsInfo theTab = ParseKGML.getTabInfo(currentTab);
@@ -404,8 +405,11 @@ public class PiilMenubar extends JMenuBar{
 						fileSelector.setCurrentDirectory(directory);
 						int returnVal = fileSelector.showOpenDialog(null);
 						if (returnVal == JFileChooser.APPROVE_OPTION) {
-							final File file = fileSelector.getSelectedFile();
+							File selected = fileSelector.getSelectedFile();
 							openedDirectory = fileSelector.getSelectedFile().getAbsolutePath();
+							CheckInputFile input = new CheckInputFile(selected, 'E');
+							if (input.getChosenFile() != null){
+							final File file = input.getChosenFile();
 							theTab.setMetaType('E');
 							theTab.setMetaFilePath(file);
 
@@ -425,7 +429,6 @@ public class PiilMenubar extends JMenuBar{
 							};
 							expressionLoader.execute();
 							dialog.setVisible(true);
-							
 							
 							if (validInput == 0 && theTab.getMapedGeneLabel().size() > 0){
 								JMenuItem loadedFileItem = new JMenuItem(file.getName().toString());
@@ -468,6 +471,7 @@ public class PiilMenubar extends JMenuBar{
 							else { // there is no overlap
 								theTab.emptyStack();
 							}
+						}
 						}
 					}
 				} // end of tabCount check
