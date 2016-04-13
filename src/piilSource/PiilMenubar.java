@@ -129,7 +129,8 @@ public class PiilMenubar extends JMenuBar{
 		duplicatePathway = new JMenu("Duplicate the current tab");
 		duplicateAction = new JMenuItem("Only the pathway");
 		duplcateMetaData = new JMenuItem("Pathway with its loaded metadata");
-		snapShot = new JMenuItem("Take a snapshot of PiiL");
+		duplcateMetaData.setEnabled(false);
+//		snapShot = new JMenuItem("Take a snapshot of PiiL");
 		multiSampleView = new JMenuItem("Multiple-sample view for all/selected genes");
 		singleSampleView = new JMenuItem("Single-sample view for all/selected genes");
 		groupWiseView = new JMenuItem("Group-wise view for all/selected genes");
@@ -164,7 +165,7 @@ public class PiilMenubar extends JMenuBar{
 		menuTools.add(duplicatePathway);
 		duplicatePathway.add(duplicateAction);
 		duplicatePathway.add(duplcateMetaData);
-		menuTools.add(snapShot);
+//		menuTools.add(snapShot);
 		menuTools.add(multiSampleView);
 		menuTools.add(singleSampleView);
 		menuTools.add(groupWiseView);
@@ -189,7 +190,7 @@ public class PiilMenubar extends JMenuBar{
 		exportEntire.addActionListener(lForMenu);
 		exportGenes.addActionListener(lForMenu);
 		duplicateAction.addActionListener(lForMenu);
-		snapShot.addActionListener(lForMenu);
+//		snapShot.addActionListener(lForMenu);
 		reportAction.addActionListener(lForMenu);
 		aboutAction.addActionListener(lForMenu);
 		manualAction.addActionListener(lForMenu);
@@ -692,10 +693,10 @@ public class PiilMenubar extends JMenuBar{
 			} // end of duplicateAction
 			
 			/* snapShot item clicked */
-			else if (ice.getSource() == snapShot){
-				export = new CustomExport();
-				export.showExportDialog(Interface.bodyFrame, "Snapshot ...", (JComponent) Interface.backgroundPanel, "PiiL snapshot");
-			}
+//			else if (ice.getSource() == snapShot){
+//				export = new CustomExport();
+//				export.showExportDialog(Interface.bodyFrame, "Snapshot ...", (JComponent) Interface.backgroundPanel, "PiiL snapshot");
+//			}
 			
 			// show multiple-sample view
 			else if (ice.getSource()== multiSampleView){
