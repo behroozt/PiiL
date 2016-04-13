@@ -694,7 +694,7 @@ public class PiilMenubar extends JMenuBar{
 			/* snapShot item clicked */
 			else if (ice.getSource() == snapShot){
 				export = new CustomExport();
-				export.showExportDialog(Interface.bodyFrame, "Snapshot ...", Interface.backgroundPanel, "PiiL snapshot");
+				export.showExportDialog(Interface.bodyFrame, "Snapshot ...", (JComponent) Interface.backgroundPanel, "PiiL snapshot");
 			}
 			
 			// show multiple-sample view
