@@ -31,6 +31,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
@@ -71,6 +73,7 @@ public class TabsInfo {
 	int selectedGenes;
 	int groupingIndex;
 	List<String> showableGroups;
+	String dataSplitor;
 	
 	public TabsInfo(String tabCaption, File path, Character source, String pathway) {
 		pointer = 0;
@@ -412,18 +415,37 @@ public class TabsInfo {
 		return sampleInfoFiles.get(fileName);
 	}
 	
-	public byte getGenesList(File file) throws IOException{
+	public byte getGenesList(File file, CheckInputFile input) throws IOException{
 		
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		String line = null;
 		byte validity = 0;
+		dataSplitor = input.getSeparator();
+		
+		// skip lines to get to samples ids line
+		for (int i = 0 ; i < (input.getSampleRow()); i++){
+			br.readLine();
+		}
 		
 		String inputFileHeader = br.readLine();
-		String[] test = inputFileHeader.split("\t");
+		String[] test = inputFileHeader.split(dataSplitor);
 		int numOfColumns = test.length;
-		
+		Pattern pattern = Pattern.compile("\"([^\"]*)\"");
+		Matcher matcher;
 		for (int i = 1; i < test.length ; i++){
-			samplesIds.add(test[i]);
+			matcher = pattern.matcher(test[i]);
+			if (matcher.find()){
+				samplesIds.add(matcher.group(1));
+			}
+			else {
+				samplesIds.add(test[i]);
+			}
+		}
+		
+		// skip rows to get to the data lines
+		int skip = input.getDataRow() - input.getSampleRow() - 1;
+		for (int j = 0; j < skip ; j++){
+			br.readLine();
 		}
 		
 		while ((line = br.readLine()) != null){
@@ -472,14 +494,21 @@ public class TabsInfo {
 		String entryID = null;
 		byte validData = 0;
 		List<String> dataValues = new ArrayList<String>();
-		String[] elements = line.split("\t");
+		String[] elements = line.split(dataSplitor);
 		int numOfElements = elements.length;
 		if (numOfElements != numOfColumns){
 			validData = 1; // return 1 when columns length is not equal for all rows
 			JOptionPane.showMessageDialog(Interface.bodyFrame, "Number of columns is not equal for all the rows, please check your input file.");
 			return validData;
 		}
+		
+		Pattern pattern = Pattern.compile("\"([^\"]*)\"");
+		
 		String geneInfo = elements[0];
+		Matcher matcher = pattern.matcher(geneInfo);
+		if (matcher.find()){
+			geneInfo = matcher.group(1);
+		}
 		String[] geneInfoParts = geneInfo.split("_");
 		String geneName = geneInfoParts[0];
 		

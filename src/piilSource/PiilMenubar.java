@@ -313,32 +313,36 @@ public class PiilMenubar extends JMenuBar{
 						fileSelector.setCurrentDirectory(directory);
 						int returnVal = fileSelector.showOpenDialog(null);
 						if (returnVal == JFileChooser.APPROVE_OPTION) {
-							final File file = fileSelector.getSelectedFile();
-							theTab.setMetaType('M');
-							theTab.setMetaFilePath(file);
-							
-							waitMessage.setText(" Please wait while the loaded file is being analyzed ... ");
-							SwingWorker<Void, Void> methylLoader = new SwingWorker<Void, Void>() {
-								protected Void doInBackground() {
-									try {
-										validInput = theTab.getGenesList(file);
-										
-									} catch (IOException e) {
-										JOptionPane.showMessageDialog(Interface.bodyFrame,"Error loading the file!");
-									}
-									return null;
-								}
-								protected void done() {
-									dialog.dispose();
-								}
-							};
-							methylLoader.execute();
-							dialog.setVisible(true);
-							
-							if (validInput == 0 && theTab.getMapedGeneLabel().size() > 0){
-								JMenuItem loadedFileItem = new JMenuItem(file.getName().toString());
+							File selected = fileSelector.getSelectedFile();
+							final CheckInputFile input = new CheckInputFile(selected, 'M');
+							if (input.getChosenFile() != null){
+								final File file = input.getChosenFile();
 								
-								loadedFileItem.addActionListener(new ActionListener() {
+								theTab.setMetaType('M');
+								theTab.setMetaFilePath(file);
+							
+								waitMessage.setText(" Please wait while the loaded file is being analyzed ... ");
+								SwingWorker<Void, Void> methylLoader = new SwingWorker<Void, Void>() {
+									protected Void doInBackground() {
+										try {
+											validInput = theTab.getGenesList(file,input);
+										
+										} catch (IOException e) {
+											JOptionPane.showMessageDialog(Interface.bodyFrame,"Error loading the file!");
+										}
+										return null;
+									}
+									protected void done() {
+										dialog.dispose();
+									}
+								};
+								methylLoader.execute();
+								dialog.setVisible(true);
+							
+								if (validInput == 0 && theTab.getMapedGeneLabel().size() > 0){
+									JMenuItem loadedFileItem = new JMenuItem(file.getName().toString());
+								
+									loadedFileItem.addActionListener(new ActionListener() {
 
 											public void actionPerformed(ActionEvent reloadFile) {
 												int currentTab = Interface.tabPane.getSelectedIndex();
@@ -355,7 +359,7 @@ public class PiilMenubar extends JMenuBar{
 													File reloadableFile = TabsInfo.getLoadedFilePath(fileName);
 
 													try {
-														thisTab.getGenesList(reloadableFile);
+														thisTab.getGenesList(reloadableFile,input);
 													} catch (IOException e) {
 														e.printStackTrace();
 														JOptionPane.showMessageDialog(Interface.bodyFrame,"Error loading the file!");
@@ -373,11 +377,12 @@ public class PiilMenubar extends JMenuBar{
 											}
 										});
 								
-								loadMethylation.add(loadedFileItem);
-								Interface.bodyFrame.setJMenuBar(menubar);
-							} // end of validInput
-							else { // there is no overlap
-								theTab.emptyStack();
+									loadMethylation.add(loadedFileItem);
+									Interface.bodyFrame.setJMenuBar(menubar);
+								} // end of validInput
+								else { // there is no overlap
+									theTab.emptyStack();
+								}
 							}
 						}
 					}
@@ -407,7 +412,7 @@ public class PiilMenubar extends JMenuBar{
 						if (returnVal == JFileChooser.APPROVE_OPTION) {
 							File selected = fileSelector.getSelectedFile();
 							openedDirectory = fileSelector.getSelectedFile().getAbsolutePath();
-							CheckInputFile input = new CheckInputFile(selected, 'E');
+							final CheckInputFile input = new CheckInputFile(selected, 'E');
 							if (input.getChosenFile() != null){
 							final File file = input.getChosenFile();
 							theTab.setMetaType('E');
@@ -417,7 +422,7 @@ public class PiilMenubar extends JMenuBar{
 							SwingWorker<Void, Void> expressionLoader = new SwingWorker<Void, Void>() {
 								protected Void doInBackground() {
 									try {
-										validInput = theTab.getGenesList(file);
+										validInput = theTab.getGenesList(file,input);
 									} catch (IOException e) {
 										JOptionPane.showMessageDialog(Interface.bodyFrame,"Error loading the file!");
 									}
@@ -448,7 +453,7 @@ public class PiilMenubar extends JMenuBar{
 													File reloadableFile = TabsInfo.getLoadedFilePath(fileName);
 
 													try {
-														thisTab.getGenesList(reloadableFile);
+														thisTab.getGenesList(reloadableFile,input);
 													} catch (IOException e) {
 														e.printStackTrace();
 														JOptionPane.showMessageDialog(Interface.bodyFrame,"Error loading the file!");

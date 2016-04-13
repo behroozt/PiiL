@@ -142,6 +142,9 @@ public class JOptionPaneMultiInput {
 				TabsInfo.setSamplesInformationFile(selectedFile.getName().toString(), new SampleInformation(sampleIdIndex,separator, header, fields,selectedFile));
 			}
 		}
+		else {
+			selectedFile = null;
+		}
 	}
 	
 	public File getSelectedFile(){

@@ -24,13 +24,13 @@ import javax.swing.SpinnerNumberModel;
 
 public class CheckInputFile {
 	
-	String[] choices = {"comma","tab","space","semicolon","dash"};
+	String[] choices = {"tab","comma","space","semicolon","dash"};
 	String[] methylationInputTypes = {"beta-values"};
 	String[] expressionInputTypes = {"RPKM"};
 	JComboBox separatorCombo = new JComboBox(choices);
 	JComboBox inputTypeCombo;
 	SpinnerModel spinID = new SpinnerNumberModel(1,1,100,1);
-	SpinnerModel spinData = new SpinnerNumberModel(1,1,100,1);
+	SpinnerModel spinData = new SpinnerNumberModel(2,2,100,1);
 	
 	JFileChooser fileChooser;
 	JSpinner idRowSpinner = new JSpinner(spinID);
@@ -42,6 +42,7 @@ public class CheckInputFile {
 	boolean validFileLoaded = true;
 	String[] header;
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
+	int samplesRowNumber, dataRowNumber;
 	
 	public CheckInputFile(File input, Character type) {
 		
@@ -107,11 +108,42 @@ public class CheckInputFile {
 		if (result == JOptionPane.CANCEL_OPTION) {
 			selectedFile = null;
 		}
+		else {
+			samplesRowNumber = Integer.parseInt(idRowSpinner.getValue().toString());
+			dataRowNumber = Integer.parseInt(dataRowSpinner.getValue().toString());
+		}
 		
 	}
 	
 	public File getChosenFile(){
 		return selectedFile;
+	}
+	
+	public int getSampleRow(){
+		return samplesRowNumber;
+	}
+	
+	public int getDataRow(){
+		return dataRowNumber;
+	}
+	
+	public String getSeparator(){
+		String splitBy;
+		String separator = separatorCombo.getSelectedItem().toString();
+		if (separator.equals("tab")){
+			splitBy = "\t";
+		} else if (separator.equals("space")){
+			splitBy = "\\s+";
+		} else if (separator.equals("comma")){
+			splitBy = ",";
+		}
+		else if (separator.equals("dash")){
+			splitBy = " ";
+		}
+		else {
+			splitBy = ";";
+		}
+		return splitBy;
 	}
 	
 	private void addComp(JPanel thePanel, JComponent comp, int xPos, int yPos, int compWidth, int compHeight, int place, int stretch){
