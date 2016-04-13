@@ -423,7 +423,7 @@ public class TabsInfo {
 		dataSplitor = input.getSeparator();
 		
 		// skip lines to get to samples ids line
-		for (int i = 0 ; i < (input.getSampleRow()); i++){
+		for (int i = 0 ; i < (input.getSampleRow() - 1); i++){
 			br.readLine();
 		}
 		
