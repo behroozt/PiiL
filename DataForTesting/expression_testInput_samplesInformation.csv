@@ -1,0 +1,12 @@
+sampleID,disease,biopsy,brainDead
+H911,T1D,No,dead
+H1204,T1D,No,dead
+DIVID1,T1D,Yes,alive
+DIVID2,T1D,Yes,alive
+DIVID3,T1D,Yes,alive
+DIVID4,T1D,Yes,alive
+DIVID5,T1D,Yes,alive
+DIVID6,T1D,Yes,alive
+H1778,Control,No,dead
+H1499,Control,No,dead
+H1530,Control,No,dead
