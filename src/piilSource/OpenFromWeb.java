@@ -50,6 +50,7 @@ import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -86,6 +87,7 @@ public class OpenFromWeb extends JDialog{
 	GridBagConstraints gridConstraints = new GridBagConstraints();
 	String organismDefault = "Select Organism";
 	String pathwayDefault = "Select Pathway";
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
 	
 	public boolean getSuccess(){
 		return successful;
@@ -216,7 +218,7 @@ public class OpenFromWeb extends JDialog{
         else {
         	for (Map.Entry entry : pathwayMap.entrySet()) {
         		String value = entry.getValue().toString();
-        		if (value.contains(item)){
+        		if (value.toLowerCase().contains(item.toLowerCase())){
         			list.add(value);
         		}
         	}
@@ -242,7 +244,7 @@ public class OpenFromWeb extends JDialog{
         else {
         	for (Map.Entry entry : organismMap.entrySet()) {
         		String value = entry.getValue().toString();
-        		if (value.contains(item)){
+        		if (value.toLowerCase().contains(item.toLowerCase())){
         			list.add(value);
         		}
         	}
@@ -410,7 +412,7 @@ public class OpenFromWeb extends JDialog{
 					dialog.setVisible(true);
 					
 				if (! s.hasNext()) {
-					JOptionPane.showMessageDialog(webFrame, "There is no KEGG entry for your chosen organism and pathway. Please choose a different one.");
+					JOptionPane.showMessageDialog(webFrame, "There is no KEGG entry for your chosen organism and pathway. Please choose a different one.","Mismatch",0,icon);
 					valid = false;
 					return;
 				}

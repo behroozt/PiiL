@@ -232,29 +232,32 @@ public class RightClickMenu {
 			int newX = 0, newY = 0;
 			JLabel newOne = new JLabel();
 			if (nw.contains(expansionSide)){
-				newX = x - (i * 10);
-				newY = y - (i * 6);
+				newX = x - (i * 6);
+				newY = y - (i * 4);
 			}
 			else if (ne.contains(expansionSide)){
-				newX = x + (i * 10);
-				newY = y - (i * 6);
+				newX = x + (i * 6);
+				newY = y - (i * 4);
 			}
 			else if (sw.contains(expansionSide)){
-				newX = x - (i * 10);
-				newY = y + (i * 6);
+				newX = x - (i * 6);
+				newY = y + (i * 4);
 			}
 			else if (se.contains(expansionSide)){
-				newX = x + (i * 10);
-				newY = y + (i * 6);
+				newX = x + (i * 6);
+				newY = y + (i * 4);
 			}
 			else {
-				newX = x + (i * 10);
-				newY = y + (i * 6);
+				newX = x + (i * 6);
+				newY = y + (i * 4);
 			}
 			
 			newOne.setBounds(newX, newY, width, height);
 			double sum = 0;
 			for (int j = 0 ; j < data.size(); j++){
+				if (!isNumeric(data.get(j).get(pointer + i))){
+					continue;
+				}
 				sum += Double.parseDouble(data.get(j).get(pointer + i));
 			}
 			if (type.equals('M')){
@@ -289,6 +292,16 @@ public class RightClickMenu {
 		Interface.bodyFrame.repaint();
 		Interface.scrollPaneHolder.get(activeTab).getVerticalScrollBar().setUnitIncrement(16);
 		Interface.scrollPaneHolder.get(activeTab).getHorizontalScrollBar().setUnitIncrement(16);
+	}
+
+	private static boolean isNumeric(String str) {
+		try {  
+		    double d = Double.parseDouble(str);  
+		}  
+		catch(NumberFormatException nfe){  
+		    return false;  
+		}  
+		return true;
 	}
 
 }

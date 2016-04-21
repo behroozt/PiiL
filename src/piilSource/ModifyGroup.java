@@ -179,18 +179,28 @@ public class ModifyGroup extends JOptionPane{
 			int height = (int) label.getBounds().getHeight();
 			Color bgColor = Color.DARK_GRAY;
 			List<List<String>> data = pathway.getDataForGene(nodeID);
-			
+			if (baseCombo.isEnabled()){
+				String baseGrp = baseCombo.getSelectedItem().toString();
+				int index = chosenGroups.indexOf(baseGrp);
+				chosenGroups.remove(index);
+				chosenGroups.add(baseGrp);
+				pathway.setBaseGroupIndex(index);
+			}
+			else {
+				pathway.setBaseGroupIndex(-1);
+			}
 			
 			for (int i = 0; i < chosenGroups.size(); i++) {
-
+				
+				String hint = chosenGroups.get(i);
 				JLabel newOne = new JLabel();
 				int newX = 0, newY = 0;
-				newX = x + (i * 10);
-				newY = y + (i * 6);
+				newX = x + (i * 7);
+				newY = y + (i * 4);
 				newOne.setBounds(newX, newY, width, height);
 				newOne.setOpaque(true);
 				newOne.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-				String hint = chosenGroups.get(i);
+				
 				newOne.setToolTipText(hint);
 				Interface.panelHolder.get(activeTab).add(newOne, BorderLayout.CENTER);
 				extraLabels[i] = newOne;
@@ -207,7 +217,6 @@ public class ModifyGroup extends JOptionPane{
 
 				double caseAverage = sum / (data.size() * groups.get(chosenGroups.get(i)).size());
 				
-//				System.out.println("grp: " + hint + " label: " + label.getText() + " average: " + caseAverage);
 				if (type.equals('M')) {
 					bgColor = Genes.paintLabel(caseAverage);
 				} else if (type.equals('E')){
@@ -284,7 +293,7 @@ public class ModifyGroup extends JOptionPane{
 				Interface.panelHolder.get(activeTab).remove(components[i]);
 			}
 		}
-		Interface.setSampleInfoLabel(chosenGroups, true);
+		Interface.setSampleInfoLabel(chosenGroups, true, pathway.getBaseGroupIndex());
 		Interface.panelHolder.get(activeTab).add(shapes,BorderLayout.CENTER);
 		Interface.bodyFrame.repaint();
 		Interface.scrollPaneHolder.get(activeTab).getVerticalScrollBar().setUnitIncrement(16);

@@ -133,6 +133,9 @@ public class BarChart extends ApplicationFrame {
         for (int i = 0; i < list.get(0).size() ; i ++){
         	float sum = 0;
         	for (int j = 0; j < list.size() ; j ++){
+        		if (!isNumeric(list.get(j).get(i))){
+					continue;
+				}
         		sum += Float.parseFloat(list.get(j).get(i));
         	}
         	double value = sum / list.size();
@@ -142,7 +145,17 @@ public class BarChart extends ApplicationFrame {
         return dataset;       
     }
 
-    private JFreeChart createChart(String title, final CategoryDataset dataset, String metaLabel) {
+    private static boolean isNumeric(String str) {
+		try {  
+		    double d = Double.parseDouble(str);  
+		}  
+		catch(NumberFormatException nfe){  
+		    return false;  
+		}  
+		return true;
+	}
+
+	private JFreeChart createChart(String title, final CategoryDataset dataset, String metaLabel) {
         
         // create the chart...
         final JFreeChart chart = ChartFactory.createBarChart(

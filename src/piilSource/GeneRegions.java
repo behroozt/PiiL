@@ -105,6 +105,9 @@ public class GeneRegions extends JFrame{
 			labelX = 25; labelY= 45; labelWidth =15;
 			for (int i =0; i < numberOfRegions; i ++){
 				DecimalFormat df=new DecimalFormat("0.000");
+				if (!isNumeric(values.get(i).get(pointer))){
+					continue;
+				}
 				Double betaValue = Double.parseDouble(values.get(i).get(pointer));
 				String regionName = tag.toArray()[i].toString() + " (" + df.format(betaValue) + ")";
 				JLabel newLabel = new JLabel(regionName,SwingConstants.CENTER);
@@ -119,6 +122,9 @@ public class GeneRegions extends JFrame{
 			labelX = 25; labelY= 45; labelHeight =15;
 			for (int i =0; i < numberOfRegions; i ++){
 				DecimalFormat df=new DecimalFormat("0.000");
+				if (!isNumeric(values.get(i).get(pointer))){
+					continue;
+				}
 				Double betaValue = Double.parseDouble(values.get(i).get(pointer));
 				String regionName = tag.toArray()[i].toString() + " (" + df.format(betaValue) + ")";
 				JLabel newLabel = new JLabel(regionName,SwingConstants.CENTER);
@@ -161,6 +167,16 @@ public class GeneRegions extends JFrame{
 		magnifyFrame.setVisible(true);
 	}
 	
+	private static boolean isNumeric(String str) {
+		try {  
+		    double d = Double.parseDouble(str);  
+		}  
+		catch(NumberFormatException nfe){  
+		    return false;  
+		}  
+		return true;
+	}
+
 	private class DrawGene extends JPanel {
 
 		private Color getColor(double val)
@@ -193,7 +209,10 @@ public class GeneRegions extends JFrame{
 			float shapeY = element.getBounds().y;
 			float intent = shapeW / multipleHits;
 			
-			for (int j = 0; j < multipleHits ; j++){
+			for (int j = 0; j < allLabels.size() ; j++){
+				if (!isNumeric(values.get(j).get(pointer))){
+					continue;
+				}
 				float value = Float.parseFloat(values.get(j).get(pointer));
 				Color geneColor = getColor(value);
 				graphical.setColor(geneColor);

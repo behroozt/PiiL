@@ -27,6 +27,7 @@ import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -35,6 +36,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.plaf.metal.MetalIconFactory;
 
 public class CustomTabPane extends JTabbedPane{
+	
+	final ImageIcon logoIcon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
 	
 	public void addTab(String title, Icon icon, Component component, String tip) {
 		
@@ -73,7 +76,7 @@ public class CustomTabPane extends JTabbedPane{
 			button.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
 			button.addMouseListener(new MouseListener() {
 				public void mouseClicked(MouseEvent e) {
-					int dialogResult = JOptionPane.showConfirmDialog(Interface.bodyFrame, "Are you sure you want to close this tab?", "Action confirmation", 0);
+					int dialogResult = JOptionPane.showConfirmDialog(Interface.bodyFrame, "Are you sure you want to close this tab?", "Action confirmation", 0, JOptionPane.WARNING_MESSAGE,logoIcon);
 					if (dialogResult == JOptionPane.YES_OPTION) {
 						JTabbedPane tabbedPane = (JTabbedPane) getParent().getParent();
 						int tabIndex = tabbedPane.indexOfComponent(tab);

@@ -108,6 +108,9 @@ public class Histogram extends ApplicationFrame {
 		
 		for (int i=0; i< betaValues.get(0).size(); i++){
 			for (int j=0; j < betaValues.size(); j++ ){
+				if (!isNumeric(betaValues.get(j).get(i))){
+					continue;
+				}
 				ad[i] += Double.parseDouble(betaValues.get(j).get(i));
 			}
 			ad[i] /= betaValues.size();
@@ -121,6 +124,16 @@ public class Histogram extends ApplicationFrame {
 		}
 		
 		return histogramdataset;
+	}
+
+	private static boolean isNumeric(String str) {
+		try {  
+		    double d = Double.parseDouble(str);  
+		}  
+		catch(NumberFormatException nfe){  
+		    return false;  
+		}  
+		return true;
 	}
 
 	private static JFreeChart createChart(String s, IntervalXYDataset intervalxydataset, String metaLabel)

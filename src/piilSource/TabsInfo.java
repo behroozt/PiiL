@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map.Entry;
@@ -46,7 +47,7 @@ public class TabsInfo {
 	HashMap<String, Genes> mapedGeneLabel;
 	HashMap<String,List<List<String>>> mapedGeneData;
 	HashMap<String, List<String>> samplesInfo;
-	HashMap<String, List<String>> idsInGroups;
+	LinkedHashMap<String, List<String>> idsInGroups;
 	HashMap<String, List<String>> idsInBaseGroup;
 	ArrayList<String> samplesIds;
 	HashMap<String, Collection<String>> mapedGeneRegion;
@@ -74,6 +75,7 @@ public class TabsInfo {
 	int groupingIndex;
 	List<String> showableGroups;
 	String dataSplitor;
+	int baseGroupIndex;
 	
 	public TabsInfo(String tabCaption, File path, Character source, String pathway) {
 		pointer = 0;
@@ -102,7 +104,16 @@ public class TabsInfo {
 		viewMode = 0;
 		selectedGenes = 0;
 		groupingIndex = 0;
+		baseGroupIndex = -1;
 		
+	}
+	
+	public void setBaseGroupIndex(int index){
+		baseGroupIndex = index;
+	}
+	
+	public int getBaseGroupIndex(){
+		return baseGroupIndex;
 	}
 	
 	public void setGroupingIndex(int index){
@@ -198,7 +209,7 @@ public class TabsInfo {
 	
 	public HashMap<String, List<String>> resetIDsInGroups(int newGroupingIndex){
 		if (idsInGroups == null){
-			idsInGroups = new HashMap<String, List<String>>();
+			idsInGroups = new LinkedHashMap<String, List<String>>();
 		}
 		else {
 			idsInGroups.clear();
@@ -207,13 +218,11 @@ public class TabsInfo {
 		for (int i = 0 ; i < (samplesIds.size()) ; i ++){
 			String id = samplesIds.get(i);
 			String group = samplesInfo.get(samplesIds.get(i)).get(newGroupingIndex);
-			
 			if (idsInGroups.get(group) == null){
 				idsInGroups.put(group,new ArrayList<String>());
 			}
 			idsInGroups.get(group).add(id);
 		}
-		
 		return idsInGroups;
 	}
 	
@@ -496,11 +505,12 @@ public class TabsInfo {
 		List<String> dataValues = new ArrayList<String>();
 		String[] elements = line.split(dataSplitor);
 		int numOfElements = elements.length;
-		if (numOfElements != numOfColumns){
-			validData = 1; // return 1 when columns length is not equal for all rows
-			JOptionPane.showMessageDialog(Interface.bodyFrame, "Number of columns is not equal for all the rows, please check your input file.");
-			return validData;
-		}
+		
+//		if (numOfElements != numOfColumns){
+//			validData = 1; // return 1 when columns length is not equal for all rows
+//			JOptionPane.showMessageDialog(Interface.bodyFrame, "Number of columns is not equal for all the rows, please check your input file.");
+//			return validData;
+//		}
 		
 		Pattern pattern = Pattern.compile("\"([^\"]*)\"");
 		

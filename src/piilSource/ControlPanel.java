@@ -354,7 +354,7 @@ public class ControlPanel extends JPanel{
 		if (enabled){
 //			Object[] hints = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getIDsInGroups().keySet().toArray();
 			List<String> hints = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getShowableGroups();
-			Interface.setSampleInfoLabel(hints, true);
+			Interface.setSampleInfoLabel(hints, true, ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getBaseGroupIndex());
 			PiilMenubar.groupWiseView.setEnabled(true);
 		}
 		else {

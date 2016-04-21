@@ -31,20 +31,28 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -71,7 +79,7 @@ public class PiilMenubar extends JMenuBar{
 
 	JMenuItem exitAction, loadAction, aboutAction, exportEntire, manualAction, exportVisible,
 	newAction, openAction, openWebAction, newSamplesInfo, reportAction, newMethylation,
-	duplicateAction, duplcateMetaData, newExpression, exportGenes, snapShot, citeUs, highlightGenes;
+	duplicateAction, duplcateMetaData, newExpression, exportGenes, snapShot, citeUs, highlightGenes, checkUpdates;
 	JMenu menuFile, menuLoad, menuHelp, openKGML, menuTools, loadMethylation,
 	loadExpression, duplicatePathway;
 	static JMenuItem multiSampleView, singleSampleView, groupWiseView;
@@ -86,6 +94,9 @@ public class PiilMenubar extends JMenuBar{
 	String openedDirectory = System.getProperty("user.home");
 	byte validInput;
 	JLabel waitMessage = new JLabel();
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
+	final Double version = 0.02;
+	String latestVersion;
 	
 	public PiilMenubar(){
 		 menu = makeMenubar();		 
@@ -144,6 +155,7 @@ public class PiilMenubar extends JMenuBar{
 		aboutAction = new JMenuItem("About");
 		manualAction = new JMenuItem("Manual");
 		citeUs = new JMenuItem("How to cite us");
+		checkUpdates = new JMenuItem("Check for updates");
 		
 		openKGML.add(openAction);
 		openKGML.add(openWebAction);
@@ -173,6 +185,7 @@ public class PiilMenubar extends JMenuBar{
 		menuHelp.add(manualAction);
 		menuHelp.add(reportAction);
 		menuHelp.add(citeUs);
+		menuHelp.add(checkUpdates);
 		menubar.add(menuFile);
 		menubar.add(menuLoad);
 		menubar.add(menuExport);
@@ -199,6 +212,7 @@ public class PiilMenubar extends JMenuBar{
 		singleSampleView.addActionListener(lForMenu);
 		highlightGenes.addActionListener(lForMenu);
 		groupWiseView.addActionListener(lForMenu);
+		checkUpdates.addActionListener(lForMenu);
 		
 		return menubar;
 	}
@@ -688,7 +702,7 @@ public class PiilMenubar extends JMenuBar{
 					new ParseKGML(doc, tabCaption, loadedFile, source);
 				}
 				else {
-					JOptionPane.showMessageDialog(Interface.bodyFrame, "There is no pathway to duplicate!");
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "There is no pathway to duplicate!","Warning",0,icon);
 				}
 			} // end of duplicateAction
 			
@@ -754,20 +768,20 @@ public class PiilMenubar extends JMenuBar{
 								int newX = 0, newY = 0;
 								JLabel newOne = new JLabel();
 								if (nw.contains(expansionSide)) {
-									newX = x - (i * 10);
-									newY = y - (i * 6);
+									newX = x - (i * 6);
+									newY = y - (i * 4);
 								} else if (ne.contains(expansionSide)) {
-									newX = x + (i * 10);
-									newY = y - (i * 6);
+									newX = x + (i * 6);
+									newY = y - (i * 4);
 								} else if (sw.contains(expansionSide)) {
-									newX = x - (i * 10);
-									newY = y + (i * 6);
+									newX = x - (i * 6);
+									newY = y + (i * 4);
 								} else if (se.contains(expansionSide)) {
-									newX = x + (i * 10);
-									newY = y + (i * 6);
+									newX = x + (i * 6);
+									newY = y + (i * 4);
 								} else {
-									newX = x + (i * 10);
-									newY = y + (i * 6);
+									newX = x + (i * 6);
+									newY = y + (i * 4);
 								}
 								newOne.setBounds(newX, newY, width, height);
 								double sum = 0;
@@ -911,9 +925,57 @@ public class PiilMenubar extends JMenuBar{
 			
 			/* how to cite item clicked */
 			else if (ice.getSource() == citeUs){
-				JOptionPane.showMessageDialog(Interface.bodyFrame, "Please cite our publication.");
-
+				JOptionPane.showMessageDialog(Interface.bodyFrame, "Please cite our publication.", "Cite us", JOptionPane.QUESTION_MESSAGE,icon);
 			}
+			
+			else if (ice.getSource() == checkUpdates){
+				
+				waitMessage.setText(" Checking PiiL's github for the latest version ... ");
+				SwingWorker<Void, Void> methylLoader = new SwingWorker<Void, Void>() {
+					protected Void doInBackground() {
+						try {
+							URL url = null;
+							
+							URLConnection con = null;
+							InputStream in = null;
+							String encoding = null;
+							url = new URL("https://github.com/behroozt/PiiL");
+							con = url.openConnection();
+							in = con.getInputStream();
+							encoding = con.getContentEncoding();
+							encoding = encoding == null ? "UTF-8" : encoding;
+							ByteArrayOutputStream baos = new ByteArrayOutputStream();
+							byte[] buf = new byte[8192];
+							int len = 0;
+							while ((len = in.read(buf)) != -1) {
+							    baos.write(buf, 0, len);
+							}
+							String body = new String(baos.toByteArray(), encoding);
+							
+							Pattern pattern = Pattern.compile("PiiL-v([0-9]*\\.?[0-9]+)");
+							Matcher matcher = pattern.matcher(body);
+							if (matcher.find()){
+								latestVersion = matcher.group(1);
+							}
+						
+						} catch (IOException e) {
+							JOptionPane.showMessageDialog(Interface.bodyFrame,"Error connecting to PiiL's github!");
+						}
+						return null;
+					}
+					protected void done() {
+						dialog.dispose();
+					}
+				};
+				methylLoader.execute();
+				dialog.setVisible(true);
+				if (Double.parseDouble(latestVersion) > version){
+					JOptionPane.showMessageDialog(null, "A newer version (v" + latestVersion + ") is available at PiiL's github: https://github.com/behroozt/PiiL" , "Checking for updates", JOptionPane.PLAIN_MESSAGE, icon);
+				}
+				else {
+					JOptionPane.showMessageDialog(null, "You are using the latest version v" + latestVersion, "Checking for updates", JOptionPane.PLAIN_MESSAGE, icon);
+				}
+			} // end of checkUpdates
 				
 		} // end of actionPerformed
 

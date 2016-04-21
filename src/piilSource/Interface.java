@@ -193,7 +193,7 @@ public class Interface extends JFrame{
 		gridConstraints.insets = new Insets(1,15,4,1);
 		
 		bodyFrame.add(backgroundPanel,BorderLayout.CENTER);
-		new Splash(3000);	
+		new Splash(2000);	
 		bodyFrame.setVisible(true);
 		
 	}
@@ -204,7 +204,7 @@ public class Interface extends JFrame{
 		sampleInfoLabel.setForeground(Color.BLACK);
 	}
 	
-	public static void setSampleInfoLabel(List<String> hints, boolean enable) {
+	public static void setSampleInfoLabel(List<String> hints, boolean enable, int baseIndex) {
 		String groups = "";
 		for (String group : hints ){
 			int members = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getIDsInGroups().get(group).size();
@@ -212,6 +212,9 @@ public class Interface extends JFrame{
 		}
 		
 		groups = groups.substring(0, groups.length()-2);
+		if (baseIndex != -1){
+			groups = groups + " (the base group)";
+		}
 		sampleInfoLabel.setText(" Samples grouping (top to buttom): " + groups);
 		sampleInfoLabel.setEnabled(enable);
 		sampleInfoLabel.setForeground(Color.BLACK);
