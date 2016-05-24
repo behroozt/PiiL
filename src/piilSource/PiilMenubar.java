@@ -79,7 +79,7 @@ public class PiilMenubar extends JMenuBar{
 
 	JMenuItem exitAction, loadAction, aboutAction, exportEntire, manualAction, exportVisible,
 	newAction, openAction, openWebAction, newSamplesInfo, reportAction, newMethylation,
-	duplicateAction, duplcateMetaData, newExpression, exportGenes, snapShot, citeUs, highlightGenes, checkUpdates;
+	duplicateAction, duplcateMetaData, newExpression, exportGenes, snapShot, citeUs, highlightGenes, checkUpdates, manageColors;
 	JMenu menuFile, menuLoad, menuHelp, openKGML, menuTools, loadMethylation,
 	loadExpression, duplicatePathway;
 	static JMenuItem multiSampleView, singleSampleView, groupWiseView;
@@ -145,9 +145,11 @@ public class PiilMenubar extends JMenuBar{
 		multiSampleView = new JMenuItem("Multiple-sample view for all/selected genes");
 		singleSampleView = new JMenuItem("Single-sample view for all/selected genes");
 		groupWiseView = new JMenuItem("Group-wise view for all/selected genes");
+		manageColors = new JMenuItem("Manage color-coding");
 		multiSampleView.setEnabled(false);
 		singleSampleView.setEnabled(false);
 		groupWiseView.setEnabled(false);
+//		*** manageColors.setEnabled(false);
 				        
 		// Help menu items
 		menuHelp = new JMenu("Help");
@@ -181,6 +183,7 @@ public class PiilMenubar extends JMenuBar{
 		menuTools.add(multiSampleView);
 		menuTools.add(singleSampleView);
 		menuTools.add(groupWiseView);
+		menuTools.add(manageColors);
 		menuHelp.add(aboutAction);
 		menuHelp.add(manualAction);
 		menuHelp.add(reportAction);
@@ -213,6 +216,7 @@ public class PiilMenubar extends JMenuBar{
 		highlightGenes.addActionListener(lForMenu);
 		groupWiseView.addActionListener(lForMenu);
 		checkUpdates.addActionListener(lForMenu);
+		manageColors.addActionListener(lForMenu);
 		
 		return menubar;
 	}
@@ -287,7 +291,7 @@ public class PiilMenubar extends JMenuBar{
 				if (dialogResult == JOptionPane.YES_OPTION) {
 					System.exit(0);
 				}
-			}
+			} // end of exitAction
 			
 			/* open KGML from web item clicked */
 			else if (ice.getSource() == openWebAction){
@@ -308,8 +312,7 @@ public class PiilMenubar extends JMenuBar{
 					webLoader.execute();
 					dialog.setVisible(true);
 				}
-				
-			}
+			} // end of open KGML from web
 			
 			/* load new methylation item clicked */
 			else if (ice.getSource() == newMethylation){
@@ -405,6 +408,7 @@ public class PiilMenubar extends JMenuBar{
 				else { // there is open tab
 					JOptionPane.showMessageDialog(Interface.bodyFrame, "You need to open a KGML file first!");
 				}
+				
 			} //  end of newMethylation
 			
 			/* load new expression item clicked */
@@ -491,7 +495,7 @@ public class PiilMenubar extends JMenuBar{
 							else { // there is no overlap
 								theTab.emptyStack();
 							}
-						}
+							}
 						}
 					}
 				} // end of tabCount check
@@ -557,11 +561,8 @@ public class PiilMenubar extends JMenuBar{
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-					}
-					
-				}
-				
-				
+					}	
+				}	
 				
 			} // end of newSampleInfo
 			
@@ -811,7 +812,6 @@ public class PiilMenubar extends JMenuBar{
 					
 				} // end of for all genes
 				
-				
 					pathway.setViewMode((byte) 1);
 					DrawShapes shapes = new DrawShapes(pathway.getGraphicsItems(), pathway.getEdges());
 					shapes.setPreferredSize(new Dimension((int) pathway.getMaxX(), (int) pathway.getMaxY()));
@@ -825,9 +825,8 @@ public class PiilMenubar extends JMenuBar{
 					Interface.bodyFrame.repaint();
 					Interface.scrollPaneHolder.get(activeTab).getVerticalScrollBar().setUnitIncrement(16);
 					Interface.scrollPaneHolder.get(activeTab).getHorizontalScrollBar().setUnitIncrement(16);
-				
 
-			} // end of multiSamples
+			} // end of multi-sample view
 			
 			/* single-sample view item clicked */
 			else if (ice.getSource() == singleSampleView){
@@ -873,7 +872,7 @@ public class PiilMenubar extends JMenuBar{
 					Interface.scrollPaneHolder.get(activeTab).getHorizontalScrollBar().setUnitIncrement(16);
 					pathway.setSelectedGenesCount(0);
 				}
-			}
+			} // end of single-sample view
 			
 			/* group-wise view item clicked */
 			else if (ice.getSource() == groupWiseView){
@@ -886,6 +885,13 @@ public class PiilMenubar extends JMenuBar{
 //				GroupSamples(pathway, activeTab);
 				
 			} // end of group-wise view
+			
+			/* manage color-code clicked */
+			else if (ice.getSource() == manageColors){
+//				TabsInfo theTab = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
+//				new ColorCodeManager(theTab.getMetaType());
+				new ColorCodeManager('E');
+			} // end of manageColorCoding
 			
 			/* about item clicked */
 			else if (ice.getSource() == aboutAction){
@@ -900,7 +906,7 @@ public class PiilMenubar extends JMenuBar{
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(Interface.bodyFrame, "Problem opening the online documentation page!");
 				}
-			}
+			} // end of manualAction
 			
 			/* report a bug item clicked */
 			else if (ice.getSource() == reportAction){
@@ -920,7 +926,6 @@ public class PiilMenubar extends JMenuBar{
 						e1.printStackTrace();
 					}
 				}
-				
 			} // end of reportAction
 			
 			/* how to cite item clicked */

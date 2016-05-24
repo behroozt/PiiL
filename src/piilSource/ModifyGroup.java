@@ -211,6 +211,9 @@ public class ModifyGroup extends JOptionPane{
 					int sampleIndex = pathway.getSamplesIDs().indexOf(sampleID);
 
 					for (int k = 0; k < data.size(); k++) {
+						if (!isNumeric(data.get(k).get(sampleIndex))){
+							continue;
+						}
 						sum += Double.parseDouble(data.get(k).get(sampleIndex));
 					}
 				}
@@ -299,4 +302,14 @@ public class ModifyGroup extends JOptionPane{
 		Interface.scrollPaneHolder.get(activeTab).getVerticalScrollBar().setUnitIncrement(16);
 		Interface.scrollPaneHolder.get(activeTab).getHorizontalScrollBar().setUnitIncrement(16);
 	} // end of GroupSamples
+
+	private static boolean isNumeric(String str) {
+		try {  
+		    double d = Double.parseDouble(str);  
+		}  
+		catch(NumberFormatException nfe){  
+		    return false;  
+		}  
+		return true;
+	}
 }

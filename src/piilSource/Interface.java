@@ -27,13 +27,17 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -54,10 +58,11 @@ public class Interface extends JFrame{
 	static ArrayList<JScrollPane> scrollPaneHolder;
 	static ArrayList<JPanel> panelHolder;
 	static JButton editFields;
-	
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
 	
 	public static void main(String[] args) {
 		new Interface();
+		
 	}
 	
 	public Interface(){
@@ -84,7 +89,21 @@ public class Interface extends JFrame{
 		bodyFrame = new JFrame();
 		bodyFrame.setSize(scrWidth, scrHeight);
 		bodyFrame.setTitle(" PiiL - Pathway interactive visualization tooL ");
-		bodyFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		
+		bodyFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);		
+		
+//		bodyFrame.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);		
+//		bodyFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+//		    @Override
+//		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+//		        if (JOptionPane.showConfirmDialog(bodyFrame, 
+//		            "Are you sure to quit PiiL?", "Closing confirmation", 
+//		            JOptionPane.YES_NO_OPTION,
+//		            JOptionPane.QUESTION_MESSAGE, icon) == JOptionPane.YES_OPTION){
+//		            System.exit(0);
+//		        }
+//		    }
+//		});
 		
 		sampleInfoPanel = new JPanel();
 		sampleInfoPanel.setPreferredSize(new Dimension(1000, 30));
@@ -193,7 +212,7 @@ public class Interface extends JFrame{
 		gridConstraints.insets = new Insets(1,15,4,1);
 		
 		bodyFrame.add(backgroundPanel,BorderLayout.CENTER);
-		new Splash(2000);	
+		new Splash(3000);	
 		bodyFrame.setVisible(true);
 		
 	}
