@@ -25,6 +25,9 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Toolkit;
@@ -35,10 +38,15 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneLayout;
 import javax.swing.SwingConstants;
 import org.freehep.util.export.ExportDialog;
 
@@ -51,11 +59,16 @@ public class GeneRegions extends JFrame{
 	float increment;
 	List<JLabel> allLabels;
 	JLabel geneLabel;
-	int labelX, labelY,labelWidth, labelHeight;
-	public static JPanel northPanel, southPanel, mainPanel;
+	int labelX, labelY,labelWidth, labelHeight, frameWidth, frameHeight, maxWidth;
+	public static JPanel northPanel, southPanel, mainPanel, labelPanel, regionsPanel;
+	JPanel centerPanel;
 	public static JFrame magnifyFrame;
 	JButton exportButton, closeButton;
 	String geneName;
+	JScrollPane regionsPane;
+	float[] ranges;
+	Color bgColor;
+	GridBagConstraints gridConstraints;
 	
 	
 	public GeneRegions(String entryID){
@@ -65,6 +78,8 @@ public class GeneRegions extends JFrame{
 		TabsInfo pathway = ParseKGML.getTabInfo(activeTab);
 		pointer = pathway.getPointer();
 		geneName = pathway.getMapedGeneLabel().get(nodeID).getText();
+		ranges = pathway.getRanges();
+		gridConstraints = new GridBagConstraints();
 		
 		if (pointer < 0){
 			pointer = 0;
@@ -72,12 +87,12 @@ public class GeneRegions extends JFrame{
 		values = pathway.getMapedGeneData().get(nodeID);
 		
 		multipleHits = values.size();
-		increment = 460 / multipleHits;
+		
 		
 		exportButton = new JButton("Export to image");
-		exportButton.setPreferredSize(new Dimension(150, 30));
+		exportButton.setPreferredSize(new Dimension(150, 33));
 		closeButton= new JButton("Close");
-		closeButton.setPreferredSize(new Dimension(150,30));
+		closeButton.setPreferredSize(new Dimension(150,33));
 		
 		exportButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent bc) {
@@ -101,49 +116,54 @@ public class GeneRegions extends JFrame{
 		Collection<String> tag = pathway.getMapedGeneRegion().get(nodeID);
 		int numberOfRegions = tag.size();
 		
-		if (numberOfRegions > 5){
-			labelX = 25; labelY= 45; labelWidth =15;
-			for (int i =0; i < numberOfRegions; i ++){
-				DecimalFormat df=new DecimalFormat("0.000");
-				if (!isNumeric(values.get(i).get(pointer))){
-					continue;
-				}
-				Double betaValue = Double.parseDouble(values.get(i).get(pointer));
-				String regionName = tag.toArray()[i].toString() + " (" + df.format(betaValue) + ")";
-				JLabel newLabel = new JLabel(regionName,SwingConstants.CENTER);
-				newLabel.setUI(new VerticalLabelUI(true));
-				newLabel.setHorizontalAlignment(SwingConstants.LEFT);
-				labelHeight = regionName.length() * 10;
-				newLabel.setBounds((int) (labelX + (i * increment)), labelY, labelWidth, labelHeight);
-				allLabels.add(newLabel);
+		labelX = 10; labelY= 10; labelHeight= 15; maxWidth=0;
+		for (int i =0; i < numberOfRegions; i ++){
+			DecimalFormat df=new DecimalFormat("0.000");
+			if (!isNumeric(values.get(i).get(pointer))){
+				continue;
 			}
-		}
-		else {
-			labelX = 25; labelY= 45; labelHeight =15;
-			for (int i =0; i < numberOfRegions; i ++){
-				DecimalFormat df=new DecimalFormat("0.000");
-				if (!isNumeric(values.get(i).get(pointer))){
-					continue;
-				}
-				Double betaValue = Double.parseDouble(values.get(i).get(pointer));
-				String regionName = tag.toArray()[i].toString() + " (" + df.format(betaValue) + ")";
-				JLabel newLabel = new JLabel(regionName,SwingConstants.CENTER);
-				newLabel.setHorizontalAlignment(SwingConstants.LEFT);
-				labelWidth = regionName.length() * 10;
-				newLabel.setBounds((int) (labelX + (i * increment)), labelY, labelWidth, labelHeight);
-				allLabels.add(newLabel);
+			Double betaValue = Double.parseDouble(values.get(i).get(pointer));
+			bgColor = getColor(betaValue);
+			String regionName = tag.toArray()[i].toString() + " (" + df.format(betaValue) + ")";
+			JLabel newLabel = new JLabel(regionName,SwingConstants.CENTER);
+			newLabel.setHorizontalAlignment(SwingConstants.CENTER);
+			labelWidth = regionName.length() * 10 + 5;
+			if (labelWidth > maxWidth){
+				maxWidth = labelWidth;
 			}
+			
+			newLabel.setOpaque(true);
+			newLabel.setBackground(bgColor);
+			newLabel.setForeground(setTextColor(bgColor));
+			newLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			allLabels.add(newLabel);
 		}
+		frameWidth = maxWidth + 10;
+		frameHeight = numberOfRegions * 20 + 10 ;
+		
 		
 		magnifyFrame = new JFrame();
 		magnifyFrame.setLayout(new BorderLayout());
 		northPanel = new JPanel();
 		southPanel = new JPanel();
 		mainPanel = new JPanel();
+		labelPanel = new JPanel();
+		centerPanel = new JPanel();
+		regionsPanel = new JPanel();
+		regionsPanel.setLayout(new GridBagLayout());
+		regionsPane = new JScrollPane(regionsPanel);
+		labelPanel.setLayout(new FlowLayout());
+		labelPanel.setPreferredSize(new Dimension(500,40));
+		centerPanel.setPreferredSize(new Dimension(500,170));
+		northPanel.setPreferredSize(new Dimension(500,250));
+		southPanel.setPreferredSize(new Dimension(500,60));
+		centerPanel.setLayout(new FlowLayout());
+		regionsPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		regionsPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		mainPanel.setLayout(new BorderLayout());
 		northPanel.setLayout(new BorderLayout());
-		southPanel.setLayout(new FlowLayout());
-		magnifyFrame.setSize(500, 240);
+		southPanel.setLayout(new GridBagLayout());
+		magnifyFrame.setSize(500, 310);
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		magnifyFrame.setResizable(false);
 		Dimension dim = tk.getScreenSize();
@@ -153,16 +173,33 @@ public class GeneRegions extends JFrame{
 		magnifyFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		magnifyFrame.setTitle("Genomic details of " + geneName);
 		
-		northPanel.add(geneLabel,BorderLayout.CENTER);
-		for (JLabel region : allLabels){
-			northPanel.add(region,BorderLayout.CENTER);
+		labelPanel.add(geneLabel);
+		for (int i = 0 ; i < numberOfRegions ; i ++) {
+			JLabel region = allLabels.get(i);
+			region.setPreferredSize(new Dimension(300,20));
+			addComp(regionsPanel, region, 0, i, 1, 1,GridBagConstraints.NORTH, GridBagConstraints.NONE);
 		}
-		DrawGene regionalMap = new DrawGene();
-		northPanel.add(regionalMap, BorderLayout.CENTER);
-		southPanel.add(exportButton);
-		southPanel.add(closeButton);
+		
+		regionsPanel.setPreferredSize(new Dimension((frameWidth + 5), (frameHeight+5))) ;
+		
+		gridConstraints.insets = new Insets(2,2,2,2);
+		addComp(southPanel, exportButton, 0, 0, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.CENTER);
+		
+		addComp(southPanel, closeButton, 1, 0, 2, 1, GridBagConstraints.CENTER, GridBagConstraints.CENTER);
+		
+		
+		regionsPane.setPreferredSize(new Dimension(350,160));
+		regionsPane.getVerticalScrollBar().setUnitIncrement(16);
+		regionsPane.getHorizontalScrollBar().setUnitIncrement(16);
+		centerPanel.add(regionsPane);
+				
+		northPanel.add(labelPanel, BorderLayout.NORTH);
+		northPanel.add(centerPanel, BorderLayout.CENTER);
+		northPanel.setBackground(Color.red);
+		southPanel.setBackground(Color.BLUE);
 		mainPanel.add(northPanel, BorderLayout.CENTER);
 		mainPanel.add(southPanel, BorderLayout.SOUTH);
+		
 		magnifyFrame.add(mainPanel);
 		magnifyFrame.setVisible(true);
 	}
@@ -175,75 +212,65 @@ public class GeneRegions extends JFrame{
 		    return false;  
 		}  
 		return true;
-	}
-
-	private class DrawGene extends JPanel {
-
-		private Color getColor(double val)
-		{
-			double r = 0,b = 0,g = 0;
-			
-			if (val == 0.5){
-				r = 255; b=255; g = 255;
-			}
-			else if (val < 0.5){
-				b= 255; r = 255 - Math.round(510 * (0.5 - val)); g = 255 - Math.round(510 * (0.5 - val));
-			}
-			else if (val > 0.5){
-				r = 255; b = 255 - Math.round(510 * (val - 0.5)); g = 255 - Math.round(510 * (val - 0.5));
-			}
-			Color myColor = new Color((int) (r),(int) (g), (int) (b));
-		    return myColor;
+	} // end of isNumeric
+	
+	private void addComp(JPanel thePanel, JComponent comp, int xPos, int yPos, int compWidth, int compHeight, int place, int stretch){
+		
+		gridConstraints.gridx = xPos;
+		gridConstraints.gridy = yPos;
+		gridConstraints.gridwidth = compWidth;
+		gridConstraints.gridheight = compHeight;
+		gridConstraints.weightx = 0;
+		gridConstraints.weighty = 0;
+//		gridConstraints.insets = new Insets(0,0,0,5);
+		gridConstraints.anchor = place;
+		gridConstraints.fill = stretch;
+		
+		thePanel.add(comp, gridConstraints);
+	} // end of addComp
+	
+	private Color getColor(double val) {
+		
+		double r = 0,b = 0,g = 0;
+		
+		double whiteValue = ((ranges[1] - ranges[0]) / 20) + (ranges[0]/10);
+		
+		double difference = 255 / (whiteValue - (ranges[0]/10));
+		
+		if (val == whiteValue){
+			r = 255; b=255; g = 255;
+		}
+		else if (val < whiteValue){
+			b= 255; r = 255 - Math.round(difference * (whiteValue - val)); g = 255 - Math.round(difference * (whiteValue - val));
+		}
+		else if (val > whiteValue){ 
+			r = 255; b = 255 - Math.round(difference * (val - whiteValue)); g = 255 - Math.round(difference * (val - whiteValue));
 		}
 		
-		public void paint(Graphics g){
-			
-			Graphics2D graphical = (Graphics2D) g;
-					
-			graphical.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			
-			Shape element = new Rectangle2D.Float(20,40,460,135);
-			float shapeW = element.getBounds().width;
-			float shapeH = element.getBounds().height;
-			float shapeX = element.getBounds().x;
-			float shapeY = element.getBounds().y;
-			float intent = shapeW / multipleHits;
-			
-			for (int j = 0; j < allLabels.size() ; j++){
-				if (!isNumeric(values.get(j).get(pointer))){
-					continue;
-				}
-				float value = Float.parseFloat(values.get(j).get(pointer));
-				Color geneColor = getColor(value);
-				graphical.setColor(geneColor);
-				Shape nodeShape = new Rectangle2D.Float(shapeX + (j * intent), shapeY, intent, shapeH);
-				graphical.fill(nodeShape);
-				graphical.setColor(Color.BLACK);
-				graphical.draw(nodeShape);
-				
-				if (geneColor.getRed() == 255){
-					if (geneColor.getGreen() < 40){
-						allLabels.get(j).setForeground(Color.LIGHT_GRAY);
-					}
-					else {
-						allLabels.get(j).setForeground(Color.BLACK);
-					}
-				}
-				else if (geneColor.getBlue() == 255){
-					if (geneColor.getGreen() < 105){
-						allLabels.get(j).setForeground(Color.WHITE);
-					}
-					else {
-						allLabels.get(j).setForeground(Color.BLACK);
-					}
-				}
-				
-			}
-			
-			graphical.setColor(Color.BLACK);
-			graphical.draw(element);
-			
-		}
-	}
+		Color myColor = new Color(r < 0 ? 0 : (int) (r),g < 0 ? 0 : (int) (g), b < 0 ? 0 : (int) (b));
+		
+	    return myColor;
+	} // end of getColor
 	
+	private Color setTextColor(Color myColor) {
+		
+		Color fgColor = Color.WHITE;
+		if (myColor.getRed() == 255){
+			if (myColor.getGreen() < 40){
+				fgColor = Color.LIGHT_GRAY;
+			}
+			else {
+				fgColor = Color.BLACK;
+			}
+		}
+		else if (myColor.getBlue() == 255){
+			if (myColor.getGreen() < 105){
+				fgColor = Color.WHITE;
+			}
+			else {
+				fgColor = Color.BLACK;
+			}
+		}
+		return fgColor;
+	} // end of setTextColor
 }

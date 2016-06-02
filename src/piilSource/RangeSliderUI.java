@@ -1,3 +1,21 @@
+/*  
+    PiiL: Pathway Interactive vIsualization tooL
+    Copyright (C) 2015  Behrooz Torabi Moghadam
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package piilSource;
 
 import java.awt.Color;
@@ -17,14 +35,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicSliderUI;
 
-/**
- * UI delegate for the RangeSlider component.  RangeSliderUI paints two thumbs,
- * one for the lower value and one for the upper value.
- */
 class RangeSliderUI extends BasicSliderUI {
 
     /** Color of selected range. */
-    private Color rangeColor = Color.GREEN;
+    private Color rangeColor = Color.MAGENTA;
     
     /** Location and size of thumb for upper value. */
     private Rectangle upperThumbRect;
@@ -36,43 +50,24 @@ class RangeSliderUI extends BasicSliderUI {
     /** Indicator that determines whether upper thumb is being dragged. */
     private transient boolean upperDragging;
     
-    /**
-     * Constructs a RangeSliderUI for the specified slider component.
-     * @param b RangeSlider
-     */
+    
     public RangeSliderUI(RangeSlider b) {
         super(b);
     }
     
-    /**
-     * Installs this UI delegate on the specified component. 
-     */
-    @Override
     public void installUI(JComponent c) {
         upperThumbRect = new Rectangle();
         super.installUI(c);
     }
 
-    /**
-     * Creates a listener to handle track events in the specified slider.
-     */
-    @Override
     protected TrackListener createTrackListener(JSlider slider) {
         return new RangeTrackListener();
     }
 
-    /**
-     * Creates a listener to handle change events in the specified slider.
-     */
-    @Override
     protected ChangeListener createChangeListener(JSlider slider) {
         return new ChangeHandler();
     }
     
-    /**
-     * Updates the dimensions for both thumbs. 
-     */
-    @Override
     protected void calculateThumbSize() {
         // Call superclass method for lower thumb size.
         super.calculateThumbSize();
@@ -81,10 +76,6 @@ class RangeSliderUI extends BasicSliderUI {
         upperThumbRect.setSize(thumbRect.width, thumbRect.height);
     }
     
-    /**
-     * Updates the locations for both thumbs.
-     */
-    @Override
     protected void calculateThumbLocation() {
         // Call superclass method for lower thumb location.
         super.calculateThumbLocation();
@@ -131,19 +122,10 @@ class RangeSliderUI extends BasicSliderUI {
         }
     }
     
-    /**
-     * Returns the size of a thumb.
-     */
-    @Override
     protected Dimension getThumbSize() {
         return new Dimension(12, 12);
     }
 
-    /**
-     * Paints the slider.  The selected thumb is always painted on top of the
-     * other thumb.
-     */
-    @Override
     public void paint(Graphics g, JComponent c) {
         super.paint(g, c);
         
@@ -168,10 +150,6 @@ class RangeSliderUI extends BasicSliderUI {
         }
     }
     
-    /**
-     * Paints the track.
-     */
-    @Override
     public void paintTrack(Graphics g) {
         // Draw track.
         super.paintTrack(g);
@@ -226,18 +204,10 @@ class RangeSliderUI extends BasicSliderUI {
         }
     }
     
-    /**
-     * Overrides superclass method to do nothing.  Thumb painting is handled
-     * within the <code>paint()</code> method.
-     */
-    @Override
     public void paintThumb(Graphics g) {
         // Do nothing.
     }
 
-    /**
-     * Paints the thumb for the lower value using the specified graphics object.
-     */
     private void paintLowerThumb(Graphics g) {
         Rectangle knobBounds = thumbRect;
         int w = knobBounds.width;
@@ -254,7 +224,7 @@ class RangeSliderUI extends BasicSliderUI {
             RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.translate(knobBounds.x, knobBounds.y);
 
-        g2d.setColor(Color.CYAN);
+        g2d.setColor(Color.BLUE);
         g2d.fill(thumbShape);
 
         g2d.setColor(Color.BLUE);
@@ -283,7 +253,7 @@ class RangeSliderUI extends BasicSliderUI {
             RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.translate(knobBounds.x, knobBounds.y);
 
-        g2d.setColor(Color.PINK);
+        g2d.setColor(Color.RED);
         g2d.fill(thumbShape);
 
         g2d.setColor(Color.RED);
@@ -293,21 +263,12 @@ class RangeSliderUI extends BasicSliderUI {
         g2d.dispose();
     }
 
-    /**
-     * Returns a Shape representing a thumb.
-     */
     private Shape createThumbShape(int width, int height) {
         // Use circular shape.
         Ellipse2D shape = new Ellipse2D.Double(0, 0, width, height);
         return shape;
     }
     
-    /** 
-     * Sets the location of the upper thumb, and repaints the slider.  This is
-     * called when the upper thumb is dragged to repaint the slider.  The
-     * <code>setThumbLocation()</code> method performs the same task for the
-     * lower thumb.
-     */
     private void setUpperThumbLocation(int x, int y) {
         Rectangle upperUnionRect = new Rectangle();
         upperUnionRect.setBounds(upperThumbRect);
@@ -318,10 +279,6 @@ class RangeSliderUI extends BasicSliderUI {
         slider.repaint(upperUnionRect.x, upperUnionRect.y, upperUnionRect.width, upperUnionRect.height);
     }
     
-    /**
-     * Moves the selected thumb in the specified direction by a block increment.
-     * This method is called when the user presses the Page Up or Down keys.
-     */
     public void scrollByBlock(int direction) {
         synchronized (slider) {
             int blockIncrement = (slider.getMaximum() - slider.getMinimum()) / 10;
@@ -340,10 +297,6 @@ class RangeSliderUI extends BasicSliderUI {
         }
     }
     
-    /**
-     * Moves the selected thumb in the specified direction by a unit increment.
-     * This method is called when the user presses one of the arrow keys.
-     */
     public void scrollByUnit(int direction) {
         synchronized (slider) {
             int delta = 1 * ((direction > 0) ? POSITIVE_SCROLL : NEGATIVE_SCROLL);
@@ -358,11 +311,6 @@ class RangeSliderUI extends BasicSliderUI {
         }       
     }
     
-    /**
-     * Listener to handle model change events.  This calculates the thumb 
-     * locations and repaints the slider if the value change is not caused by
-     * dragging a thumb.
-     */
     public class ChangeHandler implements ChangeListener {
         public void stateChanged(ChangeEvent arg0) {
             if (!lowerDragging && !upperDragging) {
@@ -372,9 +320,6 @@ class RangeSliderUI extends BasicSliderUI {
         }
     }
     
-    /**
-     * Listener to handle mouse movements in the slider track.
-     */
     public class RangeTrackListener extends TrackListener {
         
         @Override
@@ -390,9 +335,6 @@ class RangeSliderUI extends BasicSliderUI {
                 slider.requestFocus();
             }
             
-            // Determine which thumb is pressed.  If the upper thumb is 
-            // selected (last one dragged), then check its position first;
-            // otherwise check the position of the lower thumb first.
             boolean lowerPressed = false;
             boolean upperPressed = false;
             if (upperThumbSelected || slider.getMinimum() == slider.getValue()) {
@@ -474,10 +416,6 @@ class RangeSliderUI extends BasicSliderUI {
             return false;
         }
 
-        /**
-         * Moves the location of the lower thumb, and sets its corresponding 
-         * value in the slider.
-         */
         private void moveLowerThumb() {
             int thumbMiddle = 0;
             
@@ -533,10 +471,6 @@ class RangeSliderUI extends BasicSliderUI {
             }
         }
 
-        /**
-         * Moves the location of the upper thumb, and sets its corresponding 
-         * value in the slider.
-         */
         private void moveUpperThumb() {
             int thumbMiddle = 0;
             

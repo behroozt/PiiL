@@ -44,7 +44,7 @@ public class CustomTabPane extends JTabbedPane{
 		super.addTab(title, icon, component, tip);
 		int count = this.getTabCount() - 1;
 		setTabComponentAt(count, new CloseButtonTab(component, title, icon));
-		
+		PiilMenubar.manageColors.setEnabled(true);
 	}
 
 	@Override
@@ -85,7 +85,9 @@ public class CustomTabPane extends JTabbedPane{
 						Interface.removeSelectedScrollPane(tabIndex);
 						ParseKGML.closedTab(tabIndex);
 						tabbedPane.remove(tab);
-						
+						if (Interface.tabPane.getTabCount() == 0){
+							PiilMenubar.manageColors.setEnabled(false);
+						}
 					}
 					
 				}

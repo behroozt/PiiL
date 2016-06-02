@@ -42,6 +42,7 @@ public class Genes {
 	private boolean expanded;
 	private JLabel[] extendedLabels;
 	private Point selectionPoint;
+	static float[] ranges;
 
 	public String[] getAllNames() {
 		return allNames;
@@ -145,6 +146,7 @@ public class Genes {
 		
 		int activeTab = Interface.tabPane.getSelectedIndex();
 		TabsInfo thisTab = ParseKGML.getTabInfo(activeTab);
+		ranges = thisTab.getRanges();
 		HashMap<String, Genes> matchedGenes = thisTab.getMapedGeneLabel();
 		String value;
 		List<List<String>> data;
@@ -256,16 +258,21 @@ public class Genes {
 		
 		double r = 0,b = 0,g = 0;
 		
-		if (val == 0.5){
+		double whiteValue = ((ranges[1] - ranges[0]) / 20) + (ranges[0]/10);
+		
+		double difference = 255 / (whiteValue - (ranges[0]/10));
+		
+		if (val == whiteValue){
 			r = 255; b=255; g = 255;
 		}
-		else if (val < 0.5){
-			b= 255; r = 255 - Math.round(510 * (0.5 - val)); g = 255 - Math.round(510 * (0.5 - val));
+		else if (val < whiteValue){
+			b= 255; r = 255 - Math.round(difference * (whiteValue - val)); g = 255 - Math.round(difference * (whiteValue - val));
 		}
-		else if (val > 0.5){ 
-			r = 255; b = 255 - Math.round(510 * (val - 0.5)); g = 255 - Math.round(510 * (val - 0.5));
+		else if (val > whiteValue){ 
+			r = 255; b = 255 - Math.round(difference * (val - whiteValue)); g = 255 - Math.round(difference * (val - whiteValue));
 		}
-		Color myColor = new Color((int) (r),(int) (g), (int) (b));
+		
+		Color myColor = new Color(r < 0 ? 0 : (int) (r),g < 0 ? 0 : (int) (g), b < 0 ? 0 : (int) (b));
 		
 		changeTextColor(myColor);
 	    return myColor;
@@ -277,6 +284,7 @@ public class Genes {
 		double theMean = expressionValues.getMean();
 		double r = 0,b = 0,g = 0;
 		double logDifference = Math.log10(value) - Math.log10(theMean);
+		double foldDifference = 255 / ranges[2];
 		
 		if (logDifference == Double.NEGATIVE_INFINITY || logDifference == Double.POSITIVE_INFINITY){
 			logDifference = 0;
@@ -287,13 +295,13 @@ public class Genes {
 		}
 		else if (logDifference < 0) {
 			
-			b= 255; r = 255 - Math.round(logDifference * -63.75); g = 255 - Math.round(logDifference * -63.75);
+			b= 255; r = 255 - Math.round(logDifference * -foldDifference); g = 255 - Math.round(logDifference * -foldDifference);
 		}
 		else if (logDifference > 0){
-			r = 255; b = 255 - Math.round(logDifference * 63.75); g = 255 - Math.round(logDifference * 63.75);
+			r = 255; b = 255 - Math.round(logDifference * foldDifference); g = 255 - Math.round(logDifference * foldDifference);
 		}
 		
-		Color expressionColor = new Color((int)r, (int) g, (int) b);
+		Color expressionColor = new Color(r < 0 ? 0 : (int) (r),g < 0 ? 0 : (int) (g), b < 0 ? 0 : (int) (b));
 		changeTextColor(expressionColor);
 		return expressionColor;
 	}

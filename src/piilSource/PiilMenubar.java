@@ -79,10 +79,10 @@ public class PiilMenubar extends JMenuBar{
 
 	JMenuItem exitAction, loadAction, aboutAction, exportEntire, manualAction, exportVisible,
 	newAction, openAction, openWebAction, newSamplesInfo, reportAction, newMethylation,
-	duplicateAction, duplcateMetaData, newExpression, exportGenes, snapShot, citeUs, highlightGenes, checkUpdates, manageColors;
+	duplicateAction, duplcateMetaData, newExpression, exportGenes, snapShot, citeUs, highlightGenes, checkUpdates;
 	JMenu menuFile, menuLoad, menuHelp, openKGML, menuTools, loadMethylation,
 	loadExpression, duplicatePathway;
-	static JMenuItem multiSampleView, singleSampleView, groupWiseView;
+	static JMenuItem multiSampleView, singleSampleView, groupWiseView, manageColors;
 	static JMenu loadSamplesInfo;
 	JMenu menuPathwayImage;
 	JMenu menuExport;
@@ -95,7 +95,7 @@ public class PiilMenubar extends JMenuBar{
 	byte validInput;
 	JLabel waitMessage = new JLabel();
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
-	final Double version = 0.03;
+	final Double version = 0.04;
 	String latestVersion;
 	
 	public PiilMenubar(){
@@ -149,7 +149,7 @@ public class PiilMenubar extends JMenuBar{
 		multiSampleView.setEnabled(false);
 		singleSampleView.setEnabled(false);
 		groupWiseView.setEnabled(false);
-//		*** manageColors.setEnabled(false);
+		manageColors.setEnabled(false);
 				        
 		// Help menu items
 		menuHelp = new JMenu("Help");
@@ -364,7 +364,7 @@ public class PiilMenubar extends JMenuBar{
 
 											public void actionPerformed(ActionEvent reloadFile) {
 												int currentTab = Interface.tabPane.getSelectedIndex();
-												TabsInfo thisTab = ParseKGML.getTabInfo(currentTab);
+												final TabsInfo thisTab = ParseKGML.getTabInfo(currentTab);
 												if (ParseKGML.getTabInfo(currentTab) == null) {
 													JOptionPane.showMessageDialog(Interface.bodyFrame,"You need to open a KGML file first!");
 												} else if (thisTab.getMapedGeneLabel().size() > 0) {
@@ -376,12 +376,27 @@ public class PiilMenubar extends JMenuBar{
 
 													File reloadableFile = TabsInfo.getLoadedFilePath(fileName);
 
-													try {
-														thisTab.getGenesList(reloadableFile,input);
-													} catch (IOException e) {
-														e.printStackTrace();
-														JOptionPane.showMessageDialog(Interface.bodyFrame,"Error loading the file!");
-													}
+													
+														
+														SwingWorker<Void, Void> methylReLoader = new SwingWorker<Void, Void>() {
+															protected Void doInBackground() {
+																try {
+																	thisTab.getGenesList(file,input);
+																
+																} catch (IOException e) {
+																	JOptionPane.showMessageDialog(Interface.bodyFrame,"Error loading the file!");
+																}
+																return null;
+															}
+															protected void done() {
+																dialog.dispose();
+															}
+														};
+														methylReLoader.execute();
+														dialog.setVisible(true);
+														
+//														thisTab.getGenesList(reloadableFile,input);
+													
 													
 													if (thisTab.getMapedGeneLabel().size() > 0) {ControlPanel.enableControlPanel(0);
 														thisTab.assignPointer(0);
@@ -888,9 +903,9 @@ public class PiilMenubar extends JMenuBar{
 			
 			/* manage color-code clicked */
 			else if (ice.getSource() == manageColors){
-//				TabsInfo theTab = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
+				
 //				new ColorCodeManager(theTab.getMetaType());
-				new ColorCodeManager('E');
+				new ColorCodeManager();
 			} // end of manageColorCoding
 			
 			/* about item clicked */
@@ -975,7 +990,16 @@ public class PiilMenubar extends JMenuBar{
 				methylLoader.execute();
 				dialog.setVisible(true);
 				if (Double.parseDouble(latestVersion) > version){
-					JOptionPane.showMessageDialog(null, "A newer version (v" + latestVersion + ") is available at PiiL's github: https://github.com/behroozt/PiiL" , "Checking for updates", JOptionPane.PLAIN_MESSAGE, icon);
+					int choice = JOptionPane.showConfirmDialog(null, "A newer version (v" + latestVersion + ") is available. Press OK to download it from PiiL's github."
+					, "Checking for updates",JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,icon);
+					if (choice == JOptionPane.OK_OPTION){
+						String URL = "https://github.com/behroozt/PiiL/raw/master/PiiL-v" + latestVersion + ".jar";
+						try {
+							java.awt.Desktop.getDesktop().browse(java.net.URI.create(URL));
+						} catch (IOException e1) {
+							JOptionPane.showMessageDialog(Interface.bodyFrame, "Problem opening the online documentation page!");
+						}
+					}
 				}
 				else {
 					JOptionPane.showMessageDialog(null, "You are using the latest version v" + latestVersion, "Checking for updates", JOptionPane.PLAIN_MESSAGE, icon);

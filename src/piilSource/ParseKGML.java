@@ -281,24 +281,30 @@ public class ParseKGML {
 				component = (Nodes) nodeHandler.get(componentID);
 				nodeFromX = component.getNodeCordX();
 				nodeFromY = component.getNodeCordY();
+				nodeFromWidth = component.getNodeWidth();
+				nodeFromHeight = component.getNodeHeight();
 			} else{
 				nodeFromX = nodeFrom.getNodeCordX();
 				nodeFromY = nodeFrom.getNodeCordY();
+				nodeFromWidth = nodeFrom.getNodeWidth();
+				nodeFromHeight = nodeFrom.getNodeHeight();
 			}
-			nodeFromWidth = nodeFrom.getNodeWidth();
-			nodeFromHeight = nodeFrom.getNodeHeight();
+			
 			
 			if (nodeTo.getNodeType().equals("group")){
 				componentID = nodeTo.getComponentID();
 				component = (Nodes) nodeHandler.get(componentID);
 				nodeToX = component.getNodeCordX();
 				nodeToY = component.getNodeCordY();
-			} else{
+				nodeToWidth = component.getNodeWidth();
+				nodeToHeight = component.getNodeHeight();
+			} 
+			else{
 				nodeToX = nodeTo.getNodeCordX();
 				nodeToY = nodeTo.getNodeCordY();
+				nodeToWidth = nodeTo.getNodeWidth();
+				nodeToHeight = nodeTo.getNodeHeight();
 			}
-			nodeToWidth = nodeTo.getNodeWidth();
-			nodeToHeight = nodeTo.getNodeHeight();
 			
 			if (nodeFromX < nodeToX){
 				if ((nodeToX - nodeFromX) < nodeToWidth/2){
@@ -347,7 +353,6 @@ public class ParseKGML {
 				lineStroke = new BasicStroke((float) 1.5);
 				lineColor = Color.DARK_GRAY;		
 				relationEdge = ArrowEdge.createArrow(arrowStartX, arrowStartY, arrowEndX, arrowEndY);
-				
 			}
 
 			else {

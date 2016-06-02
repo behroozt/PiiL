@@ -76,6 +76,7 @@ public class TabsInfo {
 	List<String> showableGroups;
 	String dataSplitor;
 	int baseGroupIndex;
+	float[] ranges;
 	
 	public TabsInfo(String tabCaption, File path, Character source, String pathway) {
 		pointer = 0;
@@ -105,7 +106,16 @@ public class TabsInfo {
 		selectedGenes = 0;
 		groupingIndex = 0;
 		baseGroupIndex = -1;
+		ranges = new float[] {0,10,4}; // {methylationLow, methylationHigh, expressionFold}
 		
+	}
+	
+	public void setRanges(float low, float high, float fold){
+		ranges[0] = low ; ranges[1] = high; ranges[2] = fold;
+	}
+	
+	public float[] getRanges(){
+		return ranges;
 	}
 	
 	public void setBaseGroupIndex(int index){
