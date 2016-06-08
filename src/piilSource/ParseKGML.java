@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -59,7 +60,7 @@ public class ParseKGML {
 	HashMap<String, Genes> geneHandler;
 	List<Edges> edgeItems;
 	static ArrayList<TabsInfo> tabInfoTracker;
-	
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
 	private String caption;
 	private File loadedFile;
 	Character loadSource;
@@ -123,7 +124,7 @@ public class ParseKGML {
 			
 		}
 		else {
-			JOptionPane.showMessageDialog(Interface.bodyFrame, "There is a problem with the input file. Please check it or try a different one.");
+			JOptionPane.showMessageDialog(Interface.bodyFrame, "There is a problem with the input file. Please check it or try a different one.","Error",0,icon);
 		}
 				
 	}
@@ -188,6 +189,13 @@ public class ParseKGML {
 				}
 				labelX = labelX + (nodeWidth / 2) - (labelWidth / 2);
 				theLabel.setBounds(labelX, labelY, labelWidth, nodeHeight);
+			}
+			if (nodeType.equals("ortholog")){
+				theLabel.setOpaque(true);
+				theLabel.setBackground(Color.decode(value.getNodeBgColor()));
+				theLabel.setBounds(labelX, labelY, nodeWidth, nodeHeight);
+				theLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+				theLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 9));
 			}
 			if (nodeType.equals("gene")){
 				final String tip = value.getNodeLabel();
@@ -387,9 +395,12 @@ public class ParseKGML {
 	private void makeNodes(NodeList allNodes) {
 		
 		float x,y,width,height;
+		String coords;
 		Shape nodeShape = null;
 		String bgColor,fgColor,entryID, entryType, graphicShape, graphicLabel, entryName, entryLink;
 		Nodes newEntry;
+		Stroke lineStroke = new BasicStroke();
+		Color lineColor;
 		
 		for (int i = 0; i < allNodes.getLength(); i ++){
 			
@@ -404,16 +415,26 @@ public class ParseKGML {
 				graphicLabel = elementsList.item(i).getFirstChild().getAttributes().getNamedItem("name").getNodeValue();
 			}
 			
+			entryID = allNodes.item(i).getAttributes().getNamedItem("id").getNodeValue();
+			entryName = allNodes.item(i).getAttributes().getNamedItem("name").getNodeValue();
+			entryLink = "nolink";
+			graphicShape = allNodes.item(i).getFirstChild().getAttributes().getNamedItem("type").getNodeValue();
+			if(graphicShape.equals("line")){
+				coords = allNodes.item(i).getFirstChild().getAttributes().getNamedItem("coords").getNodeValue();
+				fgColor = allNodes.item(i).getFirstChild().getAttributes().getNamedItem("fgcolor").getNodeValue();
+				String[] parts = coords.split(",");
+				Shape relationEdge = ArrowEdge.createArrow(Float.parseFloat(parts[0]), Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Float.parseFloat(parts[3]));
+				Edges edge = new Edges(null, null, "line", "line", "0", relationEdge, lineStroke, Color.decode(fgColor));
+				edgeItems.add(edge);
+				continue;
+			}
 			x = Float.parseFloat(allNodes.item(i).getFirstChild().getAttributes().getNamedItem("x").getNodeValue());
 			y = Float.parseFloat(allNodes.item(i).getFirstChild().getAttributes().getNamedItem("y").getNodeValue());
 			width = Float.parseFloat(allNodes.item(i).getFirstChild().getAttributes().getNamedItem("width").getNodeValue());
 			height = Float.parseFloat(allNodes.item(i).getFirstChild().getAttributes().getNamedItem("height").getNodeValue());
-			graphicShape = allNodes.item(i).getFirstChild().getAttributes().getNamedItem("type").getNodeValue();
+			
 			bgColor = allNodes.item(i).getFirstChild().getAttributes().getNamedItem("bgcolor").getNodeValue();
 			fgColor = allNodes.item(i).getFirstChild().getAttributes().getNamedItem("fgcolor").getNodeValue();
-			entryID = allNodes.item(i).getAttributes().getNamedItem("id").getNodeValue();
-			entryName = allNodes.item(i).getAttributes().getNamedItem("name").getNodeValue();
-			entryLink = "nolink";
 			
 			if (x > maxX){ maxX = x;}
 			if (y > maxY){ maxY = y;}

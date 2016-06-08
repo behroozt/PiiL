@@ -106,7 +106,7 @@ public class JOptionPaneMultiInput {
 				if (returnVal == JFileChooser.APPROVE_OPTION) { 
 					newFile = fileChooser.getSelectedFile();
 					if (newFile == null){
-						JOptionPane.showMessageDialog(Interface.bodyFrame, "No file was loaded!");
+						JOptionPane.showMessageDialog(Interface.bodyFrame, "No file was loaded!","Warning",0,icon);
 					}
 					else {
 						fileLabel.setText(newFile.getName() + " was selected.");
@@ -127,7 +127,7 @@ public class JOptionPaneMultiInput {
 				e1.printStackTrace();
 			}
 			if (selectedFile == null || validFileLoaded == false){
-				JOptionPane.showMessageDialog(Interface.bodyFrame, "No valid file was loaded!");
+				JOptionPane.showMessageDialog(Interface.bodyFrame, "No valid file was loaded!","Error",0,icon);
 			}
 			else {
 				int sampleIdIndex = Integer.parseInt(idIndexSpinner.getValue().toString());
@@ -182,7 +182,7 @@ public class JOptionPaneMultiInput {
 		while ((line = br.readLine()) != null){
 			currentLine = line.split(splitBy);
 			if (currentLine.length != header.length){
-				JOptionPane.showMessageDialog(Interface.bodyFrame, "Some rows have different number of columns! Make sure you have chosen a correct separator and then check your input file.");
+				JOptionPane.showMessageDialog(Interface.bodyFrame, "Some rows have different number of columns! Make sure you have chosen a correct separator and then check your input file.","Error",0,icon);
 				br.close();
 				return false;
 			}
@@ -194,7 +194,7 @@ public class JOptionPaneMultiInput {
 		}
 		br.close();
 		if (!matchingID){
-			JOptionPane.showMessageDialog(Interface.bodyFrame, "The sample IDs in the loaded file do not match with the IDs in the loaded methylation/expression file!");
+			JOptionPane.showMessageDialog(Interface.bodyFrame, "The sample IDs in the loaded file do not match with the IDs in the loaded methylation/expression file!","Error",0,icon);
 			return false;
 		}
 		return true;

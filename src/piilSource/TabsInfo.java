@@ -236,31 +236,6 @@ public class TabsInfo {
 		return idsInGroups;
 	}
 	
-//	public HashMap<String, List<String>> setIDsInBase(int selectedIndex) {
-//		
-//		if (idsInBaseGroup == null){
-//			idsInBaseGroup = new HashMap<String, List<String>>();
-//		}
-//		else {
-//			idsInBaseGroup.clear();
-//		}
-//		
-//		for (int i = 0 ; i < (samplesIds.size()) ; i ++){
-//			String id = samplesIds.get(i);
-//			String group = samplesInfo.get(samplesIds.get(i)).get(selectedIndex);
-//			
-//			if (idsInBaseGroup.get(group) == null){
-//				idsInBaseGroup.put(group,new ArrayList<String>());
-//			}
-//			idsInBaseGroup.get(group).add(id);
-//		}
-//		
-//		return idsInBaseGroup;
-//		
-//	}
-	
-	
-	
 	public boolean extractSamplesInfo(File file, int sampleIdIndex, String seperator, String[] fileHeader, int[] selectedIndexes, int sampleGroupIndex) throws IOException{
 		
 		BufferedReader br = new BufferedReader(new FileReader(file));

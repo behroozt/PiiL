@@ -56,10 +56,11 @@ public class ModifyGroup extends JOptionPane{
 	JScrollPane groupsScrollPane;
 	int activeTab = Interface.tabPane.getSelectedIndex();
 	TabsInfo pathway;
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
 	
 	ModifyGroup(){
 		pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
-		final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
+		
 		myPanel = new JPanel();
 		myPanel.setLayout(new FlowLayout());
 		fields = new JLabel("Group the samples by:");
@@ -125,7 +126,7 @@ public class ModifyGroup extends JOptionPane{
 			
 			public void actionPerformed(ActionEvent e) {
 				if (pathway.getMetaType().equals('M')){
-					JOptionPane.showMessageDialog(Interface.bodyFrame, "This option is available only for expression meta data!");
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "This option is available only for expression meta data!","Message",0,icon);
 					baseCheck.setSelected(false);
 				}
 				else {

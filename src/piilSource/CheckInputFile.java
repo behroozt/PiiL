@@ -111,7 +111,7 @@ public class CheckInputFile {
 				if (returnVal == JFileChooser.APPROVE_OPTION) { 
 					newFile = fileChooser.getSelectedFile();
 					if (newFile == null){
-						JOptionPane.showMessageDialog(Interface.bodyFrame, "No file was loaded!");
+						JOptionPane.showMessageDialog(Interface.bodyFrame, "No file was loaded!","Warning",JOptionPane.WARNING_MESSAGE,icon);
 					}
 					else {
 						fileLabel.setText(newFile.getName() + " was selected.");

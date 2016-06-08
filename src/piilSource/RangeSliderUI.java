@@ -38,7 +38,7 @@ import javax.swing.plaf.basic.BasicSliderUI;
 class RangeSliderUI extends BasicSliderUI {
 
     /** Color of selected range. */
-    private Color rangeColor = Color.MAGENTA;
+    private Color rangeColor = Color.ORANGE;
     
     /** Location and size of thumb for upper value. */
     private Rectangle upperThumbRect;

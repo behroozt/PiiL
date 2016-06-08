@@ -28,8 +28,12 @@ import java.awt.Toolkit;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.File;
@@ -44,6 +48,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -74,7 +79,7 @@ import org.xml.sax.InputSource;
 
 public class OpenFromWeb extends JDialog{
 
-	JButton loadButton, cancelButton;
+	JButton loadButton, cancelButton, fetchButton;
 	JComboBox organismCombo, pathwayCombo;
 	JFrame webFrame;
 	JPanel webPanel, containerPanel;
@@ -87,9 +92,12 @@ public class OpenFromWeb extends JDialog{
 	URL url;
 	boolean successful= false;
 	GridBagConstraints gridConstraints = new GridBagConstraints();
-	String organismDefault = "Select Organism";
-	String pathwayDefault = "Select Pathway";
+	String organismDefault = "Homo sapiens (human)";
+	String pathwayDefault = "Press Fetch to reload";
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
+	JLabel waitMessage = new JLabel();
+	String chosenOrganismCode;
+	final JDialog dialog = new JDialog(null, "Loading data",ModalityType.APPLICATION_MODAL);
 	
 	public boolean getSuccess(){
 		return successful;
@@ -121,22 +129,32 @@ public class OpenFromWeb extends JDialog{
 		searchOrganism.setPreferredSize(organismCombo.getPreferredSize());
 		searchPathway.setPreferredSize(organismCombo.getPreferredSize());
 		
+		waitMessage.setText(" Fetching available pathways for the selected organism from the KEGG database ... ");
+		
+		dialog.setUndecorated(true);
+		JProgressBar progressBar = new JProgressBar();
+		progressBar.setIndeterminate(true);
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.add(progressBar, BorderLayout.CENTER);
+		panel.add(waitMessage, BorderLayout.PAGE_START);
+		dialog.add(panel);
+		dialog.pack();
+		dialog.setLocationRelativeTo(webFrame);
+		
 		try {
 			retrieveOrganismlist();
 			retrievePathwayList();
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(Interface.bodyFrame, "Error retrieving organism and/or pathway lists. Please check your internet connection!");
+			JOptionPane.showMessageDialog(Interface.bodyFrame, "Error retrieving organism and/or pathway lists. Please check your internet connection!","Warning",0,icon);
 			successful = false;
 			return;
 		}
+		
 		successful = true;
 		organismCombo.setModel(new DefaultComboBoxModel(getOrganismList("")));
-//		
 		pathwayLabel = new JLabel("Pathway:");
 		pathwayCombo = new JComboBox();
 		pathwayCombo.setPreferredSize(new Dimension(250,35));
-		
-		
 		pathwayCombo.setModel(new DefaultComboBoxModel(getPathwayList("")));
 		
 		ListenForButton lForButton = new ListenForButton();
@@ -144,25 +162,31 @@ public class OpenFromWeb extends JDialog{
 		loadButton.addActionListener(lForButton);
 		cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener(lForButton);
+		fetchButton = new JButton("Fetch available pathways");
+		fetchButton.addActionListener(lForButton);
+		fetchButton.setPreferredSize(new Dimension(200,32));
 		loadButton.setPreferredSize(new Dimension(100,30));
 		cancelButton.setPreferredSize(new Dimension(100,30));
-		gridConstraints.insets = new Insets(5,5,1,1);
+		gridConstraints.insets = new Insets(8,10,1,1);
 		addComp(webPanel,organismLabel,0,0,1,1,GridBagConstraints.EAST, GridBagConstraints.NONE);
-		gridConstraints.insets = new Insets(5,1,1,1);
+		gridConstraints.insets = new Insets(10,1,1,1);
 		addComp(webPanel,organismCombo,1,0,1,1,GridBagConstraints.WEST, GridBagConstraints.NONE);
-		addComp(webPanel,pathwayLabel,2,0,1,1,GridBagConstraints.EAST, GridBagConstraints.NONE);
-		gridConstraints.insets = new Insets(5,1,1,5);
-		addComp(webPanel,pathwayCombo,3,0,1,1,GridBagConstraints.WEST, GridBagConstraints.NONE);
+		gridConstraints.insets = new Insets(12,5,5,5);
+		addComp(webPanel,fetchButton,2,0,2,1,GridBagConstraints.CENTER, GridBagConstraints.NONE);
+		gridConstraints.insets = new Insets(8,1,1,1);
+		addComp(webPanel,pathwayLabel,4,0,1,1,GridBagConstraints.EAST, GridBagConstraints.NONE);
+		gridConstraints.insets = new Insets(10,1,1,10);
+		addComp(webPanel,pathwayCombo,5,0,1,1,GridBagConstraints.WEST, GridBagConstraints.NONE);
 		gridConstraints.insets = new Insets(1,5,1,1);
 		addComp(webPanel,searchOrgLabel,0,1,1,1,GridBagConstraints.EAST, GridBagConstraints.NONE);
 		gridConstraints.insets = new Insets(1,1,1,1);
 		addComp(webPanel,searchOrganism,1,1,1,1,GridBagConstraints.WEST, GridBagConstraints.NONE);
-		addComp(webPanel,searchPathLabel,2,1,1,1,GridBagConstraints.EAST, GridBagConstraints.NONE);
-		gridConstraints.insets = new Insets(1,1,1,5);
-		addComp(webPanel,searchPathway,3,1,1,1,GridBagConstraints.WEST, GridBagConstraints.NONE);
-		gridConstraints.insets = new Insets(5,1,5,1);
-		addComp(webPanel,loadButton,1,2,1,2,GridBagConstraints.EAST, GridBagConstraints.NONE);
-		addComp(webPanel,cancelButton,2,2,1,2,GridBagConstraints.WEST, GridBagConstraints.NONE);
+		addComp(webPanel,searchPathLabel,4,1,1,1,GridBagConstraints.EAST, GridBagConstraints.NONE);
+		gridConstraints.insets = new Insets(1,1,1,10);
+		addComp(webPanel,searchPathway,5,1,1,1,GridBagConstraints.WEST, GridBagConstraints.NONE);
+		gridConstraints.insets = new Insets(5,1,10,1);
+		addComp(webPanel,loadButton,2,2,1,1,GridBagConstraints.EAST, GridBagConstraints.NONE);
+		addComp(webPanel,cancelButton,3,2,1,1,GridBagConstraints.WEST, GridBagConstraints.NONE);
 		
 		searchOrganism.addKeyListener(new KeyListener() {
 			public void keyTyped(KeyEvent arg0) {
@@ -173,11 +197,21 @@ public class OpenFromWeb extends JDialog{
 				organismCombo.removeAllItems();
 				organismCombo.setModel(new DefaultComboBoxModel(getOrganismList(searchItem)));
 				organismCombo.setSelectedItem(organismDefault);
+				if (organismCombo.getModel().getSize() > 0){
+					
+					fetchButton.setEnabled(true);
+				}
+				else {
+					loadButton.setEnabled(false);
+					fetchButton.setEnabled(false);
+				}
 			}
 			
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_ENTER){
-					loadButton.doClick();
+					if (organismCombo.getModel().getSize() > 0){
+						fetchButton.doClick();
+					}
 				}
 			}
 		});
@@ -190,7 +224,13 @@ public class OpenFromWeb extends JDialog{
 				String searchItem = searchPathway.getText();
 				pathwayCombo.removeAllItems();
 				pathwayCombo.setModel(new DefaultComboBoxModel(getPathwayList(searchItem)));
-				pathwayCombo.setSelectedItem(pathwayDefault);
+				if (pathwayCombo.getModel().getSize() == 0){
+					loadButton.setEnabled(false);
+				}
+				else {
+					loadButton.setEnabled(true);
+				}
+				
 			}
 			
 			public void keyPressed(KeyEvent ke) {
@@ -200,15 +240,42 @@ public class OpenFromWeb extends JDialog{
 			}
 		});
 		
-		organismCombo.setSelectedItem(organismDefault);
-		pathwayCombo.setSelectedItem(pathwayDefault);
+		organismCombo.addKeyListener(new KeyListener() {
+			public void keyTyped(KeyEvent arg0) {				
+			}
+			
+			public void keyReleased(KeyEvent arg0) {
+			}
+			
+			public void keyPressed(KeyEvent ke) {
+				if (ke.getKeyCode() == KeyEvent.VK_ENTER){
+					fetchButton.doClick();
+				}
+			}
+		});
 		
+		organismCombo.addItemListener(new ItemListener() {
+			
+			public void itemStateChanged(ItemEvent arg0) {
+				searchPathway.setText("");
+				searchPathway.setEnabled(false);
+				pathwayCombo.setSelectedItem(pathwayDefault);
+				pathwayCombo.setEnabled(false);
+				fetchButton.setEnabled(true);
+			}
+		});
+		
+		organismCombo.setSelectedItem(organismMap.get("hsa"));
+		fetchButton.setEnabled(false);
+		pathwayCombo.setEnabled(true);
+		searchPathway.setEnabled(true);
+		pathwayCombo.setSelectedIndex(0);
 		containerPanel.add(webPanel, BorderLayout.CENTER);
 		webFrame.add(containerPanel);
 		webFrame.pack();
 		webFrame.setAlwaysOnTop(true);
 		webFrame.setVisible(true);
-	}
+	} // end of constructor 
 	
 	public void ShowFrame(){
 		webFrame.setVisible(true);
@@ -244,7 +311,6 @@ public class OpenFromWeb extends JDialog{
 		List<String> list = new ArrayList<String>();
         
         if (item.equals("")){
-        	list.add(organismDefault);
             for (Map.Entry entry : organismMap.entrySet()) {
                 list.add(entry.getValue().toString());
             }
@@ -258,6 +324,7 @@ public class OpenFromWeb extends JDialog{
         	}
         	
         }
+		
         String[] itemsList = new String[list.size()];
         for (int i = 0; i < list.size() ; i ++){
         	itemsList[i] = list.get(i).toString();
@@ -267,13 +334,31 @@ public class OpenFromWeb extends JDialog{
     }
 	
 	private void retrievePathwayList() throws Exception {
-        String url = "http://rest.kegg.jp/list/pathway";
+        String url = "http://rest.kegg.jp/list/pathway/hsa";
         String result = null;
         try {
             result = sendRestRequest(url).toString();
         } catch (Exception e) {
 //            JOptionPane.showMessageDialog(Interface.bodyFrame, "Error downloading pathways list from KEGG database.");
         }
+        StringTokenizer tokenizer = new StringTokenizer(result, "\n");
+        while (tokenizer.hasMoreTokens()) {
+            StringTokenizer lineTokenizer = new StringTokenizer(tokenizer.nextToken(), "\t");
+            if (lineTokenizer.hasMoreTokens())
+                pathwayMap.put(lineTokenizer.nextToken(), lineTokenizer.nextToken());
+        }
+    }
+	
+	private void retrievePathwayList(String orgCode) throws Exception {
+        String url = "http://rest.kegg.jp/list/pathway/" + orgCode;
+        String result = null;
+        
+        try {
+            result = sendRestRequest(url).toString();
+        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(Interface.bodyFrame, "Error downloading pathways list from KEGG database.");
+        }
+        pathwayMap.clear();
         StringTokenizer tokenizer = new StringTokenizer(result, "\n");
         while (tokenizer.hasMoreTokens()) {
             StringTokenizer lineTokenizer = new StringTokenizer(tokenizer.nextToken(), "\t");
@@ -331,14 +416,14 @@ public class OpenFromWeb extends JDialog{
 				webFrame.setVisible(false);
 			}
 			
-			if (be.getSource() == loadButton){
+			else if (be.getSource() == loadButton){
 				
 				if ((organismCombo.getSelectedIndex() == -1) | (pathwayCombo.getSelectedIndex() == -1)){
-					JOptionPane.showMessageDialog(Interface.bodyFrame, "Please select a pathway/organism from the list!");
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "Please select a pathway/organism from the list!","Warning",0,icon);
 					webFrame.setVisible(true);
 				}
 				else if (organismCombo.getSelectedItem().equals(organismDefault) | pathwayCombo.getSelectedItem().equals(pathwayDefault)){
-					JOptionPane.showMessageDialog(Interface.bodyFrame, "Please select a pathway/organism from the list!");
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "Please select a pathway/organism from the list!","Warning",0,icon);
 					webFrame.setVisible(true);
 				}
 
@@ -346,8 +431,7 @@ public class OpenFromWeb extends JDialog{
 
 				final File downloaded;
 				final String keggURL;
-				JLabel message; 
-				
+				JLabel message;
 				
 				final JDialog dialog = new JDialog(Interface.bodyFrame, "Loading data",ModalityType.APPLICATION_MODAL);
 				dialog.setUndecorated(true);
@@ -375,19 +459,18 @@ public class OpenFromWeb extends JDialog{
 				
 				String selectedPathway = pathwayCombo.getSelectedItem().toString();
 				String pathway = null, pathwayName = null;
-				
+				String removable = "path:" + organism;
 				for (Entry<String, String> onePathway : pathwayMap.entrySet()){
 					if (onePathway.getValue().equals(selectedPathway)){
-						pathway = onePathway.getKey().replace("path:map", "");
+						pathway = onePathway.getKey().replace(removable, "");
 						pathwayName = onePathway.getValue();
 						break;
 					}
 				}
-								
-				String fixPart = "http://www.kegg.jp/kegg-bin/download?entry=";
-				keggURL = fixPart + organism + pathway + "&format=kgml";
+				// http://rest.kegg.jp/get/hsa05130/kgml				
+				String fixPart = "http://rest.kegg.jp/get/";
+				keggURL = fixPart + organism + pathway + "/kgml";
 				final String fileName = organism + pathway + ".xml";
-				
 				String home = System.getProperty("user.home");
 				File directory = new File(home + "/PiilDownloads");
 				if (! directory.exists()){
@@ -398,26 +481,14 @@ public class OpenFromWeb extends JDialog{
 				try {
 					url = new URL(keggURL);
 				} catch (MalformedURLException e) {
-					JOptionPane.showMessageDialog(webFrame, "Error opening URL! Please check your internet conncetion.");
+					JOptionPane.showMessageDialog(webFrame, "Error opening URL! Please check your internet conncetion.","Warning",0,icon);
 				}
 				
-					SwingWorker<Void, Void> checkWorker = new SwingWorker<Void, Void>() {
-						protected Void doInBackground() {
-							try {
-								s = new Scanner(url.openStream());
-							} catch (IOException e) {
-								JOptionPane.showMessageDialog(webFrame, "Error reading downloaded file! Please try again.");
-							}	
-							return null;
-						}
-
-						protected void done() {
-							dialog.dispose();
-						}
-					};
-					checkWorker.execute();
-					message.setText(" Cheking the validity of the pathway ... ");
-					dialog.setVisible(true);
+				try {
+					s = new Scanner(url.openStream());
+				} catch (IOException e) {
+					JOptionPane.showMessageDialog(webFrame, "Error reading downloaded file! Please try again.","Warning",0,icon);
+				}	
 					
 				if (! s.hasNext()) {
 					JOptionPane.showMessageDialog(webFrame, "There is no KEGG entry for your chosen organism and pathway. Please choose a different one.","Mismatch",0,icon);
@@ -434,9 +505,9 @@ public class OpenFromWeb extends JDialog{
 								try {
 									writer = new PrintWriter(downloaded, "UTF-8");
 								} catch (FileNotFoundException e) {
-									JOptionPane.showMessageDialog(webFrame, "Error writing KGML file to hard drive! File not found!");
+									JOptionPane.showMessageDialog(webFrame, "Error writing KGML file to hard drive! File not found!","Error",0,icon);
 								} catch (UnsupportedEncodingException e) {
-									JOptionPane.showMessageDialog(webFrame, "Error writing KGML file to hard drive! Unsupported encoding exception!");
+									JOptionPane.showMessageDialog(webFrame, "Error writing KGML file to hard drive! Unsupported encoding exception!","Error",0,icon);
 								}
 								while (s.hasNextLine()) 
 									writer.println(s.nextLine());
@@ -485,7 +556,7 @@ public class OpenFromWeb extends JDialog{
 									return builder.parse(new InputSource(docString));						
 								}
 								catch (Exception e){
-									JOptionPane.showMessageDialog(Interface.bodyFrame, "Pleae check the input data. The format does not match with supported KGML file format.");
+									JOptionPane.showMessageDialog(Interface.bodyFrame, "Pleae check the input data. The format does not match with supported KGML file format.","Error",0,icon);
 								}
 								return null;
 							}
@@ -503,6 +574,40 @@ public class OpenFromWeb extends JDialog{
 				webFrame.setVisible(false);
 				}
 			} //  end of loadButton
+			
+			else if (be.getSource() == fetchButton){
+				String selectedOrganism = organismCombo.getSelectedItem().toString();
+
+				for (Entry<String, String> oneOrganism : organismMap.entrySet()){
+					if (oneOrganism.getValue().equals(selectedOrganism)){
+						chosenOrganismCode = oneOrganism.getKey();
+						break;
+					}
+				}
+				
+				SwingWorker<Void, Void> webLoader = new SwingWorker<Void, Void>() {
+					protected Void doInBackground() {
+						try {
+							retrievePathwayList(chosenOrganismCode);
+							searchPathway.setEnabled(true);
+							pathwayCombo.setEnabled(true);
+							loadButton.setEnabled(true);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						pathwayCombo.removeAllItems();
+						pathwayCombo.setModel(new DefaultComboBoxModel(getPathwayList("")));
+						return null;
+					}
+					protected void done() {
+						dialog.dispose();
+					}
+				};
+				webLoader.execute();
+				dialog.setVisible(true);
+				webFrame.setAlwaysOnTop(true);
+			}
 		}
 	}
 	

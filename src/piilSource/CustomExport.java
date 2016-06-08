@@ -36,6 +36,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -62,6 +63,7 @@ private static final long serialVersionUID = -6297626389977751810L;
 private static final String rootKey = CustomExport.class.getName();
 private static final String SAVE_AS_TYPE = rootKey +".SaveAsType";
 private static final String SAVE_AS_FILE = rootKey +".SaveAsFile";
+final ImageIcon logoIcon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
 
 /**
 * Set the Properties object to be used for storing/restoring
@@ -268,7 +270,7 @@ protected boolean writeFile(final Component component, final ExportFileType t) t
 		protected Void doInBackground() {
 				try {
 					t.exportToFile(f,component,Interface.bodyFrame,props,creator);
-					JOptionPane.showMessageDialog(Interface.bodyFrame, "Exported successfully!");
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "Exported successfully!","Done",0,logoIcon);
 					
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -301,7 +303,7 @@ public void setValue(Object value)
     }
     catch (Throwable x)
     {
-  	  JOptionPane.showMessageDialog(Interface.bodyFrame, "Error writing the graphics file!");
+  	  JOptionPane.showMessageDialog(Interface.bodyFrame, "Error writing the graphics file!","Error",0,icon);
 //       ErrorDialog.showErrorDialog(this,"Error writing graphics file",x);
        return;
     }
@@ -346,7 +348,7 @@ private class ButtonListener implements ActionListener
         if (currentType() != null) {
            JPanel panel = currentType().createOptionPanel(props);
            int rc = JOptionPane.showConfirmDialog(CustomExport.this,panel,"Options for "+currentType().getDescription(),
-                                         JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
+                                         JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE, icon);
            if (rc == JOptionPane.OK_OPTION) {
                currentType().applyChangedOptions(panel, props);
                File f1 = new File(file.getText());

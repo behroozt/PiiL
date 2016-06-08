@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -48,6 +49,7 @@ public class RightClickMenu {
 	TabsInfo pathway = ParseKGML.getTabInfo(activeTab);
 	Character type = pathway.getMetaType();
 	Point expansionSide;
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
 
 	public RightClickMenu(Component component, int x, int y, String nodeID, Point point) {
 		
@@ -134,7 +136,7 @@ public class RightClickMenu {
 				try {
 					java.awt.Desktop.getDesktop().browse(java.net.URI.create(URL));
 				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(Interface.bodyFrame, "Unable to browse GeneCards website!");
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "Unable to browse GeneCards website!","Error", 0, icon);
 				}
 			} // end of geneCards
 			
@@ -144,7 +146,7 @@ public class RightClickMenu {
 				try {
 					java.awt.Desktop.getDesktop().browse(java.net.URI.create(URL));
 				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(Interface.bodyFrame, "Unable to browse PubMed website!");
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "Unable to browse PubMed website!","Error", 0, icon);
 				}
 			} // end of pubmed
 			
@@ -154,13 +156,13 @@ public class RightClickMenu {
 				try {
 					java.awt.Desktop.getDesktop().browse(java.net.URI.create(URL));
 				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(Interface.bodyFrame, "Unable to browse Ensembl website!");				}
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "Unable to browse Ensembl website!","Error", 0, icon);				}
 			} // end of ensemble
 			
 			else if (mc.getSource() == geneRegion){
 				Collection<String> theRegion = pathway.getMapedGeneRegion().get(entryID);
 				if (theRegion == null){
-					JOptionPane.showMessageDialog(Interface.bodyFrame, "No genetic detail is available for this gene!");
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "No genetic detail is available for this gene!","Message", 0, icon);
 				}
 				else{
 					new GeneRegions(entryID);

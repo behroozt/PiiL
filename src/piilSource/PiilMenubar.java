@@ -79,7 +79,7 @@ public class PiilMenubar extends JMenuBar{
 
 	JMenuItem exitAction, loadAction, aboutAction, exportEntire, manualAction, exportVisible,
 	newAction, openAction, openWebAction, newSamplesInfo, reportAction, newMethylation,
-	duplicateAction, duplcateMetaData, newExpression, exportGenes, snapShot, citeUs, highlightGenes, checkUpdates;
+	duplicateAction, duplicateMetaData, newExpression, exportGenes, snapShot, citeUs, highlightGenes, checkUpdates;
 	JMenu menuFile, menuLoad, menuHelp, openKGML, menuTools, loadMethylation,
 	loadExpression, duplicatePathway;
 	static JMenuItem multiSampleView, singleSampleView, groupWiseView, manageColors;
@@ -137,10 +137,10 @@ public class PiilMenubar extends JMenuBar{
 		
 		// Tools menu items
 		menuTools = new JMenu("Tools");
-		duplicatePathway = new JMenu("Duplicate the current tab");
-		duplicateAction = new JMenuItem("Only the pathway");
-		duplcateMetaData = new JMenuItem("Pathway with its loaded metadata");
-		duplcateMetaData.setEnabled(false);
+		duplicateAction = new JMenuItem("Duplicate this pathway in a new tab");
+//		duplicateAction = new JMenuItem("Only the pathway");
+//		duplicateMetaData = new JMenuItem("Pathway with its loaded metadata");
+//		duplicateMetaData.setEnabled(false);
 //		snapShot = new JMenuItem("Take a snapshot of PiiL");
 		multiSampleView = new JMenuItem("Multiple-sample view for all/selected genes");
 		singleSampleView = new JMenuItem("Single-sample view for all/selected genes");
@@ -153,7 +153,7 @@ public class PiilMenubar extends JMenuBar{
 				        
 		// Help menu items
 		menuHelp = new JMenu("Help");
-		reportAction = new JMenuItem("Report a bug");
+		reportAction = new JMenuItem("Report a bug / Send feedback");
 		aboutAction = new JMenuItem("About");
 		manualAction = new JMenuItem("Manual");
 		citeUs = new JMenuItem("How to cite us");
@@ -176,9 +176,9 @@ public class PiilMenubar extends JMenuBar{
 		menuPathwayImage.add(exportEntire);
 		menuExport.add(menuPathwayImage);
 		menuExport.add(exportGenes);
-		menuTools.add(duplicatePathway);
-		duplicatePathway.add(duplicateAction);
-		duplicatePathway.add(duplcateMetaData);
+		menuTools.add(duplicateAction);
+//		duplicatePathway.add(duplicateAction);
+//		duplicatePathway.add(duplcateMetaData);
 //		menuTools.add(snapShot);
 		menuTools.add(multiSampleView);
 		menuTools.add(singleSampleView);
@@ -281,13 +281,14 @@ public class PiilMenubar extends JMenuBar{
             		dialog.setVisible(true);
         		}
         		if (!validFormat){
-        			JOptionPane.showMessageDialog(Interface.bodyFrame, "Unable to parse the input file. Make sure you are connected to the internet and/or check your KGML file format.");
+        			JOptionPane.showMessageDialog(Interface.bodyFrame, "Unable to parse the input file. Make sure you are connected to the internet and/or check your KGML file format.","Error",0,icon);
         		}
 			} // end of openAction
         			
 			/* exit item clicked */
 			else if (ice.getSource() == exitAction){
-				int dialogResult = JOptionPane.showConfirmDialog(Interface.bodyFrame, "Are you sure you want to exit?", "Action confirmation", 0);
+				int dialogResult = JOptionPane.showConfirmDialog(Interface.bodyFrame, "Are you sure to quit PiiL?", "Closing confirmation", 
+			            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, icon);
 				if (dialogResult == JOptionPane.YES_OPTION) {
 					System.exit(0);
 				}
@@ -321,9 +322,9 @@ public class PiilMenubar extends JMenuBar{
 					int currentTab = Interface.tabPane.getSelectedIndex();
 					final TabsInfo theTab = ParseKGML.getTabInfo(currentTab);
 					if (ParseKGML.getTabInfo(currentTab) == null) {
-						JOptionPane.showMessageDialog(Interface.bodyFrame,"You need to open a KGML file first!");
+						JOptionPane.showMessageDialog(Interface.bodyFrame,"You need to open a KGML file first!","Warning", 0, icon);
 					} else if (theTab.getMapedGeneLabel().size() > 0) {
-						JOptionPane.showMessageDialog(Interface.bodyFrame,"You can not load more than one methylation/expression file for each pathway!");
+						JOptionPane.showMessageDialog(Interface.bodyFrame,"You can not load more than one methylation/expression file for each pathway!","Warning", 0, icon);
 					} else {
 						fileSelector = new JFileChooser();
 						fileSelector.setFileFilter(null);
@@ -346,7 +347,7 @@ public class PiilMenubar extends JMenuBar{
 											validInput = theTab.getGenesList(file,input);
 										
 										} catch (IOException e) {
-											JOptionPane.showMessageDialog(Interface.bodyFrame,"Error loading the file!");
+											JOptionPane.showMessageDialog(Interface.bodyFrame,"Error loading the file!","Warning", 0, icon);
 										}
 										return null;
 									}
@@ -366,9 +367,9 @@ public class PiilMenubar extends JMenuBar{
 												int currentTab = Interface.tabPane.getSelectedIndex();
 												final TabsInfo thisTab = ParseKGML.getTabInfo(currentTab);
 												if (ParseKGML.getTabInfo(currentTab) == null) {
-													JOptionPane.showMessageDialog(Interface.bodyFrame,"You need to open a KGML file first!");
+													JOptionPane.showMessageDialog(Interface.bodyFrame,"You need to open a KGML file first!","Warning", 0, icon);
 												} else if (thisTab.getMapedGeneLabel().size() > 0) {
-													JOptionPane.showMessageDialog(Interface.bodyFrame,"You can not load more than one methylation/expression file for each pathway!");
+													JOptionPane.showMessageDialog(Interface.bodyFrame,"You can not load more than one methylation/expression file for each pathway!","Warning", 0, icon);
 												} else {
 													String fileName = reloadFile.getActionCommand();
 													thisTab.setMetaType('M');
@@ -384,7 +385,7 @@ public class PiilMenubar extends JMenuBar{
 																	thisTab.getGenesList(file,input);
 																
 																} catch (IOException e) {
-																	JOptionPane.showMessageDialog(Interface.bodyFrame,"Error loading the file!");
+																	JOptionPane.showMessageDialog(Interface.bodyFrame,"Error loading the file!","Error", 0, icon);
 																}
 																return null;
 															}
@@ -403,7 +404,7 @@ public class PiilMenubar extends JMenuBar{
 														loadSamplesInfo.setEnabled(true);
 
 													} else {
-														JOptionPane.showMessageDialog(Interface.bodyFrame,"The loaded list has no overlap with this pathway");
+														JOptionPane.showMessageDialog(Interface.bodyFrame,"The loaded list has no overlap with this pathway","Message", 0, icon);
 														thisTab.emptyStack();
 													}
 												}
@@ -421,7 +422,7 @@ public class PiilMenubar extends JMenuBar{
 					}
 				} // end of tabCount check
 				else { // there is open tab
-					JOptionPane.showMessageDialog(Interface.bodyFrame, "You need to open a KGML file first!");
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "You need to open a KGML file first!","Warning", 0, icon);
 				}
 				
 			} //  end of newMethylation
@@ -434,9 +435,9 @@ public class PiilMenubar extends JMenuBar{
 					int currentTab = Interface.tabPane.getSelectedIndex();
 					final TabsInfo theTab = ParseKGML.getTabInfo(currentTab);
 					if (ParseKGML.getTabInfo(currentTab) == null) {
-						JOptionPane.showMessageDialog(Interface.bodyFrame,"You need to open a KGML file first!");
+						JOptionPane.showMessageDialog(Interface.bodyFrame,"You need to open a KGML file first!","Warning", 0, icon);
 					} else if (theTab.getMapedGeneLabel().size() > 0) {
-						JOptionPane.showMessageDialog(Interface.bodyFrame,"You can not load more than one methylation/expression file for each pathway!");
+						JOptionPane.showMessageDialog(Interface.bodyFrame,"You can not load more than one methylation/expression file for each pathway!","Warning", 0, icon);
 					} else {
 						fileSelector = new JFileChooser();
 						fileSelector.setFileFilter(null);
@@ -458,7 +459,7 @@ public class PiilMenubar extends JMenuBar{
 									try {
 										validInput = theTab.getGenesList(file,input);
 									} catch (IOException e) {
-										JOptionPane.showMessageDialog(Interface.bodyFrame,"Error loading the file!");
+										JOptionPane.showMessageDialog(Interface.bodyFrame,"Error loading the file!","Error", 0, icon);
 									}
 									return null;
 								}
@@ -477,9 +478,9 @@ public class PiilMenubar extends JMenuBar{
 												int currentTab = Interface.tabPane.getSelectedIndex();
 												TabsInfo thisTab = ParseKGML.getTabInfo(currentTab);
 												if (ParseKGML.getTabInfo(currentTab) == null) {
-													JOptionPane.showMessageDialog(Interface.bodyFrame,"You need to open a KGML file first!");
+													JOptionPane.showMessageDialog(Interface.bodyFrame,"You need to open a KGML file first!","Warning", 0, icon);
 												} else if (thisTab.getMapedGeneLabel().size() > 0) {
-													JOptionPane.showMessageDialog(Interface.bodyFrame,"You can not load more than one methylation/expression file for each pathway!");
+													JOptionPane.showMessageDialog(Interface.bodyFrame,"You can not load more than one methylation/expression file for each pathway!","Warning", 0, icon);
 												} else {
 													String fileName = reloadFile.getActionCommand();
 													thisTab.setMetaType('E');
@@ -490,7 +491,7 @@ public class PiilMenubar extends JMenuBar{
 														thisTab.getGenesList(reloadableFile,input);
 													} catch (IOException e) {
 														e.printStackTrace();
-														JOptionPane.showMessageDialog(Interface.bodyFrame,"Error loading the file!");
+														JOptionPane.showMessageDialog(Interface.bodyFrame,"Error loading the file!","Error", 0, icon);
 													}
 													if (thisTab.getMapedGeneLabel().size() > 0) {
 														ControlPanel.enableControlPanel(0);
@@ -498,7 +499,7 @@ public class PiilMenubar extends JMenuBar{
 														loadSamplesInfo.setEnabled(true);
 
 													} else {
-														JOptionPane.showMessageDialog(Interface.bodyFrame,"The loaded list has no overlap with this pathway");
+														JOptionPane.showMessageDialog(Interface.bodyFrame,"The loaded list has no overlap with this pathway","Message", 0, icon);
 														thisTab.emptyStack();
 													}
 												}
@@ -515,7 +516,7 @@ public class PiilMenubar extends JMenuBar{
 					}
 				} // end of tabCount check
 				else { // there is no open tab
-					JOptionPane.showMessageDialog(Interface.bodyFrame, "You need to open a KGML file first!");
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "You need to open a KGML file first!","Warning", 0, icon);
 				}
 			} // end of newExpression
 			
@@ -587,9 +588,9 @@ public class PiilMenubar extends JMenuBar{
 					int currentTab = Interface.tabPane.getSelectedIndex();
 					TabsInfo pathway = ParseKGML.getTabInfo(currentTab);
 					if (ParseKGML.getTabInfo(currentTab) == null) {
-						JOptionPane.showMessageDialog(Interface.bodyFrame,"You need to open a KGML file first!");
+						JOptionPane.showMessageDialog(Interface.bodyFrame,"You need to open a KGML file first!","Warning", 0, icon);
 					} else if (pathway.getMapedGeneLabel().size() > 0) {
-						JOptionPane.showMessageDialog(Interface.bodyFrame,"You can not load more than one list for each pathway!");
+						JOptionPane.showMessageDialog(Interface.bodyFrame,"You can not load more than one list for each pathway!","Warning", 0, icon);
 					} else {
 						fileSelector = new JFileChooser();
 						fileSelector.setFileFilter(null);
@@ -602,13 +603,13 @@ public class PiilMenubar extends JMenuBar{
 								pathway.setMetaType('H');  // H for highlight genes
 								pathway.setMetaFilePath(file);
 							} catch (IOException e) {
-								JOptionPane.showMessageDialog(Interface.bodyFrame, "Error reading the file!");
+								JOptionPane.showMessageDialog(Interface.bodyFrame, "Error reading the file!","Error", 0, icon);
 							}
 						}
 					}
 				}
 				else { // no open tab
-					JOptionPane.showMessageDialog(Interface.bodyFrame,"You need to open a KGML file first!");
+					JOptionPane.showMessageDialog(Interface.bodyFrame,"You need to open a KGML file first!","Warning", 0, icon);
 				}
 			} // end of highlightGenes
 			
@@ -616,7 +617,7 @@ public class PiilMenubar extends JMenuBar{
 			else if (ice.getSource() == exportVisible){
 				int tabIndex = Interface.tabPane.getSelectedIndex();
 				if (ParseKGML.tabInfoTracker == null || ParseKGML.getTabInfo(tabIndex) == null){
-					JOptionPane.showMessageDialog(Interface.bodyFrame, "You need to open a KGML file first!");
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "You need to open a KGML file first!","Warning", 0, icon);
 				}
 				else {
 					export = new CustomExport();
@@ -631,7 +632,7 @@ public class PiilMenubar extends JMenuBar{
 			else if (ice.getSource() == exportEntire){
 				int index = Interface.tabPane.getSelectedIndex();
 				if (ParseKGML.tabInfoTracker == null || ParseKGML.getTabInfo(index) == null){
-					JOptionPane.showMessageDialog(Interface.bodyFrame, "You need to open a KGML file first!");
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "You need to open a KGML file first!","Warning", 0, icon);
 				}
 				else{
 					export = new CustomExport();
@@ -645,7 +646,7 @@ public class PiilMenubar extends JMenuBar{
 			/* export matched genes list item clicked */
 			else if (ice.getSource() == exportGenes){
 				if (ParseKGML.tabInfoTracker == null ){
-					JOptionPane.showMessageDialog(Interface.bodyFrame, "You need to open a KGML file first!");
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "You need to open a KGML file first!","Warning", 0, icon);
 				}
 				else {
 					boolean metaExists = false;
@@ -655,7 +656,7 @@ public class PiilMenubar extends JMenuBar{
 						}
 					}
 					if (!metaExists){
-						JOptionPane.showMessageDialog(Interface.bodyFrame, "At least one of the tabs must have loaded meta data!");
+						JOptionPane.showMessageDialog(Interface.bodyFrame, "At least one of the tabs must have loaded meta data!","Warning", 0, icon);
 					}
 					else {
 						JFileChooser saveFile = new JFileChooser();
@@ -699,7 +700,7 @@ public class PiilMenubar extends JMenuBar{
 								}
 							}
 					    	outFile.close();
-					    	JOptionPane.showMessageDialog(Interface.bodyFrame, "Information was successfully written to " + matchedGenesFile);
+					    	JOptionPane.showMessageDialog(Interface.bodyFrame, "Information was successfully written to " + matchedGenesFile,"Done", 0, icon);
 					    }
 					}
 				}
@@ -869,7 +870,7 @@ public class PiilMenubar extends JMenuBar{
 					}
 				}
 				if (!anyExpanded){
-					JOptionPane.showMessageDialog(Interface.bodyFrame, "All genes are already in single-sample view!");
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "All genes are already in single-sample view!","Warning", 0, icon);
 				}
 				else {
 					DrawShapes shapes = new DrawShapes(pathway.getGraphicsItems(), pathway.getEdges());
@@ -919,7 +920,7 @@ public class PiilMenubar extends JMenuBar{
 				try {
 					java.awt.Desktop.getDesktop().browse(java.net.URI.create(URL));
 				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(Interface.bodyFrame, "Problem opening the online documentation page!");
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "Problem opening the online documentation page!","Error", 0, icon);
 				}
 			} // end of manualAction
 			
@@ -929,7 +930,7 @@ public class PiilMenubar extends JMenuBar{
 				if (Desktop.isDesktopSupported() && (desktop = Desktop.getDesktop()).isSupported(Desktop.Action.MAIL)) {
 					URI mailto;
 					try {
-						mailto = new URI("mailto:behrooz.torabi@icm.uu.se?subject=Reporting%20a%20bug%20for%20PiiL");
+						mailto = new URI("mailto:piil.feedback@gmail.com?subject=Reporting%20a%20bug%20/%20Sending%20feedback");
 						try {
 							desktop.mail(mailto);
 						}
@@ -979,7 +980,7 @@ public class PiilMenubar extends JMenuBar{
 							}
 						
 						} catch (IOException e) {
-							JOptionPane.showMessageDialog(Interface.bodyFrame,"Error connecting to PiiL's github!");
+							JOptionPane.showMessageDialog(Interface.bodyFrame,"Error connecting to PiiL's github!","Error", 0, icon);
 						}
 						return null;
 					}
@@ -997,7 +998,7 @@ public class PiilMenubar extends JMenuBar{
 						try {
 							java.awt.Desktop.getDesktop().browse(java.net.URI.create(URL));
 						} catch (IOException e1) {
-							JOptionPane.showMessageDialog(Interface.bodyFrame, "Problem opening the online documentation page!");
+							JOptionPane.showMessageDialog(Interface.bodyFrame, "Problem opening the online documentation page!","Error", 0, icon);
 						}
 					}
 				}

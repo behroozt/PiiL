@@ -40,6 +40,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -69,6 +70,7 @@ public class GeneRegions extends JFrame{
 	float[] ranges;
 	Color bgColor;
 	GridBagConstraints gridConstraints;
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
 	
 	
 	public GeneRegions(String entryID){

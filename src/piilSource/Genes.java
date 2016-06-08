@@ -109,7 +109,7 @@ public class Genes {
 				geneNode.setBorder(borderStyle);
 			} else {
 				selected = true;
-				geneNode.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, Color.ORANGE, Color.YELLOW));
+				geneNode.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, Color.MAGENTA, Color.YELLOW));
 			}
 		}
 	}
@@ -235,8 +235,8 @@ public class Genes {
 			bgColor = getColor(parseDouble);
 		}
 		geneNode.setBackground(bgColor);
-		geneNode.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.MAGENTA));
-		borderStyle = BorderFactory.createMatteBorder(2, 2, 2, 2, Color.MAGENTA);
+		geneNode.setBorder(BorderFactory.createMatteBorder(2,2,2,2, new Color(0,170,0)));
+		borderStyle = BorderFactory.createMatteBorder(2,2,2,2,new Color(0,170,0));
 	}
 	
 	private void setBgColor(double value, List<List<String>> values) {
@@ -326,19 +326,25 @@ public class Genes {
 		}
 	}
 	
-	public static Color paintLabel(double d){
+	public static Color paintLabel(double val){
+		
 		double r = 0,b = 0,g = 0;
-		double value = d;
-		if (value == 0.5){
+		
+		double whiteValue = ((ranges[1] - ranges[0]) / 20) + (ranges[0]/10);
+		
+		double difference = 255 / (whiteValue - (ranges[0]/10));
+		
+		if (val == whiteValue){
 			r = 255; b=255; g = 255;
 		}
-		else if (value < 0.5){
-			b= 255; r = 255 - Math.round(510 * (0.5 - value)); g = 255 - Math.round(510 * (0.5 - value));
+		else if (val < whiteValue){
+			b= 255; r = 255 - Math.round(difference * (whiteValue - val)); g = 255 - Math.round(difference * (whiteValue - val));
 		}
-		else if (value > 0.5){ 
-			r = 255; b = 255 - Math.round(510 * (value - 0.5)); g = 255 - Math.round(510 * (value - 0.5));
+		else if (val > whiteValue){ 
+			r = 255; b = 255 - Math.round(difference * (val - whiteValue)); g = 255 - Math.round(difference * (val - whiteValue));
 		}
-		Color myColor = new Color((int) (r),(int) (g), (int) (b));
+		
+		Color myColor = new Color(r < 0 ? 0 : (int) (r),g < 0 ? 0 : (int) (g), b < 0 ? 0 : (int) (b));
 		
 		return myColor;
 	}
@@ -349,6 +355,7 @@ public class Genes {
 		double theMean = expressionValues.getMean();
 		double r = 0,b = 0,g = 0;
 		double logDifference = Math.log10(value) - Math.log10(theMean);
+		double foldDifference = 255 / ranges[2];
 		
 		if (logDifference == Double.NEGATIVE_INFINITY || logDifference == Double.POSITIVE_INFINITY){
 			logDifference = 0;
@@ -359,13 +366,14 @@ public class Genes {
 		}
 		else if (logDifference < 0) {
 			
-			b= 255; r = 255 - Math.round(logDifference * -63.75); g = 255 - Math.round(logDifference * -63.75);
+			b= 255; r = 255 - Math.round(logDifference * -foldDifference); g = 255 - Math.round(logDifference * -foldDifference);
 		}
 		else if (logDifference > 0){
-			r = 255; b = 255 - Math.round(logDifference * 63.75); g = 255 - Math.round(logDifference * 63.75);
+			r = 255; b = 255 - Math.round(logDifference * foldDifference); g = 255 - Math.round(logDifference * foldDifference);
 		}
 		
-		Color expressionColor = new Color((int)r, (int) g, (int) b);
+		Color expressionColor = new Color(r < 0 ? 0 : (int) (r),g < 0 ? 0 : (int) (g), b < 0 ? 0 : (int) (b));
+		
 		return expressionColor;
 	}
 
@@ -385,14 +393,11 @@ public class Genes {
 		HashMap<String, Genes> matchedGenes = thisTab.getMapedGeneLabel();
 		for (Entry<String, Genes> oneNode : matchedGenes.entrySet()){
 			JLabel geneLabel = oneNode.getValue().getLabel();
-			geneLabel.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
-			geneLabel.setForeground(Color.red);
-			geneLabel.setBackground(Color.white);
+			geneLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+			geneLabel.setForeground(Color.BLACK);
+			geneLabel.setBackground(Color.ORANGE);
 		}
-		
-		
 	}
-
 }
 
 class Statistics {

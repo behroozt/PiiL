@@ -22,6 +22,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -48,6 +49,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.Timer;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -548,7 +550,7 @@ public class ControlPanel extends JPanel{
 
 						JLabel oneNode = target.getValue().getLabel();
 						if (geneName.equals(oneNode.getText())) {
-
+							
 							bounds = oneNode.getBounds();
 							break;
 						}
