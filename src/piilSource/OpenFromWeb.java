@@ -422,7 +422,7 @@ public class OpenFromWeb extends JDialog{
 					JOptionPane.showMessageDialog(Interface.bodyFrame, "Please select a pathway/organism from the list!","Warning",0,icon);
 					webFrame.setVisible(true);
 				}
-				else if (organismCombo.getSelectedItem().equals(organismDefault) | pathwayCombo.getSelectedItem().equals(pathwayDefault)){
+				else if (pathwayCombo.getSelectedItem().equals(pathwayDefault)){
 					JOptionPane.showMessageDialog(Interface.bodyFrame, "Please select a pathway/organism from the list!","Warning",0,icon);
 					webFrame.setVisible(true);
 				}

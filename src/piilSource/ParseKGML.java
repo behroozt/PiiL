@@ -77,6 +77,7 @@ public class ParseKGML {
 		loadedFile = file;
 		loadSource = source;
 		parse(xmlDoc);
+
 	}
 
 	public static TabsInfo getTabInfo(int selectedTab){
@@ -159,7 +160,7 @@ public class ParseKGML {
 		    final String nodeID = oneNode.getKey();
 							
 			nodeType = value.getNodeType();
-			
+
 			if (nodeType.equals("group")){
 				continue;
 			}
@@ -192,7 +193,13 @@ public class ParseKGML {
 			}
 			if (nodeType.equals("ortholog")){
 				theLabel.setOpaque(true);
-				theLabel.setBackground(Color.decode(value.getNodeBgColor()));
+				if (value.getNodeBgColor().equals("none")){
+					theLabel.setBackground(Color.WHITE);
+				}
+				else {
+					theLabel.setBackground(Color.decode(value.getNodeBgColor()));
+				}
+				
 				theLabel.setBounds(labelX, labelY, nodeWidth, nodeHeight);
 				theLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 				theLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 9));
