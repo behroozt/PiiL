@@ -71,7 +71,7 @@ public class GeneRegions extends JFrame{
 	Color bgColor;
 	GridBagConstraints gridConstraints;
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
-	
+	int NAcounter = 0;
 	
 	public GeneRegions(String entryID){
 		
@@ -122,6 +122,8 @@ public class GeneRegions extends JFrame{
 		for (int i =0; i < numberOfRegions; i ++){
 			DecimalFormat df=new DecimalFormat("0.000");
 			if (!isNumeric(values.get(i).get(pointer))){
+				
+				NAcounter ++;
 				continue;
 			}
 			Double betaValue = Double.parseDouble(values.get(i).get(pointer));
@@ -176,7 +178,7 @@ public class GeneRegions extends JFrame{
 		magnifyFrame.setTitle("Genomic details of " + geneName);
 		
 		labelPanel.add(geneLabel);
-		for (int i = 0 ; i < numberOfRegions ; i ++) {
+		for (int i = 0 ; i < (numberOfRegions - NAcounter); i ++) {
 			JLabel region = allLabels.get(i);
 			region.setPreferredSize(new Dimension(300,20));
 			addComp(regionsPanel, region, 0, i, 1, 1,GridBagConstraints.NORTH, GridBagConstraints.NONE);
