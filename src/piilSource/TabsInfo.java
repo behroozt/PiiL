@@ -46,6 +46,7 @@ public class TabsInfo {
 	Integer pointer;
 	HashMap<String, Genes> mapedGeneLabel;
 	HashMap<String,List<List<String>>> mapedGeneData;
+	HashMap<String,List<Integer>> mappedGeneSelectedSites;
 	HashMap<String, List<String>> samplesInfo;
 	LinkedHashMap<String, List<String>> idsInGroups;
 	HashMap<String, List<String>> idsInBaseGroup;
@@ -77,6 +78,7 @@ public class TabsInfo {
 	String dataSplitor;
 	int baseGroupIndex;
 	float[] ranges;
+	float sdThreshold;
 	
 	public TabsInfo(String tabCaption, File path, Character source, String pathway) {
 		pointer = 0;
@@ -100,6 +102,7 @@ public class TabsInfo {
 		mapedGeneData = new HashMap<String, List<List<String>>>();
 		mapedGeneLabel = new HashMap<String, Genes>();
 		mapedGeneRegion = new HashMap<String, Collection<String>>();
+		mappedGeneSelectedSites = new HashMap<String, List<Integer>>();
 		samplesInfo = new HashMap<String, List<String>>();
 		samplesIds = new ArrayList<String>();
 		viewMode = 0;
@@ -107,7 +110,34 @@ public class TabsInfo {
 		groupingIndex = 0;
 		baseGroupIndex = -1;
 		ranges = new float[] {0,10,4}; // {methylationLow, methylationHigh, expressionFold}
+		sdThreshold = 0;
 		
+	}
+	
+	public void setSelectedSites(HashMap < String ,List<Integer>> selection){
+		
+		mappedGeneSelectedSites = selection;
+	}
+	
+	public List<Integer> getSelectedSites(String gene){
+		if (mappedGeneSelectedSites.get(gene) == null){
+			return null;
+		}
+		else {
+			return mappedGeneSelectedSites.get(gene);
+		}
+	}
+	
+	public HashMap<String, List<Integer>> getAllSites(){
+		return mappedGeneSelectedSites;
+	}
+	
+	public void setSDThreshold(float threshold){
+		sdThreshold = threshold;
+	}
+	
+	public float getSDThreshold(){
+		return sdThreshold;
 	}
 	
 	public void setRanges(float low, float high, float fold){
@@ -507,6 +537,7 @@ public class TabsInfo {
 		String[] geneInfoParts = geneInfo.split("_");
 		String geneName = geneInfoParts[0];
 		
+		
 		//check if GeneName_Region pattern exists
 		
 		for (Entry<String, Genes> oneNode : genes.entrySet()){
@@ -515,13 +546,18 @@ public class TabsInfo {
 				entryID = oneNode.getKey();
 				mapedGeneLabel.put(oneNode.getKey(), oneNode.getValue());
 		    	if (geneInfoParts.length > 1){
+		    		String description = "";
+		    		for (int i = 1; i < geneInfoParts.length ; i++){
+		    			description += geneInfoParts[i] + "_";
+		    		}
+		    		description = description.substring(0, description.length()-1);
 					// ****** add this to mapedGeneRegion
 		    		if (mapedGeneRegion.get(entryID) == null){
 		    			mapedGeneRegion.put(entryID, new ArrayList<String>());
-		    			mapedGeneRegion.get(entryID).add(new String(geneInfoParts[1]));
+		    			mapedGeneRegion.get(entryID).add(new String(description));
 		    		}
 		    		else if (mapedGeneRegion.containsKey(entryID)){
-		    			mapedGeneRegion.get(entryID).add(new String(geneInfoParts[1]));
+		    			mapedGeneRegion.get(entryID).add(new String(description));
 		    		}
 				}
 		    	
@@ -700,6 +736,16 @@ public class TabsInfo {
 //			setMapedGeneData(null);
 		}
 		
+	}
+
+	public void setSitesForGene(String nodeID, List<Integer> selected) {
+		
+		mappedGeneSelectedSites.put(nodeID, selected);
+		
+	}
+	
+	public List<Integer> getSitesForGene(String geneID){
+		return mappedGeneSelectedSites.get(geneID);
 	}
 
 }

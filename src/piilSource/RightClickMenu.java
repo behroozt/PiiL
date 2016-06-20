@@ -42,24 +42,26 @@ public class RightClickMenu {
 	
 
 	JPopupMenu menu;
-	JMenuItem histogram,rawData,  geneRegion, geneCards, pubmed, ensembl, multipleSamples;
+	JMenuItem histogram,rawData,  cpgView, geneCards, pubmed, ensembl, multipleSamples;
 	JMenu geneInfo;
 	String entryID;
-	int activeTab = Interface.tabPane.getSelectedIndex();
-	TabsInfo pathway = ParseKGML.getTabInfo(activeTab);
-	Character type = pathway.getMetaType();
+	int activeTab;
+	TabsInfo pathway;
+	Character type;
 	Point expansionSide;
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
 
 	public RightClickMenu(Component component, int x, int y, String nodeID, Point point) {
-		
+		activeTab = Interface.tabPane.getSelectedIndex();
+		pathway = ParseKGML.getTabInfo(activeTab);
+		type = pathway.getMetaType();
 		entryID = nodeID;
 		expansionSide = new Point(point);
 		menu = new JPopupMenu();
 		geneInfo = new JMenu("Check this gene on ...");
 		histogram = new JMenuItem("Histogram for all samples");
 		rawData = new JMenuItem("Barplot for raw data");
-		geneRegion = new JMenuItem("Genomic region details");
+		cpgView = new JMenuItem("Show CpG site(s) details");
 		multipleSamples = new JMenuItem("Show multiple-sample view");
 		geneCards = new JMenuItem("GeneCards");
 		pubmed = new JMenuItem("Pubmed");
@@ -68,7 +70,7 @@ public class RightClickMenu {
 		menu.add(geneInfo);
 		menu.add(histogram);
 		menu.add(rawData);
-		menu.add(geneRegion);
+		menu.add(cpgView);
 		menu.add(multipleSamples);
 		geneInfo.add(geneCards);
 		geneInfo.add(pubmed);
@@ -81,7 +83,7 @@ public class RightClickMenu {
 			if (gene == null) {
 				histogram.setEnabled(false);
 				rawData.setEnabled(false);
-				geneRegion.setEnabled(false);
+				cpgView.setEnabled(false);
 				multipleSamples.setEnabled(false);
 			}
 			else {
@@ -95,14 +97,14 @@ public class RightClickMenu {
 			if (pathway.getMapedGeneData().size() == 0){
 				histogram.setEnabled(false);
 				rawData.setEnabled(false);
-				geneRegion.setEnabled(false);
+				cpgView.setEnabled(false);
 				multipleSamples.setEnabled(false);
 			}
 		}
 		else {
 			histogram.setEnabled(false);
 			rawData.setEnabled(false);
-			geneRegion.setEnabled(false);
+			cpgView.setEnabled(false);
 			multipleSamples.setEnabled(false);
 		}
 		
@@ -110,7 +112,7 @@ public class RightClickMenu {
 		geneCards.addActionListener(lForClick);
 		histogram.addActionListener(lForClick);
 		rawData.addActionListener(lForClick);
-		geneRegion.addActionListener(lForClick);
+		cpgView.addActionListener(lForClick);
 		pubmed.addActionListener(lForClick);
 		ensembl.addActionListener(lForClick);
 		multipleSamples.addActionListener(lForClick);
@@ -159,15 +161,15 @@ public class RightClickMenu {
 					JOptionPane.showMessageDialog(Interface.bodyFrame, "Unable to browse Ensembl website!","Error", 0, icon);				}
 			} // end of ensemble
 			
-			else if (mc.getSource() == geneRegion){
+			else if (mc.getSource() == cpgView){
 				Collection<String> theRegion = pathway.getMapedGeneRegion().get(entryID);
 				if (theRegion == null){
-					JOptionPane.showMessageDialog(Interface.bodyFrame, "No genetic detail is available for this gene!","Message", 0, icon);
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "No CpG site detail is available for this gene!","Message", 0, icon);
 				}
 				else{
-					new GeneRegions(entryID);
+					new GeneRegions(entryID,activeTab,pathway);
 				}
-			} // end of geneRegion
+			} // end of cpgView
 			
 			else if (mc.getSource() == multipleSamples){
 				

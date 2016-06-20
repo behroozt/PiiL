@@ -141,43 +141,145 @@ public class Genes {
 	public void setTag(boolean match){
 		matchTag = match;
 	}
+	
+	public static void setSignificantSites(){
+		
+		int activeTab = Interface.tabPane.getSelectedIndex();
+		TabsInfo thisTab = ParseKGML.getTabInfo(activeTab);
+		List<List<String>> data;
+		
+		HashMap<String, List<Integer>> selection = new HashMap<String, List<Integer>>();
+		float threshold = thisTab.getSDThreshold();
+		HashMap<String, Genes> matchedGenes = thisTab.getMapedGeneLabel();
+		
+		for (Entry<String, Genes> oneNode : matchedGenes.entrySet()){
+			List<Integer> selectedSites = new ArrayList<Integer>();
+			data = thisTab.getDataForGene(oneNode.getKey());
+			int multiRegion = data.size();
+			selectedSites.clear();
+			for (int i = 0; i < multiRegion; i++){
+				Statistics calculator = new Statistics(data.get(i));
+				
+				if (!calculator.checkMissingValues()){
+					if (calculator.getStdDev() > threshold){
+						
+						selectedSites.add(i);
+					}
+				}
+			}
+			if (selectedSites.size() == 0){
+				selectedSites.add(-1);
+			}
+			
+			selection.put(oneNode.getKey(), selectedSites);
+		}
+		
+		thisTab.setSelectedSites(selection);
+		
+	}
+	
 
 	public static void changeBgColor(int newPointer,Character type) {
-		
 		int activeTab = Interface.tabPane.getSelectedIndex();
 		TabsInfo thisTab = ParseKGML.getTabInfo(activeTab);
 		ranges = thisTab.getRanges();
 		HashMap<String, Genes> matchedGenes = thisTab.getMapedGeneLabel();
-		String value;
+		String value = null;
 		List<List<String>> data;
+		float threshold = thisTab.getSDThreshold();
 		
 		if (type.equals('M')){
+			
+			double sum = 0, average = 0;
+			int validSites = 0; int multiRegion = 0; 
+			
 			for (Entry<String, Genes> oneNode : matchedGenes.entrySet()){
+				
 				data = thisTab.getDataForGene(oneNode.getKey());
-				int multiRegion = data.size();
+				multiRegion = data.size();
+				
 				if (multiRegion == 1){
+					
 					value = data.get(0).get(newPointer);
-					if (!isNumeric(value)){
-						oneNode.getValue().setBgColor(-1);
+					if (thisTab.getSelectedSites(oneNode.getKey()) == null){
+						
+						if (!isNumeric(value)){
+							oneNode.getValue().setBgColor(-1);
+						}
+						else {
+							oneNode.getValue().setBgColor(Double.parseDouble(value));
+						}
 					}
 					else {
-						oneNode.getValue().setBgColor(Double.parseDouble(value));
+						
+						if (thisTab.getSelectedSites(oneNode.getKey()).get(0) == -1){
+							oneNode.getValue().setBgColor(-1);
+						}
+						else {
+							oneNode.getValue().setBgColor(Double.parseDouble(value));
+						}
 					}
 					
 				}
-				else { // there are multipel regions
-					double sum = 0, average = 0;
-					for (int i = 0; i < multiRegion; i++){
-						String val = data.get(i).get(newPointer);
-						
-						if (!isNumeric(val)){
-							continue;
+				else { // there are multiple regions
+					
+					sum = 0 ; average = 0; validSites = 0;
+					
+					if (threshold == 0){
+						if ( thisTab.getSelectedSites(oneNode.getKey()) != null ){
+							if (thisTab.getSelectedSites(oneNode.getKey()).get(0) == -1){
+								// none of the sites have passed SD filtering
+								validSites = 0;
+							}
+							else {
+								for (int i : thisTab.getSelectedSites(oneNode.getKey())){
+									String val = data.get(i).get(newPointer);
+									
+									if (!isNumeric(val)){
+										continue;
+									}
+									sum += Double.parseDouble(val);
+									validSites ++;
+								}
+							}
 						}
-						sum += Double.parseDouble(val);
+						else {
+							for (int i = 0; i < multiRegion; i++){
+								String val = data.get(i).get(newPointer);
+								
+								if (!isNumeric(val)){
+									continue;
+								}
+								sum += Double.parseDouble(val);
+								validSites ++;
+							}
+						}
 					}
 					
-					average = sum / multiRegion;
-					if (Double.isNaN(average)){
+					else if ( (threshold > 0)){  // there is an SD filter
+						
+						if (thisTab.getSelectedSites(oneNode.getKey()).get(0) == -1){
+							// none of the sites have passed SD filtering
+							validSites = 0;
+						}
+						else {
+							for (int i : thisTab.getSelectedSites(oneNode.getKey())){
+								String val = data.get(i).get(newPointer);
+								
+								if (!isNumeric(val)){
+									continue;
+								}
+								sum += Double.parseDouble(val);
+								validSites ++;
+							}
+						}
+						
+					}
+					
+					if (validSites == 0) validSites = 1;
+					average = sum / validSites;
+					
+					if (Double.isNaN(average) | (average == 0)){
 						oneNode.getValue().setSpecialBgColor(-1);
 					}
 					else {
@@ -214,7 +316,7 @@ public class Genes {
 	private void setBgColor(double parseDouble) {
 		Color bgColor = null;
 		if (parseDouble == -1){
-			bgColor = Color.BLACK;
+			bgColor = Color.DARK_GRAY;
 			geneNode.setForeground(Color.WHITE);
 		}
 		else {
@@ -228,7 +330,7 @@ public class Genes {
 	private void setSpecialBgColor(double parseDouble) {
 		Color bgColor = null;
 		if (parseDouble == -1){
-			bgColor = Color.BLACK;
+			bgColor = Color.DARK_GRAY;
 			geneNode.setForeground(Color.WHITE);
 		}
 		else {
@@ -328,6 +430,9 @@ public class Genes {
 	
 	public static Color paintLabel(double val){
 		
+		if (val == 0){
+			return Color.DARK_GRAY;
+		}
 		double r = 0,b = 0,g = 0;
 		
 		double whiteValue = ((ranges[1] - ranges[0]) / 20) + (ranges[0]/10);
@@ -404,6 +509,7 @@ class Statistics {
     List<String> data;
     int size; 
     Object[] measurements;
+    boolean missingvalues = false;
 
     public Statistics(List<String> list) 
     {
@@ -413,18 +519,47 @@ class Statistics {
 
     }   
 
-    double getMean()
+    boolean checkMissingValues() {
+    	int naCounter = 0;
+    	
+    	for(String a : data){
+        	if (!isNumeric(a)){
+        		naCounter++;
+        		continue;
+        	}
+        	if (Double.isNaN(Double.parseDouble(a))){
+        		naCounter ++;
+        		continue;
+        	}
+        	
+        }
+    	
+		if (naCounter >= (size/3)){
+			return true;
+		}
+		return false;
+	}
+
+	double getMean()
     {
         double sum = 0.0;
+        int naCounter = 0;
+        
         for(String a : data){
         	if (!isNumeric(a)){
+        		naCounter++;
+        		continue;
+        	}
+        	if (Double.isNaN(Double.parseDouble(a))){
+        		naCounter ++;
         		continue;
         	}
         	else {
         		sum += Double.parseDouble(a);
         	}
         }
-        return sum/size;
+        
+        return sum/(size - naCounter);
     }
 
     private boolean isNumeric(String str) {
@@ -441,8 +576,14 @@ class Statistics {
     {
         double mean = getMean();
         double temp = 0;
+        int naCounter = 0;
         for(String a :data){
+        	if (!isNumeric(a)){
+        		naCounter ++;
+        		continue;
+        	}
         	if (Double.isNaN(Double.parseDouble(a))){
+        		naCounter ++;
         		continue;
         	}
         	else {
@@ -450,7 +591,7 @@ class Statistics {
         	}
         }
             
-        return temp/size;
+        return temp/(size - naCounter);
     }
 
     double getStdDev()

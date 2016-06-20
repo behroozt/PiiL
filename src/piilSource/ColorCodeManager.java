@@ -49,7 +49,6 @@ import javax.swing.event.ChangeListener;
 
 public class ColorCodeManager extends JDialog{
 	
-	JFrame colorFrame;
 	JPanel colorPanel, containerPanel;
 	RangeSlider ranger;
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));

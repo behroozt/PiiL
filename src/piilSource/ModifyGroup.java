@@ -172,10 +172,16 @@ public class ModifyGroup extends JOptionPane{
 		Object[] hints = pathway.getIDsInGroups().keySet().toArray();
 		HashMap<String, List<String>> groups = pathway.getIDsInGroups();
 		Character type = pathway.getMetaType();
+		double sum;
+		double caseAverage;
+		int valid;
 
 		for (Entry<String, Genes> gene : pathway.getMapedGeneLabel().entrySet()) {
 			JLabel[] extraLabels = new JLabel[chosenGroups.size()];
 			Genes geneNode = gene.getValue();
+			if (geneNode.getLabel().getBackground() == Color.DARK_GRAY){
+				continue;
+			}
 			final String nodeID = gene.getKey();
 			JLabel geneLabel = geneNode.getLabel();
 			geneLabel.setVisible(false);
@@ -198,6 +204,7 @@ public class ModifyGroup extends JOptionPane{
 			int height = (int) label.getBounds().getHeight();
 			Color bgColor = Color.DARK_GRAY;
 			List<List<String>> data = pathway.getDataForGene(nodeID);
+			
 			if (baseCombo.isEnabled()){
 				String baseGrp = baseCombo.getSelectedItem().toString();
 				int index = chosenGroups.indexOf(baseGrp);
@@ -223,21 +230,44 @@ public class ModifyGroup extends JOptionPane{
 				newOne.setToolTipText(hint);
 				Interface.panelHolder.get(activeTab).add(newOne, BorderLayout.CENTER);
 				extraLabels[i] = newOne;
-				double sum = 0;
-				
+				sum = 0;
+				caseAverage = 0;
+				valid = 0 ;
 				for (int j = 0; j < groups.get(chosenGroups.get(i)).size(); j++) {
 					String sampleID = groups.get(chosenGroups.get(i)).get(j);
 					int sampleIndex = pathway.getSamplesIDs().indexOf(sampleID);
-
-					for (int k = 0; k < data.size(); k++) {
-						if (!isNumeric(data.get(k).get(sampleIndex))){
-							continue;
+					
+					if ((pathway.getSDThreshold() > 0) | (pathway.getSelectedSites(gene.getKey()) != null)){
+						List<Integer> significantSites = pathway.getSelectedSites(gene.getKey());
+						
+						for (int item : significantSites){
+							if (item != -1){
+								if (!isNumeric(data.get(item).get(sampleIndex))){
+									continue;
+								}
+								sum += Double.parseDouble(data.get(item).get(sampleIndex));
+								valid ++;
+							}
+							
 						}
-						sum += Double.parseDouble(data.get(k).get(sampleIndex));
+						caseAverage = sum / valid ;
+						
 					}
+					else {
+						
+						for (int k = 0; k < data.size(); k++) {
+							if (!isNumeric(data.get(k).get(sampleIndex))){
+								continue;
+							}
+							sum += Double.parseDouble(data.get(k).get(sampleIndex));
+							valid ++;
+						}
+						caseAverage = sum / valid;
+					}
+					
 				}
 
-				double caseAverage = sum / (data.size() * groups.get(chosenGroups.get(i)).size());
+				
 				
 				if (type.equals('M')) {
 					bgColor = Genes.paintLabel(caseAverage);
@@ -268,12 +298,16 @@ public class ModifyGroup extends JOptionPane{
 						} else {
 							newOne.setForeground(Color.BLACK);
 						}
-					} else if (bgColor.getBlue() == 255) {
+					} 
+					else if (bgColor.getBlue() == 255) {
 						if (bgColor.getGreen() < 105) {
 							newOne.setForeground(Color.WHITE);
 						} else {
 							newOne.setForeground(Color.BLACK);
 						}
+					}
+					else if (bgColor == Color.DARK_GRAY){
+						newOne.setForeground(Color.WHITE);
 					}
 					newOne.addMouseListener(new MouseListener() {
 

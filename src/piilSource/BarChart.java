@@ -30,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -59,10 +60,15 @@ public class BarChart extends ApplicationFrame {
 	JPanel buttonsPanel;
 	JButton exportButton, closeButton;
 	String metaLabel;
+	String geneName;
+	int activeTab = Interface.tabPane.getSelectedIndex();
+	TabsInfo pathway = ParseKGML.getTabInfo(activeTab);
+	List<Integer> significantSites;
 	
     public BarChart(final String title, List<List<String>> list, Character meta) {
-
+    	
         super(title);
+        geneName = title;
         metaLabel = (meta.equals('M')) ? "beta" : "expression";
         final CategoryDataset dataset = createDataset(list,metaLabel);
         final JFreeChart chart = createChart(title,dataset,metaLabel);
@@ -129,23 +135,84 @@ public class BarChart extends ApplicationFrame {
 //        	float value = Float.parseFloat(list.get(0).get(i));
 //        	dataset.addValue(value, series1, categories.get(i));
 //        }
+        String geneCode = null;
         
-        for (int i = 0; i < list.get(0).size() ; i ++){
-        	float sum = 0;
-        	for (int j = 0; j < list.size() ; j ++){
-        		if (!isNumeric(list.get(j).get(i))){
-					continue;
-				}
-        		sum += Float.parseFloat(list.get(j).get(i));
+        for (Entry<String, Genes> item : pathway.getMapedGeneLabel().entrySet()){
+        	if (item.getValue().getText().equals(geneName)){
+        		geneCode = item.getKey();
+        		continue;
         	}
-        	double value = sum / list.size();
-        	dataset.addValue(value, series1, categories.get(i));
         }
-
+        
+        float sum;
+    	int invalid = 0;
+    	double value;
+        
+        if (metaLabel.equals("expression")){ // plot for expression values
+        	
+        	for (int i = 0; i < list.get(0).size() ; i ++){
+            	sum = 0; value = 0;
+            	for (int j = 0; j < list.size() ; j ++){
+            		if (!isNumeric(list.get(j).get(i))){
+            			invalid ++;
+    					continue;
+    				}
+            		sum += Float.parseFloat(list.get(j).get(i));
+            	}
+            	value = sum / (list.size() - invalid);
+            	dataset.addValue(value, series1, categories.get(i));
+            }
+        }
+        
+        else if (metaLabel.equals("beta")){  // plot for methylation values
+        	
+        	significantSites = new ArrayList<Integer>();
+            significantSites = pathway.getSelectedSites(geneCode);
+            
+            if (significantSites == null){ // include all CpG sites
+            	for (int i = 0; i < list.get(0).size() ; i ++){
+                	sum = 0; value = 0; invalid = 0;
+                	for (int j = 0; j < list.size() ; j ++){
+                		if (!isNumeric(list.get(j).get(i))){
+                			invalid ++;
+        					continue;
+        				}
+                		sum += Float.parseFloat(list.get(j).get(i));
+                	}
+                	value = sum / (list.size() - invalid);
+                	dataset.addValue(value, series1, categories.get(i));
+                }
+            }
+            else { // there is a sd filter or some sites are selected
+            	for (int i = 0; i < list.get(0).size() ; i ++){
+            		sum =0; invalid = 0;
+            		for (int item : significantSites){
+        				if (item != -1){
+        					if (!isNumeric(list.get(item).get(i))){
+        						invalid ++;
+        						continue;
+        					}
+        					sum += Double.parseDouble(list.get(item).get(i));
+        				}
+        				
+        			}
+            		value = sum / (significantSites.size() - invalid);
+                	dataset.addValue(value, series1, categories.get(i));
+            	}
+            }
+            
+        }
+        
+       
         return dataset;       
     }
 
-    private static boolean isNumeric(String str) {
+    private double calculateValue() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	private static boolean isNumeric(String str) {
 		try {  
 		    double d = Double.parseDouble(str);  
 		}  

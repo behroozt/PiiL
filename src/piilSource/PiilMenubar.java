@@ -81,8 +81,8 @@ public class PiilMenubar extends JMenuBar{
 	newAction, openAction, openWebAction, newSamplesInfo, reportAction, newMethylation,
 	duplicateAction, duplicateMetaData, newExpression, exportGenes, snapShot, citeUs, highlightGenes, checkUpdates;
 	JMenu menuFile, menuLoad, menuHelp, openKGML, menuTools, loadMethylation,
-	loadExpression, duplicatePathway;
-	static JMenuItem multiSampleView, singleSampleView, groupWiseView, manageColors;
+	loadExpression, duplicatePathway, menuView;
+	static JMenuItem multiSampleView, singleSampleView, groupWiseView, manageColors, filterSites;
 	static JMenu loadSamplesInfo;
 	JMenu menuPathwayImage;
 	JMenu menuExport;
@@ -135,6 +135,15 @@ public class PiilMenubar extends JMenuBar{
 		exportEntire = new JMenuItem("The entire pathway");
 		exportGenes = new JMenuItem("List of matched genes in each pathway");
 		
+		// View menu items
+		menuView = new JMenu("View");
+		singleSampleView = new JMenuItem("Single-sample view for all/selected genes");
+		multiSampleView = new JMenuItem("Multiple-sample view for all/selected genes");
+		groupWiseView = new JMenuItem("Group-wise view for all/selected genes");
+		multiSampleView.setEnabled(false);
+		singleSampleView.setEnabled(false);
+		groupWiseView.setEnabled(false);
+		
 		// Tools menu items
 		menuTools = new JMenu("Tools");
 		duplicateAction = new JMenuItem("Duplicate this pathway in a new tab");
@@ -142,14 +151,10 @@ public class PiilMenubar extends JMenuBar{
 //		duplicateMetaData = new JMenuItem("Pathway with its loaded metadata");
 //		duplicateMetaData.setEnabled(false);
 //		snapShot = new JMenuItem("Take a snapshot of PiiL");
-		multiSampleView = new JMenuItem("Multiple-sample view for all/selected genes");
-		singleSampleView = new JMenuItem("Single-sample view for all/selected genes");
-		groupWiseView = new JMenuItem("Group-wise view for all/selected genes");
 		manageColors = new JMenuItem("Manage color-coding");
-		multiSampleView.setEnabled(false);
-		singleSampleView.setEnabled(false);
-		groupWiseView.setEnabled(false);
 		manageColors.setEnabled(false);
+		filterSites = new JMenuItem("Exclude non-differentiating CpG sites");
+		filterSites.setEnabled(false);
 				        
 		// Help menu items
 		menuHelp = new JMenu("Help");
@@ -172,18 +177,20 @@ public class PiilMenubar extends JMenuBar{
 		loadExpression.add(newExpression);
 		loadSamplesInfo.setEnabled(false);
 		loadSamplesInfo.add(newSamplesInfo);
+		menuView.add(multiSampleView);
+		menuView.add(singleSampleView);
+		menuView.add(groupWiseView);
 		menuPathwayImage.add(exportVisible);
 		menuPathwayImage.add(exportEntire);
 		menuExport.add(menuPathwayImage);
 		menuExport.add(exportGenes);
-		menuTools.add(duplicateAction);
+		
 //		duplicatePathway.add(duplicateAction);
 //		duplicatePathway.add(duplcateMetaData);
 //		menuTools.add(snapShot);
-		menuTools.add(multiSampleView);
-		menuTools.add(singleSampleView);
-		menuTools.add(groupWiseView);
+		menuTools.add(duplicateAction);
 		menuTools.add(manageColors);
+		menuTools.add(filterSites);
 		menuHelp.add(aboutAction);
 		menuHelp.add(manualAction);
 		menuHelp.add(reportAction);
@@ -191,6 +198,7 @@ public class PiilMenubar extends JMenuBar{
 		menuHelp.add(checkUpdates);
 		menubar.add(menuFile);
 		menubar.add(menuLoad);
+		menubar.add(menuView);
 		menubar.add(menuExport);
 		menubar.add(menuTools);
 		menubar.add(menuHelp);
@@ -217,6 +225,7 @@ public class PiilMenubar extends JMenuBar{
 		groupWiseView.addActionListener(lForMenu);
 		checkUpdates.addActionListener(lForMenu);
 		manageColors.addActionListener(lForMenu);
+		filterSites.addActionListener(lForMenu);
 		
 		return menubar;
 	}
@@ -376,8 +385,6 @@ public class PiilMenubar extends JMenuBar{
 													thisTab.setMetaFilePath(file);
 
 													File reloadableFile = TabsInfo.getLoadedFilePath(fileName);
-
-													
 														
 														SwingWorker<Void, Void> methylReLoader = new SwingWorker<Void, Void>() {
 															protected Void doInBackground() {
@@ -396,9 +403,6 @@ public class PiilMenubar extends JMenuBar{
 														methylReLoader.execute();
 														dialog.setVisible(true);
 														
-//														thisTab.getGenesList(reloadableFile,input);
-													
-													
 													if (thisTab.getMapedGeneLabel().size() > 0) {ControlPanel.enableControlPanel(0);
 														thisTab.assignPointer(0);
 														loadSamplesInfo.setEnabled(true);
@@ -904,10 +908,13 @@ public class PiilMenubar extends JMenuBar{
 			
 			/* manage color-code clicked */
 			else if (ice.getSource() == manageColors){
-				
-//				new ColorCodeManager(theTab.getMetaType());
 				new ColorCodeManager();
 			} // end of manageColorCoding
+			
+			/* filer sites item clicked */
+			else if(ice.getSource() == filterSites){
+				new SDFilter();
+			}
 			
 			/* about item clicked */
 			else if (ice.getSource() == aboutAction){

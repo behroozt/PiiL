@@ -32,6 +32,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,6 +70,7 @@ public class ControlPanel extends JPanel{
 	static int mainDelay = 1000;
 	static ImagePanel colorMap;
 	static ImagePanel relationMap;
+	static ListenForCombo lForCombo;
 
 	public JPanel makeSidePanel() {
 		holderPanel = new JPanel();
@@ -164,11 +167,9 @@ public class ControlPanel extends JPanel{
 		addComp(mapPanel, relationMap, 0, 0, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE,5,2);
 		addComp(mapPanel, colorMap, 0, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE,5,2);
 		
-		
-		ListenForCombo lForCombo = new ListenForCombo();
+		lForCombo = new ListenForCombo();
 		matchedGenesCombo.addItemListener(lForCombo);
-		samplesIDsCombo.addItemListener(lForCombo);
-		
+
 		ListenForButton lForButton = new ListenForButton();
 		nextButton.addActionListener(lForButton);
 		previousButton.addActionListener(lForButton);
@@ -243,18 +244,20 @@ public class ControlPanel extends JPanel{
 		TabsInfo pathway = ParseKGML.getTabInfo(activeTab);
 		
 		fillMatchedGenes(activeTab);
+		samplesIDsCombo.removeItemListener(lForCombo);
 		fillSamplesIDs(activeTab);
 		setIndexLabel(tabPointer);
 		setMatchNumberLabel(tabPointer);
 		
 		if (samplesIDsCombo.getItemCount() > 0){
 			samplesIDsCombo.setSelectedIndex(tabPointer);
+			samplesIDsCombo.addItemListener(lForCombo);
 			for (Component theComponent: buttonsPanel.getComponents()){
 				if (theComponent.getClass() != JSlider.class) {
 					theComponent.setEnabled(true);
 				}
 			}
-		}
+		}		
 		else {
 			matchedGenesCombo.setEnabled(true);
 		}
@@ -276,6 +279,12 @@ public class ControlPanel extends JPanel{
 		colorMap.setVisible(true);
 		PiilMenubar.multiSampleView.setEnabled(true);
 		PiilMenubar.singleSampleView.setEnabled(true);
+		if (pathway.getMetaType().equals('M')){
+			PiilMenubar.filterSites.setEnabled(true);
+		}
+		else {
+			PiilMenubar.filterSites.setEnabled(false);
+		}
 		if (pathway.getIDsInGroups() != null && pathway.getIDsInGroups().size() > 0){
 			PiilMenubar.groupWiseView.setEnabled(true);
 			if (pathway.getViewMode() == 2){
@@ -348,6 +357,7 @@ public class ControlPanel extends JPanel{
 		}
 		matchedGenesCombo.removeAllItems();
 		matchedGenesCombo.setPrototypeDisplayValue("XXXXXXXX");
+		samplesIDsCombo.removeItemListener(lForCombo);
 		samplesIDsCombo.removeAllItems();
 		samplesIDsCombo.setPrototypeDisplayValue("XXXXXXXX");
 		matchedNumberLabel.setForeground(new Color(185,185,185));
@@ -368,6 +378,7 @@ public class ControlPanel extends JPanel{
 		PiilMenubar.setSampleIdMenu(false);
 		colorMap.setVisible(enabled);
 		PiilMenubar.multiSampleView.setEnabled(false);
+		PiilMenubar.filterSites.setEnabled(enabled);
 		PiilMenubar.singleSampleView.setEnabled(enabled);
 		
 		
@@ -427,7 +438,6 @@ public class ControlPanel extends JPanel{
         			if ( newPointer >= index){
         				playButton.setEnabled(false);
         			}
-        			Genes.changeBgColor(newPointer,type);        			
         			setIndexLabel(newPointer);
         			samplesIDsCombo.setSelectedIndex(newPointer);
         			if (currentTab.getSamplesInfo() != null && currentTab.getSamplesInfo().size() > 0){
@@ -441,7 +451,6 @@ public class ControlPanel extends JPanel{
 					stopTimer();
         			int newPointer = currentTab.movePointerBackward();
         			playButton.setEnabled(true);
-        			Genes.changeBgColor(newPointer,type);
         			setIndexLabel(newPointer);
         			samplesIDsCombo.setSelectedIndex(newPointer);
         			if (currentTab.getSamplesInfo() != null && currentTab.getSamplesInfo().size() > 0){
@@ -455,7 +464,6 @@ public class ControlPanel extends JPanel{
 				int newPointer = currentTab.assignPointer(0);
 				playButton.setEnabled(true);
 				timerSpeed.setValue(2);
-				Genes.changeBgColor(newPointer,type);
 				setIndexLabel(newPointer);
 				samplesIDsCombo.setSelectedIndex(newPointer);
 				if (currentTab.getSamplesInfo() != null && currentTab.getSamplesInfo().size() > 0){
@@ -467,7 +475,6 @@ public class ControlPanel extends JPanel{
 				stopTimer();
 				int newPointer = currentTab.assignPointer(currentTab.getSamplesIDs().size() - 1);
 				playButton.setEnabled(false);
-				Genes.changeBgColor(newPointer,type);
 				setIndexLabel(newPointer);
 				samplesIDsCombo.setSelectedIndex(newPointer);
 				if (currentTab.getSamplesInfo() != null && currentTab.getSamplesInfo().size() > 0){
@@ -522,7 +529,7 @@ public class ControlPanel extends JPanel{
 
 		public void itemStateChanged(ItemEvent ce) {
 			
-			if (ce.getSource() == samplesIDsCombo & !timer.isRunning()){
+			if (ce.getSource() == samplesIDsCombo & !timer.isRunning() ){
 				if (ce.getStateChange() == ItemEvent.SELECTED){
 					int activeTab = Interface.tabPane.getSelectedIndex();
 					int newPointer = samplesIDsCombo.getSelectedIndex();
@@ -537,7 +544,7 @@ public class ControlPanel extends JPanel{
 	    			}
 				}
 			}
-			else if (ce.getSource() == matchedGenesCombo){
+			if (ce.getSource() == matchedGenesCombo){
 				if (ce.getStateChange() == ItemEvent.SELECTED){
 					
 					int tab = Interface.tabPane.getSelectedIndex();
