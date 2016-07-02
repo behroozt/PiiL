@@ -59,7 +59,7 @@ public class CheckInputFile {
 	File selectedFile;
 	boolean validFileLoaded = true;
 	String[] header;
-	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon_small.png"));
 	int samplesRowNumber, dataRowNumber;
 	
 	public CheckInputFile(File input, Character type) {
