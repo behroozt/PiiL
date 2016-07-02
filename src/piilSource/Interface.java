@@ -54,7 +54,7 @@ public class Interface extends JFrame{
 	static ArrayList<JScrollPane> scrollPaneHolder;
 	static ArrayList<JPanel> panelHolder;
 	static JButton editFields;
-	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon_small.png"));
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 	static JScrollPane toolbox;
 	
 	public static void main(String[] args) {
@@ -214,8 +214,8 @@ public class Interface extends JFrame{
 		gridConstraints.insets = new Insets(1,15,4,1);
 		
 		bodyFrame.add(backgroundPanel,BorderLayout.CENTER);
-//		new Splash(3000);	
-		bodyFrame.setIconImage(createImage("/resources/logoIcon.png").getImage());
+		new Splash(3000);	
+		bodyFrame.setIconImage(createImage("/resources/icon.png").getImage());
 		
 		bodyFrame.setVisible(true);
 		

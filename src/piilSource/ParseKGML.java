@@ -60,7 +60,7 @@ public class ParseKGML {
 	HashMap<String, Genes> geneHandler;
 	List<Edges> edgeItems;
 	static ArrayList<TabsInfo> tabInfoTracker;
-	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 	private String caption;
 	private File loadedFile;
 	Character loadSource;

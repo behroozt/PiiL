@@ -49,7 +49,7 @@ public class RightClickMenu {
 	TabsInfo pathway;
 	Character type;
 	Point expansionSide;
-	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 
 	public RightClickMenu(Component component, int x, int y, String nodeID, Point point) {
 		activeTab = Interface.tabPane.getSelectedIndex();

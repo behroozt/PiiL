@@ -25,7 +25,7 @@ public class SDFilter extends JDialog{
 	JPanel filterPanel;
 	JLabel filterLabel;
 	JTextField sdValue;
-	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 	TabsInfo activeTab;
 	JDialog dialog = new JDialog(Interface.bodyFrame, "Analyzing data",ModalityType.APPLICATION_MODAL);
 	JButton applyButton = new JButton("Apply");

@@ -12,7 +12,7 @@ public class Check {
         frame = new JFrame("Test");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        Image image = new ImageIcon("logoIcon.png").getImage();
+        Image image = new ImageIcon("icon.png").getImage();
         System.out.println(image);
         frame.setIconImage(image);
         frame.setVisible(true);

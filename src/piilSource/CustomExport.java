@@ -63,7 +63,7 @@ private static final long serialVersionUID = -6297626389977751810L;
 private static final String rootKey = CustomExport.class.getName();
 private static final String SAVE_AS_TYPE = rootKey +".SaveAsType";
 private static final String SAVE_AS_FILE = rootKey +".SaveAsFile";
-final ImageIcon logoIcon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
+final ImageIcon logoIcon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 
 /**
 * Set the Properties object to be used for storing/restoring

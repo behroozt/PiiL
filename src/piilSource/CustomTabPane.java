@@ -37,7 +37,7 @@ import javax.swing.plaf.metal.MetalIconFactory;
 
 public class CustomTabPane extends JTabbedPane{
 	
-	final ImageIcon logoIcon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
+	final ImageIcon logoIcon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 	
 	public void addTab(String title, Icon icon, Component component, String tip) {
 		

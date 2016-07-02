@@ -56,7 +56,7 @@ public class ModifyGroup extends JOptionPane{
 	JScrollPane groupsScrollPane;
 	int activeTab = Interface.tabPane.getSelectedIndex();
 	TabsInfo pathway;
-	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 	
 	ModifyGroup(){
 		pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());

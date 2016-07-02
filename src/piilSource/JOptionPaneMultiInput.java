@@ -68,7 +68,7 @@ public class JOptionPaneMultiInput {
 	File selectedFile;
 	boolean validFileLoaded = true;
 	String[] header;
-	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 	
 	public JOptionPaneMultiInput(File file) {
 

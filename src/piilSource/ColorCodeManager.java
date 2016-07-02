@@ -51,7 +51,7 @@ public class ColorCodeManager extends JDialog{
 	
 	JPanel colorPanel, containerPanel;
 	RangeSlider ranger;
-	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 	TabsInfo theTab = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
 	Character metaType = theTab.getMetaType();
 	float[] ranges = theTab.getRanges();

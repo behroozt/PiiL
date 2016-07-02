@@ -78,7 +78,7 @@ public class GeneRegions extends JFrame{
 	static float[] ranges;
 	static Color bgColor;
 	GridBagConstraints gridConstraints;
-	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 	int NAcounter = 0;
 	float sdThreshold;
 	List<Integer> selectedSites;

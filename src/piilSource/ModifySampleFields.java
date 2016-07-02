@@ -36,7 +36,7 @@ public class ModifySampleFields{
 	JPanel myPanel;
 	JLabel choose;
 	TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
-	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 	
 	public ModifySampleFields() {
 		

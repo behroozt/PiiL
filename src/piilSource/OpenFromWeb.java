@@ -94,7 +94,7 @@ public class OpenFromWeb extends JDialog{
 	GridBagConstraints gridConstraints = new GridBagConstraints();
 	String organismDefault = "Homo sapiens (human)";
 	String pathwayDefault = "Press Fetch to reload";
-	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 	JLabel waitMessage = new JLabel();
 	String chosenOrganismCode;
 	final JDialog dialog = new JDialog(null, "Loading data",ModalityType.APPLICATION_MODAL);
