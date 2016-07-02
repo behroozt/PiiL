@@ -4,11 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -25,6 +28,7 @@ public class SDFilter extends JDialog{
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
 	TabsInfo activeTab;
 	JDialog dialog = new JDialog(Interface.bodyFrame, "Analyzing data",ModalityType.APPLICATION_MODAL);
+	JButton applyButton = new JButton("Apply");
 	
 	public SDFilter(){
 		activeTab  = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
@@ -35,7 +39,37 @@ public class SDFilter extends JDialog{
 		sdValue.setPreferredSize(new Dimension(50,20));
 		filterPanel.add(filterLabel);
 		filterPanel.add(sdValue);
-		
+		filterPanel.add(applyButton);
+		applyButton.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent arg0) {
+				float sdThreshold = 0;
+				if (sdValue.getText() == "" | Float.parseFloat(sdValue.getText()) < 0){
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "Please select a positive real number.","Error",0,icon);
+					
+				}
+				else {
+					sdThreshold = Float.parseFloat(sdValue.getText());
+					if (sdThreshold != activeTab.getSDThreshold()){
+						activeTab.setSDThreshold(sdThreshold);
+						
+						SwingWorker<Void, Void> analyzeWorker = new SwingWorker<Void, Void>() {
+							protected Void doInBackground() {
+								Genes.setSignificantSites();
+								Genes.changeBgColor(activeTab.getPointer(), 'M');
+								return null;
+							}
+
+							protected void done() {
+								dialog.dispose();
+							}
+						};
+						analyzeWorker.execute();
+						dialog.setVisible(true);
+					}
+				}
+			}
+		});
 		
 		dialog.setUndecorated(true);
 		JLabel waitMessage = new JLabel("Analyzing CpG sites for all matched genes ... ");
@@ -48,30 +82,34 @@ public class SDFilter extends JDialog{
 		dialog.pack();
 		dialog.setLocationRelativeTo(Interface.bodyFrame);
 		
-		int result = JOptionPane.showConfirmDialog(null, filterPanel, "Filtering CpG sites ...", JOptionPane.OK_CANCEL_OPTION,0,icon);
+		Object[] buttons = {"Apply and Close", "Close"};
+		int result = JOptionPane.showOptionDialog(null, filterPanel, "Filtering CpG sites ...", JOptionPane.OK_CANCEL_OPTION,0,icon, buttons, buttons[0]);
 		if (result == JOptionPane.OK_OPTION){
 			float sdThreshold = 0;
-			if (sdValue.getText() == ""){
-				sdThreshold = 0;
+			if (sdValue.getText() == "" | Float.parseFloat(sdValue.getText()) < 0){
+				JOptionPane.showMessageDialog(Interface.bodyFrame, "Please select a positive real number.","Error",0,icon);
+				
 			}
 			else {
 				sdThreshold = Float.parseFloat(sdValue.getText());
-			}
-			activeTab.setSDThreshold(sdThreshold);
-			
-			SwingWorker<Void, Void> analyzeWorker = new SwingWorker<Void, Void>() {
-				protected Void doInBackground() {
-					Genes.setSignificantSites();
-					Genes.changeBgColor(activeTab.getPointer(), 'M');
-					return null;
-				}
+				if (sdThreshold != activeTab.getSDThreshold()){
+					activeTab.setSDThreshold(sdThreshold);
+					
+					SwingWorker<Void, Void> analyzeWorker = new SwingWorker<Void, Void>() {
+						protected Void doInBackground() {
+							Genes.setSignificantSites();
+							Genes.changeBgColor(activeTab.getPointer(), 'M');
+							return null;
+						}
 
-				protected void done() {
-					dialog.dispose();
+						protected void done() {
+							dialog.dispose();
+						}
+					};
+					analyzeWorker.execute();
+					dialog.setVisible(true);
 				}
-			};
-			analyzeWorker.execute();
-			dialog.setVisible(true);
+			}
 			
 		}
 	}

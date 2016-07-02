@@ -42,7 +42,7 @@ import javax.swing.SpinnerNumberModel;
 
 public class CheckInputFile {
 	
-	String[] choices = {"tab","comma","space","semicolon","dash"};
+	String[] choices = {"comma","tab","space","semicolon","dash"};
 	String[] methylationInputTypes = {"beta-values"};
 	String[] expressionInputTypes = {"RPKM"};
 	JComboBox separatorCombo = new JComboBox(choices);

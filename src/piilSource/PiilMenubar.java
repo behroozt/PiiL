@@ -91,7 +91,7 @@ public class PiilMenubar extends JMenuBar{
 	JMenuBar menu;
 	OpenFromWeb webLoad;
 	CustomExport export;
-	String openedDirectory = System.getProperty("user.home");
+	static String openedDirectory = System.getProperty("user.home");
 	byte validInput;
 	JLabel waitMessage = new JLabel();
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
@@ -104,6 +104,10 @@ public class PiilMenubar extends JMenuBar{
 	
 	public JMenuBar getMenu(){
 		return menu;
+	}
+	
+	public static String getLastOpenedDir(){
+		return openedDirectory;
 	}
 
 	private JMenuBar makeMenubar() {
@@ -345,7 +349,7 @@ public class PiilMenubar extends JMenuBar{
 							final CheckInputFile input = new CheckInputFile(selected, 'M');
 							if (input.getChosenFile() != null){
 								final File file = input.getChosenFile();
-								
+								openedDirectory = fileSelector.getSelectedFile().getAbsolutePath();
 								theTab.setMetaType('M');
 								theTab.setMetaFilePath(file);
 							
@@ -367,7 +371,7 @@ public class PiilMenubar extends JMenuBar{
 								methylLoader.execute();
 								dialog.setVisible(true);
 							
-								if (validInput == 0 && theTab.getMapedGeneLabel().size() > 0){
+								if (validInput == 0 && theTab.getMapedGeneLabel().size() > 0 && theTab.getMapedGeneData().size() > 0){
 									JMenuItem loadedFileItem = new JMenuItem(file.getName().toString());
 								
 									loadedFileItem.addActionListener(new ActionListener() {
@@ -408,7 +412,7 @@ public class PiilMenubar extends JMenuBar{
 														loadSamplesInfo.setEnabled(true);
 
 													} else {
-														JOptionPane.showMessageDialog(Interface.bodyFrame,"The loaded list has no overlap with this pathway","Message", 0, icon);
+														JOptionPane.showMessageDialog(Interface.bodyFrame,"The loaded data has no overlap with this pathway (make sure column separator is selected correctly).","Message", 0, icon);
 														thisTab.emptyStack();
 													}
 												}
@@ -474,7 +478,7 @@ public class PiilMenubar extends JMenuBar{
 							expressionLoader.execute();
 							dialog.setVisible(true);
 							
-							if (validInput == 0 && theTab.getMapedGeneLabel().size() > 0){
+							if (validInput == 0 && theTab.getMapedGeneLabel().size() > 0 && theTab.getMapedGeneData().size() > 0){
 								JMenuItem loadedFileItem = new JMenuItem(file.getName().toString());
 								loadedFileItem.addActionListener(new ActionListener() {
 
@@ -503,7 +507,7 @@ public class PiilMenubar extends JMenuBar{
 														loadSamplesInfo.setEnabled(true);
 
 													} else {
-														JOptionPane.showMessageDialog(Interface.bodyFrame,"The loaded list has no overlap with this pathway","Message", 0, icon);
+														JOptionPane.showMessageDialog(Interface.bodyFrame,"The loaded list has no overlap with this pathway (make sure column separator is selected correctly).","Message", 0, icon);
 														thisTab.emptyStack();
 													}
 												}
@@ -536,7 +540,7 @@ public class PiilMenubar extends JMenuBar{
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					JOptionPaneMultiInput patientsInfo  = new JOptionPaneMultiInput(fileSelector.getSelectedFile());
 					selectedSampleInfoFile = patientsInfo.getSelectedFile();
-					
+					openedDirectory = fileSelector.getSelectedFile().getAbsolutePath();
 					if (patientsInfo.validFileLoaded & selectedSampleInfoFile != null){
 						
 						SampleInformation inform = TabsInfo.getSamplesInformationFile(selectedSampleInfoFile.getName());

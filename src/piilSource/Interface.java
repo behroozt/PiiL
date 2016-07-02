@@ -22,16 +22,12 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -58,7 +54,8 @@ public class Interface extends JFrame{
 	static ArrayList<JScrollPane> scrollPaneHolder;
 	static ArrayList<JPanel> panelHolder;
 	static JButton editFields;
-	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/logoIcon.png"));
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon_small.png"));
+	static JScrollPane toolbox;
 	
 	public static void main(String[] args) {
 		new Interface();
@@ -138,13 +135,18 @@ public class Interface extends JFrame{
 		
 		/* controlPanel holds the sidePanel */
 		controlPanel = new JPanel();
-		controlPanel.setPreferredSize(new Dimension(160,500));
+		controlPanel.setPreferredSize(new Dimension(170,500));
+		controlPanel.setLayout(new BorderLayout());
 		sidePanel = new ControlPanel().makeSidePanel();
 		
 		sidePanel.setBackground(new Color(185,185,185));
-		controlPanel.add(sidePanel, BorderLayout.NORTH);
+		toolbox = new JScrollPane(sidePanel);
+		toolbox.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		toolbox.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		toolbox.setPreferredSize(new Dimension(170,500));
+		controlPanel.add(toolbox, BorderLayout.WEST);
 		controlPanel.setBackground(new Color(185,185,185));
-		controlPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+		toolbox.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 		bodyPanel.add(controlPanel, BorderLayout.WEST);
 		bodyPanel.add(drawingPanel, BorderLayout.CENTER);
 		
@@ -212,11 +214,18 @@ public class Interface extends JFrame{
 		gridConstraints.insets = new Insets(1,15,4,1);
 		
 		bodyFrame.add(backgroundPanel,BorderLayout.CENTER);
-		new Splash(3000);	
+//		new Splash(3000);	
+		bodyFrame.setIconImage(createImage("/resources/logoIcon.png").getImage());
+		
 		bodyFrame.setVisible(true);
 		
 	}
 	
+	private ImageIcon createImage(String path) {
+		
+		return new ImageIcon(java.awt.Toolkit.getDefaultToolkit().getClass().getResource(path));
+	}
+
 	public static void setSampleInfoLabel(String text, boolean enable){
 		sampleInfoLabel.setText(text);
 		sampleInfoLabel.setEnabled(enable);

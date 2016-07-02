@@ -29,6 +29,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -119,6 +120,12 @@ public class BarChart extends ApplicationFrame {
         
         // row keys...
         final String series1 = metaLabel + " values";
+        boolean grouping = false;
+        HashMap<String, List<String>> classes = null ;
+        if (pathway.getIDsInGroups() != null){
+        	grouping = true;
+        	classes = pathway.getIDsInGroups();
+        }
 
         int activeTab = Interface.tabPane.getSelectedIndex();
         List<String> categories = new ArrayList<String>();
@@ -160,7 +167,16 @@ public class BarChart extends ApplicationFrame {
             		sum += Float.parseFloat(list.get(j).get(i));
             	}
             	value = sum / (list.size() - invalid);
-            	dataset.addValue(value, series1, categories.get(i));
+            	if (grouping){
+            		for (Entry<String, List<String>> item : classes.entrySet()){
+            			if (item.getValue().contains(categories.get(i))){
+            				dataset.addValue(value, item.getKey(), categories.get(i));
+            			}
+            		}
+            	}
+            	else {
+            		dataset.addValue(value, series1, categories.get(i));
+            	}
             }
         }
         
@@ -180,7 +196,16 @@ public class BarChart extends ApplicationFrame {
                 		sum += Float.parseFloat(list.get(j).get(i));
                 	}
                 	value = sum / (list.size() - invalid);
-                	dataset.addValue(value, series1, categories.get(i));
+                	if (grouping){
+                		for (Entry<String, List<String>> item : classes.entrySet()){
+                			if (item.getValue().contains(categories.get(i))){
+                				dataset.addValue(value, item.getKey(), categories.get(i));
+                			}
+                		}
+                	}
+                	else {
+                		dataset.addValue(value, series1, categories.get(i));
+                	}
                 }
             }
             else { // there is a sd filter or some sites are selected
@@ -197,7 +222,16 @@ public class BarChart extends ApplicationFrame {
         				
         			}
             		value = sum / (significantSites.size() - invalid);
-                	dataset.addValue(value, series1, categories.get(i));
+            		if (grouping){
+                		for (Entry<String, List<String>> item : classes.entrySet()){
+                			if (item.getValue().contains(categories.get(i))){
+                				dataset.addValue(value, item.getKey(), categories.get(i));
+                			}
+                		}
+                	}
+                	else {
+                		dataset.addValue(value, series1, categories.get(i));
+                	}
             	}
             }
             
@@ -242,7 +276,7 @@ public class BarChart extends ApplicationFrame {
         // get a reference to the plot for further customisation...
         final CategoryPlot plot = chart.getCategoryPlot();
         plot.setBackgroundPaint(Color.lightGray);
-        plot.setDomainGridlinePaint(Color.white);
+        plot.setDomainGridlinePaint(Color.red);
         plot.setRangeGridlinePaint(Color.white);
 
         // set the range axis to display integers only...
@@ -260,19 +294,29 @@ public class BarChart extends ApplicationFrame {
         // set up gradient paints for series...
         final GradientPaint gp0 = new GradientPaint(
             0.0f, 0.0f, Color.blue, 
-            0.0f, 0.0f, Color.lightGray
+            0.0f, 0.0f, Color.blue
         );
         final GradientPaint gp1 = new GradientPaint(
             0.0f, 0.0f, Color.green, 
-            0.0f, 0.0f, Color.lightGray
+            0.0f, 0.0f, Color.green
         );
         final GradientPaint gp2 = new GradientPaint(
             0.0f, 0.0f, Color.red, 
-            0.0f, 0.0f, Color.lightGray
+            0.0f, 0.0f, Color.red
+        );
+        final GradientPaint gp3 = new GradientPaint(
+                0.0f, 0.0f, Color.yellow, 
+                0.0f, 0.0f, Color.yellow
+        );
+        final GradientPaint gp4 = new GradientPaint(
+                0.0f, 0.0f, Color.cyan, 
+                0.0f, 0.0f, Color.cyan
         );
         renderer.setSeriesPaint(0, gp0);
         renderer.setSeriesPaint(1, gp1);
         renderer.setSeriesPaint(2, gp2);
+        renderer.setSeriesPaint(3, gp3);
+        renderer.setSeriesPaint(4, gp4);
 
         final CategoryAxis domainAxis = plot.getDomainAxis();
         domainAxis.setCategoryLabelPositions(

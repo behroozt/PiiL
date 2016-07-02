@@ -99,8 +99,8 @@ public class JOptionPaneMultiInput {
 			if (bc.getSource() == loadData) {
 				fileChooser = new JFileChooser();
 				fileChooser.setFileFilter(null);
-				String home = System.getProperty("user.home");
-				File directory = new File(home);
+				
+				File directory = new File(PiilMenubar.getLastOpenedDir());
 				fileChooser.setCurrentDirectory(directory);
 				int returnVal = fileChooser.showOpenDialog(null);
 				if (returnVal == JFileChooser.APPROVE_OPTION) { 
