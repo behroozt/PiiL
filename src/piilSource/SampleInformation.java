@@ -29,14 +29,20 @@ public class SampleInformation {
 	private String[] samplesInfoHeader;
 	private int[] chosenColumns;
 	private File chosenFile;
+	private boolean barcode;
 
-	public SampleInformation(int index, String sep, String[] header, int[] cols, File theFile){
+	public SampleInformation(int index, String sep, String[] header, int[] cols, File theFile, boolean flag){
 		
 		idIndex = index;
 		separator = sep;
 		samplesInfoHeader = header;
 		chosenColumns = cols;
 		chosenFile = theFile;
+		barcode = flag;
+	}
+	
+	public boolean getBarcode(){
+		return barcode;
 	}
 	
 	public int getIndex(){

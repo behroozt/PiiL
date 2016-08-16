@@ -248,6 +248,7 @@ public class TabsInfo {
 	}
 	
 	public HashMap<String, List<String>> resetIDsInGroups(int newGroupingIndex){
+		
 		if (idsInGroups == null){
 			idsInGroups = new LinkedHashMap<String, List<String>>();
 		}
@@ -257,7 +258,11 @@ public class TabsInfo {
 		
 		for (int i = 0 ; i < (samplesIds.size()) ; i ++){
 			String id = samplesIds.get(i);
+			if (samplesInfo.get(samplesIds.get(i)) == null){
+				continue;
+			}
 			String group = samplesInfo.get(samplesIds.get(i)).get(newGroupingIndex);
+			
 			if (idsInGroups.get(group) == null){
 				idsInGroups.put(group,new ArrayList<String>());
 			}
@@ -266,7 +271,7 @@ public class TabsInfo {
 		return idsInGroups;
 	}
 	
-	public boolean extractSamplesInfo(File file, int sampleIdIndex, String seperator, String[] fileHeader, int[] selectedIndexes, int sampleGroupIndex) throws IOException{
+	public boolean extractSamplesInfo(File file, int sampleIdIndex, String seperator, String[] fileHeader, int[] selectedIndexes, int sampleGroupIndex, boolean flag) throws IOException{
 		
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		String line = null;
@@ -303,34 +308,66 @@ public class TabsInfo {
 		samplesInfo.put(Integer.toString(-1), header);	
 		samplesInfo.put(Integer.toString(0), selectedColumns);
 		
+		String barcode_id;
+		
 		while ((line = br.readLine()) != null){
 			String[] currentLine = line.split(splitBy);
 			String id = currentLine[sampleIdIndex - 1];
-			
-			
-			if (sampleGroupIndex != 0 & samplesIds.contains(id)){
-				String sampleGroup = currentLine[sampleGroupIndex - 1];
-				if (idsInGroups.get(sampleGroup) == null){
-					idsInGroups.put(sampleGroup,new ArrayList<String>());
+		
+				for (String item : samplesIds){
+					if (flag){
+						String[] barcode = item.split("-");
+						barcode_id = barcode[0] + "-" + barcode[1] + "-" + barcode[2];
+					}
+					else {
+						barcode_id = item;
+					}
+					
+					if (barcode_id.equals(id)){
+						
+						if (sampleGroupIndex != 0){
+							String sampleGroup = currentLine[sampleGroupIndex - 1];
+							if (idsInGroups.get(sampleGroup) == null){
+								idsInGroups.put(sampleGroup,new ArrayList<String>());
+							}
+							idsInGroups.get(sampleGroup).add(item);
+							PiilMenubar.groupWiseView.setEnabled(true);
+						}
+						List<String> selectedValues = new ArrayList<String>(); 
+						// the first item in selectedValues keeps the sample group
+
+						for (int i = 0; i< selectedIndexes.length; i ++){
+							selectedValues.add(currentLine[selectedIndexes[i]]);
+						}
+						samplesInfo.put(item, selectedValues);
+//						break;
+					}
 				}
-				idsInGroups.get(sampleGroup).add(id);
-				PiilMenubar.groupWiseView.setEnabled(true);
-			}
+			
+//			if (sampleGroupIndex != 0 & samplesIds.contains(id)){
+//				String sampleGroup = currentLine[sampleGroupIndex - 1];
+//				if (idsInGroups.get(sampleGroup) == null){
+//					idsInGroups.put(sampleGroup,new ArrayList<String>());
+//				}
+//				idsInGroups.get(sampleGroup).add(id);
+//				PiilMenubar.groupWiseView.setEnabled(true);
+//			}
 			
 				
-			List<String> selectedValues = new ArrayList<String>(); 
-			// the first item in selectedValues keeps the sample group
-				
-			for (int i = 0; i< selectedIndexes.length; i ++){
-				selectedValues.add(currentLine[selectedIndexes[i]]);
-			}
-			samplesInfo.put(id, selectedValues);
+//			List<String> selectedValues = new ArrayList<String>(); 
+//			// the first item in selectedValues keeps the sample group
+//				
+//			for (int i = 0; i< selectedIndexes.length; i ++){
+//				selectedValues.add(currentLine[selectedIndexes[i]]);
+//			}
+//			samplesInfo.put(item, selectedValues);
 			
 		} // end of while
 		
 		if (sampleGroupIndex == 0){
 			idsInGroups = null;
 		}
+		
 		ControlPanel.setSampleInfoLabel(pointer);
 		return true;
 		

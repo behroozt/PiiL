@@ -49,6 +49,7 @@ import javax.swing.JSpinner;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -69,6 +70,7 @@ public class JOptionPaneMultiInput {
 	boolean validFileLoaded = true;
 	String[] header;
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
+	JCheckBox tcga;
 	
 	public JOptionPaneMultiInput(File file) {
 
@@ -82,13 +84,16 @@ public class JOptionPaneMultiInput {
 		listModel.addElement(1);
 		selectedFile = file;
 		fileLabel = new JLabel(file.getName() + " was selected.");
+		tcga = new JCheckBox("Sample IDs are TCGA barcodes.");
+		tcga.setHorizontalTextPosition(SwingConstants.LEFT);
 		
 		addComp(myPanel, fileLabel, 0, 0, 2, 1, GridBagConstraints.WEST, GridBagConstraints.NONE);
 		addComp(myPanel, separatorLabel, 0, 1, 1, 1, GridBagConstraints.EAST, GridBagConstraints.NONE);
 		addComp(myPanel, separatorCombo, 1, 1, 2, 1, GridBagConstraints.WEST, GridBagConstraints.NONE);
 		addComp(myPanel, indexLabel, 0, 2, 1, 1, GridBagConstraints.EAST, GridBagConstraints.NONE);
 		addComp(myPanel, idIndexSpinner, 1, 2, 2, 1, GridBagConstraints.WEST, GridBagConstraints.NONE);
-		addComp(myPanel, loadData, 0, 3, 2, 1, GridBagConstraints.LINE_END, GridBagConstraints.NONE);
+		addComp(myPanel, tcga, 0, 3, 1, 1, GridBagConstraints.EAST, GridBagConstraints.NONE);
+		addComp(myPanel, loadData, 0, 4, 2, 1, GridBagConstraints.LINE_END, GridBagConstraints.NONE);
 		
 		containerPanel.add(myPanel, BorderLayout.CENTER);
 	   
@@ -139,7 +144,7 @@ public class JOptionPaneMultiInput {
 					fields[i] = i;
 				}
 				
-				TabsInfo.setSamplesInformationFile(selectedFile.getName().toString(), new SampleInformation(sampleIdIndex,separator, header, fields,selectedFile));
+				TabsInfo.setSamplesInformationFile(selectedFile.getName().toString(), new SampleInformation(sampleIdIndex,separator, header, fields,selectedFile,tcga.isSelected()));
 			}
 		}
 		else {
@@ -187,9 +192,18 @@ public class JOptionPaneMultiInput {
 				return false;
 			}
 			else{
-				if (pathway.getSamplesIDs().contains(currentLine[Integer.parseInt(idIndexSpinner.getValue().toString())-1])){
-					matchingID = true;
+				for (String item : pathway.getSamplesIDs()){
+					if (tcga.isSelected()){
+						String[] barcode = item.split("-");
+						item = barcode[0] + "-" + barcode[1] + "-" + barcode[2];
+					}
+					if (item.equals(currentLine[Integer.parseInt(idIndexSpinner.getValue().toString())-1])){
+						matchingID = true;
+					}
 				}
+//				if (pathway.getSamplesIDs().contains(currentLine[Integer.parseInt(idIndexSpinner.getValue().toString())-1])){
+//					matchingID = true;
+//				}
 			}
 		}
 		br.close();

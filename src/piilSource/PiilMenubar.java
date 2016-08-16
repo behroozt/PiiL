@@ -546,7 +546,7 @@ public class PiilMenubar extends JMenuBar{
 						SampleInformation inform = TabsInfo.getSamplesInformationFile(selectedSampleInfoFile.getName());
 						TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
 						try {
-							validSampleInfo = pathway.extractSamplesInfo(inform.getFile(), inform.getIndex(), inform.getSeparator(), inform.getHeader(), inform.getColumns(), pathway.getGroupingIndex());
+							validSampleInfo = pathway.extractSamplesInfo(inform.getFile(), inform.getIndex(), inform.getSeparator(), inform.getHeader(), inform.getColumns(), pathway.getGroupingIndex(), inform.getBarcode());
 							final JMenuItem loadedInfoFile = new JMenuItem(selectedSampleInfoFile.getName());
 							if (validFormat) {
 								
@@ -557,7 +557,7 @@ public class PiilMenubar extends JMenuBar{
 
 												try {
 													TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
-													validSampleInfo = pathway.extractSamplesInfo(inform.getFile(),inform.getIndex(),inform.getSeparator(),inform.getHeader(),inform.getColumns(),pathway.getGroupingIndex());
+													validSampleInfo = pathway.extractSamplesInfo(inform.getFile(),inform.getIndex(),inform.getSeparator(),inform.getHeader(),inform.getColumns(),pathway.getGroupingIndex(), inform.getBarcode());
 													if (validSampleInfo) {
 														loadSamplesInfo.add(loadedInfoFile);
 														Interface.bodyFrame.setJMenuBar(menubar);
