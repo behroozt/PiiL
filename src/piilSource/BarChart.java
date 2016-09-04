@@ -312,8 +312,8 @@ public class BarChart extends ApplicationFrame {
                 0.0f, 0.0f, Color.cyan, 
                 0.0f, 0.0f, Color.cyan
         );
-        renderer.setSeriesPaint(0, gp0);
-        renderer.setSeriesPaint(1, gp1);
+        renderer.setSeriesPaint(0, Color.BLUE);
+        renderer.setSeriesPaint(1, Color.GREEN);
         renderer.setSeriesPaint(2, gp2);
         renderer.setSeriesPaint(3, gp3);
         renderer.setSeriesPaint(4, gp4);

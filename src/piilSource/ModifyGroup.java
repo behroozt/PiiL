@@ -208,8 +208,10 @@ public class ModifyGroup extends JOptionPane{
 			if (baseCombo.isEnabled()){
 				String baseGrp = baseCombo.getSelectedItem().toString();
 				int index = chosenGroups.indexOf(baseGrp);
-				chosenGroups.remove(index);
-				chosenGroups.add(baseGrp);
+				if (index >=0){
+					chosenGroups.remove(index);
+					chosenGroups.add(baseGrp);
+				}
 				pathway.setBaseGroupIndex(index);
 			}
 			else {

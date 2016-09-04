@@ -21,6 +21,7 @@ package piilSource;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -384,12 +385,15 @@ public class Genes {
 		
 		Statistics expressionValues = new Statistics(values.get(0));
 		double theMean = expressionValues.getMean();
+		double theMedian = expressionValues.getMedian();
 		double r = 0,b = 0,g = 0;
-		double logDifference = Math.log10(value) - Math.log10(theMean);
+		double logDifference = Math.log10(value+1) - Math.log10(theMedian);
+		
 		double foldDifference = 255 / ranges[2];
 		
-		if (logDifference == Double.NEGATIVE_INFINITY || logDifference == Double.POSITIVE_INFINITY){
-			logDifference = 0;
+		if (logDifference == Double.NEGATIVE_INFINITY || logDifference == Double.POSITIVE_INFINITY || Double.isNaN(logDifference)){
+			changeTextColor(Color.WHITE);
+			return Color.BLACK;
 		}
 		
 		if (logDifference == 0){
@@ -397,10 +401,10 @@ public class Genes {
 		}
 		else if (logDifference < 0) {
 			
-			b= 255; r = 255 - Math.round(logDifference * -foldDifference); g = 255 - Math.round(logDifference * -foldDifference);
+			r= 255; b = 255 - Math.round(logDifference * -foldDifference); g = 255 - Math.round(logDifference * -foldDifference);
 		}
 		else if (logDifference > 0){
-			r = 255; b = 255 - Math.round(logDifference * foldDifference); g = 255 - Math.round(logDifference * foldDifference);
+			b = 255; r = 255 - Math.round(logDifference * foldDifference); g = 255 - Math.round(logDifference * foldDifference);
 		}
 		
 		Color expressionColor = new Color(r < 0 ? 0 : (int) (r),g < 0 ? 0 : (int) (g), b < 0 ? 0 : (int) (b));
@@ -458,12 +462,13 @@ public class Genes {
 		
 		Statistics expressionValues = new Statistics(values.get(0));
 		double theMean = expressionValues.getMean();
+		double theMedian = expressionValues.getMedian();
 		double r = 0,b = 0,g = 0;
-		double logDifference = Math.log10(value) - Math.log10(theMean);
+		double logDifference = Math.log10(value+1) - Math.log10(theMedian);
 		double foldDifference = 255 / ranges[2];
 		
-		if (logDifference == Double.NEGATIVE_INFINITY || logDifference == Double.POSITIVE_INFINITY){
-			logDifference = 0;
+		if (logDifference == Double.NEGATIVE_INFINITY || logDifference == Double.POSITIVE_INFINITY || Double.isNaN(logDifference)){
+			return Color.BLACK;
 		}
 		
 		if (logDifference == 0){
@@ -471,10 +476,10 @@ public class Genes {
 		}
 		else if (logDifference < 0) {
 			
-			b= 255; r = 255 - Math.round(logDifference * -foldDifference); g = 255 - Math.round(logDifference * -foldDifference);
+			r= 255; b = 255 - Math.round(logDifference * -foldDifference); g = 255 - Math.round(logDifference * -foldDifference);
 		}
 		else if (logDifference > 0){
-			r = 255; b = 255 - Math.round(logDifference * foldDifference); g = 255 - Math.round(logDifference * foldDifference);
+			b = 255; r = 255 - Math.round(logDifference * foldDifference); g = 255 - Math.round(logDifference * foldDifference);
 		}
 		
 		Color expressionColor = new Color(r < 0 ? 0 : (int) (r),g < 0 ? 0 : (int) (g), b < 0 ? 0 : (int) (b));
@@ -517,7 +522,26 @@ class Statistics {
         size = list.size();
         this.measurements = list.toArray();
 
-    }   
+    }
+    
+    double getMedian(){
+    	
+    	Arrays.sort(measurements);
+    	
+    	if (measurements.length % 2 == 0) 
+    	{
+    	    	  
+    		double a = Double.parseDouble(measurements[(measurements.length / 2) - 1].toString()) +1 ;
+    		double b = Double.parseDouble(measurements[(measurements.length / 2) ].toString()) + 1;
+//    	          return (measurements[(measurements.length / 2) - 1] + measurements[measurements.length / 2]) / 2.0;
+    		return a + b / 2.0;
+    	} 
+    	else 
+    	{
+    		return Double.parseDouble(measurements[measurements.length / 2].toString()) + 1;
+    	}
+    }
+
 
     boolean checkMissingValues() {
     	int naCounter = 0;
@@ -555,7 +579,7 @@ class Statistics {
         		continue;
         	}
         	else {
-        		sum += Double.parseDouble(a);
+        		sum += Double.parseDouble(a) + 1;
         	}
         }
         
@@ -587,7 +611,7 @@ class Statistics {
         		continue;
         	}
         	else {
-        		temp += (mean-Double.parseDouble(a))*(mean-Double.parseDouble(a));
+        		temp += (mean-(Double.parseDouble(a)+1))*(mean-(Double.parseDouble(a)+1));
         	}
         }
             

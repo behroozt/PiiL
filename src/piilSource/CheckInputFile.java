@@ -44,7 +44,7 @@ public class CheckInputFile {
 	
 	String[] choices = {"comma","tab","space","semicolon","dash"};
 	String[] methylationInputTypes = {"beta-values"};
-	String[] expressionInputTypes = {"RPKM"};
+	String[] expressionInputTypes = {"FPKM"};
 	JComboBox separatorCombo = new JComboBox(choices);
 	JComboBox inputTypeCombo;
 	SpinnerModel spinID = new SpinnerNumberModel(1,1,100,1);

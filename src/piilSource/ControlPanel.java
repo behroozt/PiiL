@@ -22,11 +22,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,6 +53,9 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
@@ -71,6 +77,7 @@ public class ControlPanel extends JPanel{
 	static ImagePanel colorMap;
 	static ImagePanel relationMap;
 	static ListenForCombo lForCombo;
+	static JLabel metaDataLabel; 
 
 	public JPanel makeSidePanel() {
 		holderPanel = new JPanel();
@@ -87,14 +94,18 @@ public class ControlPanel extends JPanel{
 		ImageIcon relationImage = new ImageIcon(getClass().getResource("/resources/relations.png"));
 		relationMap = new ImagePanel(relationImage.getImage());
 		relationMap.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		colorMap.setVisible(false);
-		relationMap.setVisible(false);
+		metaDataLabel = new JLabel("Loaded Metadata");
+		
+		metaDataLabel.setEnabled(false);
+		metaDataLabel.setBorder(BorderFactory.createRaisedBevelBorder());
+		metaDataLabel.setPreferredSize(new Dimension(130, 40));
+		metaDataLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		nextButton = new JButton(">");
 		nextButton.setBorder(new RoundedCornerBorder());
 		nextButton.setPreferredSize(new Dimension(85,30));
 		nextButton.setToolTipText("show next sample");
-		addComp(buttonsPanel, nextButton, 0, 0, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE,22,2);
+		addComp(buttonsPanel, nextButton, 0, 0, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE,45,2);
 		previousButton = new JButton("<");
 		previousButton.setBorder(new RoundedCornerBorder());
 		previousButton.setPreferredSize(new Dimension(85,31));
@@ -109,7 +120,7 @@ public class ControlPanel extends JPanel{
 		firstButton.setBorder(new RoundedCornerBorder());
 		firstButton.setPreferredSize(new Dimension(85,31));
 		firstButton.setToolTipText("show the first sample");
-		addComp(buttonsPanel, firstButton, 0, 3, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE,2,2);
+		addComp(buttonsPanel, firstButton, 0, 3, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE,2,22);
 		playButton = new JButton("Play");
 		playButton.setBorder(new RoundedCornerBorder());
 		playButton.setPreferredSize(new Dimension(85,31));
@@ -121,7 +132,7 @@ public class ControlPanel extends JPanel{
 		repeatPlayback.setBackground(new Color(185,185,185));
 //		repeatPlayback.setBorder(new RoundedCornerBorder());
 		repeatPlayback.setPreferredSize(new Dimension(86, 30));
-		addComp(buttonsPanel, repeatPlayback, 0, 5, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE,6,1);
+		addComp(buttonsPanel, repeatPlayback, 0, 6, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE,1,20);
 		
 		timerSpeed = new JSlider(JSlider.HORIZONTAL, 1,4,2);
 		timerSpeed.setPaintLabels(true);
@@ -133,7 +144,7 @@ public class ControlPanel extends JPanel{
 		timerSpeed.setBackground(new Color(185,185,185));
 		
 		timerSpeed.setPreferredSize(new Dimension(110, 40));
-		addComp(buttonsPanel, timerSpeed, 0, 6, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE,1,20);
+		addComp(buttonsPanel, timerSpeed, 0, 5, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE,1,1);
 		
 		ListenForSlider lForSlider = new ListenForSlider();
 		timerSpeed.addChangeListener(lForSlider);
@@ -164,8 +175,39 @@ public class ControlPanel extends JPanel{
 		matchedNumberLabel = new JLabel("matches");
 		matchedNumberLabel.setForeground(new Color(185,185,185));
 		addComp(buttonsPanel, matchedNumberLabel, 0, 12, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE,5,10);
-		addComp(mapPanel, relationMap, 0, 0, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE,5,2);
-		addComp(mapPanel, colorMap, 0, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE,5,2);
+		
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.weightx = 0.5;
+		c.weighty = 0;
+		c.insets = new Insets(30,0,10,0);
+		c.anchor = GridBagConstraints.PAGE_START;
+		c.fill = GridBagConstraints.NONE;
+		mapPanel.add(relationMap, c);
+		
+		c.insets = new Insets(5,0,0,0);
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.weightx = 0.5;
+		c.weighty = 0;
+		c.gridx = 0;
+		c.gridy = 1;
+		c.anchor = GridBagConstraints.PAGE_START;
+		mapPanel.add(colorMap,c);
+		c.insets = new Insets(20,0,0,0);
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.weightx = 0;
+		c.weighty = 1;
+		c.gridx = 0;
+		c.gridy = 2;
+		c.anchor = GridBagConstraints.PAGE_START;
+		mapPanel.add(metaDataLabel,c);
+		
+		
 		
 		lForCombo = new ListenForCombo();
 		matchedGenesCombo.addItemListener(lForCombo);
@@ -243,6 +285,7 @@ public class ControlPanel extends JPanel{
 		int activeTab = Interface.tabPane.getSelectedIndex();
 		TabsInfo pathway = ParseKGML.getTabInfo(activeTab);
 		
+		matchedGenesCombo.removeItemListener(lForCombo);
 		fillMatchedGenes(activeTab);
 		samplesIDsCombo.removeItemListener(lForCombo);
 		fillSamplesIDs(activeTab);
@@ -252,6 +295,9 @@ public class ControlPanel extends JPanel{
 		if (samplesIDsCombo.getItemCount() > 0){
 			samplesIDsCombo.setSelectedIndex(tabPointer);
 			samplesIDsCombo.addItemListener(lForCombo);
+			matchedGenesCombo.setSelectedIndex(pathway.getSelectedGeneIndex());
+			setMatchedGene(matchedGenesCombo.getSelectedItem().toString());
+			matchedGenesCombo.addItemListener(lForCombo);
 			for (Component theComponent: buttonsPanel.getComponents()){
 				if (theComponent.getClass() != JSlider.class) {
 					theComponent.setEnabled(true);
@@ -268,7 +314,7 @@ public class ControlPanel extends JPanel{
 			PiilMenubar.groupWiseView.setEnabled(true);
 		}
 		else {
-			Interface.setSampleInfoLabel(" Sample Info", false);
+			Interface.setSampleInfoLabel(samplesIDsCombo.getSelectedItem().toString(), true);
 			Interface.editFields.setEnabled(false);
 			PiilMenubar.groupWiseView.setEnabled(false);
 		}
@@ -281,9 +327,17 @@ public class ControlPanel extends JPanel{
 		PiilMenubar.singleSampleView.setEnabled(true);
 		if (pathway.getMetaType().equals('M')){
 			PiilMenubar.filterSites.setEnabled(true);
+			Interface.tabPane.setToolTipTextAt(activeTab, "Methylation data loaded");
+			metaDataLabel.setText("DNA Methylation");
+			metaDataLabel.setEnabled(true);
+			
 		}
-		else {
+		else if (pathway.getMetaType().equals('E')){
 			PiilMenubar.filterSites.setEnabled(false);
+			Interface.tabPane.setToolTipTextAt(activeTab, "Expression data loaded");
+			metaDataLabel.setText("Gene Expression");
+			metaDataLabel.setEnabled(true);
+			
 		}
 		if (pathway.getIDsInGroups() != null && pathway.getIDsInGroups().size() > 0){
 			PiilMenubar.groupWiseView.setEnabled(true);
@@ -291,6 +345,28 @@ public class ControlPanel extends JPanel{
 				ControlPanel.disableControlPanel(true);
 			}
 		}
+	}
+
+	private static void setMatchedGene(String geneName) {
+		int tab = Interface.tabPane.getSelectedIndex();
+		TabsInfo pathway = ParseKGML.getTabInfo(tab);
+		
+		Rectangle bounds = null;
+		
+		for (Entry<String, Genes> target : pathway.getMapedGeneLabel().entrySet()) {
+
+			JLabel oneNode = target.getValue().getLabel();
+			if (geneName.equals(oneNode.getText())) {
+				
+				bounds = oneNode.getBounds();
+				break;
+			}
+		}
+		Interface.scrollPaneHolder.get(tab).getViewport().scrollRectToVisible(bounds);
+		
+		pathway.setSelectedGeneIndex(matchedGenesCombo.getSelectedIndex());
+		matchedGenesCombo.setSelectedIndex(pathway.getSelectedGeneIndex());
+		pathway.setSelectedGenePointer(new Point((int) bounds.getX(),(int) bounds.getY()));
 		
 	}
 
@@ -331,6 +407,7 @@ public class ControlPanel extends JPanel{
 		for (String item : hashsetList){
 			matchedGenesCombo.addItem(item);
 		}
+		matchedGenesCombo.setSelectedIndex(ParseKGML.tabInfoTracker.get(Interface.tabPane.getSelectedIndex()).getSelectedGeneIndex());
 		
 	}
 
@@ -368,15 +445,17 @@ public class ControlPanel extends JPanel{
 			List<String> hints = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getShowableGroups();
 			Interface.setSampleInfoLabel(hints, true, ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getBaseGroupIndex());
 			PiilMenubar.groupWiseView.setEnabled(true);
+			
 		}
 		else {
-			Interface.setSampleInfoLabel(" Sample Info", false);
-			
+			Interface.setSampleInfoLabel(" Sample's Information", false);
 			PiilMenubar.groupWiseView.setEnabled(false);
+			metaDataLabel.setText("Loaded Metadata");
+			metaDataLabel.setEnabled(false);
 		}
 		Interface.editFields.setEnabled(false);
 		PiilMenubar.setSampleIdMenu(false);
-		colorMap.setVisible(enabled);
+//		colorMap.setVisible(enabled);
 		PiilMenubar.multiSampleView.setEnabled(false);
 		PiilMenubar.filterSites.setEnabled(enabled);
 		PiilMenubar.singleSampleView.setEnabled(enabled);
@@ -384,11 +463,9 @@ public class ControlPanel extends JPanel{
 		
 		
 		if (Interface.tabPane.getTabCount() == 0){
-			relationMap.setVisible(false);
+			Interface.sampleInfoLabel.setForeground(Interface.sampleInfoLabel.getBackground());
 		}
-		else {
-			relationMap.setVisible(true);
-		}
+		
 	}
 
 	public static String setSampleInfoLabel(int tabPointer) {
@@ -443,6 +520,9 @@ public class ControlPanel extends JPanel{
         			if (currentTab.getSamplesInfo() != null && currentTab.getSamplesInfo().size() > 0){
         				setSampleInfoLabel(newPointer);
         			}
+        			else {
+        				Interface.setSampleInfoLabel(samplesIDsCombo.getItemAt(newPointer).toString(), true);
+        			}
         		}
 			} // end if nextButton
 			
@@ -455,6 +535,9 @@ public class ControlPanel extends JPanel{
         			samplesIDsCombo.setSelectedIndex(newPointer);
         			if (currentTab.getSamplesInfo() != null && currentTab.getSamplesInfo().size() > 0){
         				setSampleInfoLabel(newPointer);
+        			}
+        			else {
+        				Interface.setSampleInfoLabel(samplesIDsCombo.getItemAt(newPointer).toString(), true);
         			}
         		}
 			} // end of previousButton 
@@ -469,6 +552,9 @@ public class ControlPanel extends JPanel{
 				if (currentTab.getSamplesInfo() != null && currentTab.getSamplesInfo().size() > 0){
     				setSampleInfoLabel(newPointer);
     			}
+				else {
+    				Interface.setSampleInfoLabel(samplesIDsCombo.getItemAt(newPointer).toString(), true);
+    			}
 			} // end of firstButton
 			
 			else if (bc.getSource() == lastButton){
@@ -479,6 +565,9 @@ public class ControlPanel extends JPanel{
 				samplesIDsCombo.setSelectedIndex(newPointer);
 				if (currentTab.getSamplesInfo() != null && currentTab.getSamplesInfo().size() > 0){
     				setSampleInfoLabel(newPointer);
+    			}
+				else {
+    				Interface.setSampleInfoLabel(samplesIDsCombo.getItemAt(newPointer).toString(), true);
     			}
 			} // end of lastButton
 			
@@ -542,27 +631,15 @@ public class ControlPanel extends JPanel{
 					if (pathway.getSamplesInfo() != null && pathway.getSamplesInfo().size() > 0){
 	    				setSampleInfoLabel(newPointer);
 	    			}
+					else {
+        				Interface.setSampleInfoLabel(samplesIDsCombo.getItemAt(newPointer).toString(), true);
+        			}
 				}
 			}
 			if (ce.getSource() == matchedGenesCombo){
 				if (ce.getStateChange() == ItemEvent.SELECTED){
-					
-					int tab = Interface.tabPane.getSelectedIndex();
-					TabsInfo pathway = ParseKGML.getTabInfo(tab);
 					String geneName = (String) ce.getItem();
-					
-					Rectangle bounds = null;
-					
-					for (Entry<String, Genes> target : pathway.getMapedGeneLabel().entrySet()) {
-
-						JLabel oneNode = target.getValue().getLabel();
-						if (geneName.equals(oneNode.getText())) {
-							
-							bounds = oneNode.getBounds();
-							break;
-						}
-					}
-					Interface.scrollPaneHolder.get(tab).getViewport().scrollRectToVisible(bounds);
+					setMatchedGene(geneName);
 				}
 			}
 		}

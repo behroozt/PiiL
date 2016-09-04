@@ -18,6 +18,11 @@
 
 package piilSource;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Shape;
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,9 +40,12 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import org.jfree.util.StringUtils;
+import org.omg.CORBA.Bounds;
 import org.w3c.dom.Document;
 
 
@@ -79,6 +87,8 @@ public class TabsInfo {
 	int baseGroupIndex;
 	float[] ranges;
 	float sdThreshold;
+	int selectedGeneIndex;
+	Point selectedGenePointer;
 	
 	public TabsInfo(String tabCaption, File path, Character source, String pathway) {
 		pointer = 0;
@@ -111,7 +121,33 @@ public class TabsInfo {
 		baseGroupIndex = -1;
 		ranges = new float[] {0,10,4}; // {methylationLow, methylationHigh, expressionFold}
 		sdThreshold = 0;
+		selectedGeneIndex = 0;
+		selectedGenePointer = new Point(0, 0);
 		
+	}
+	
+	public void setSelectedGenePointer(Point position){
+		Component star  = Interface.panelHolder.get(Interface.tabPane.getSelectedIndex()).getComponent(Interface.panelHolder.get(Interface.tabPane.getSelectedIndex()).getComponentCount()-3);
+		Component extraStar  = Interface.panelHolder.get(Interface.tabPane.getSelectedIndex()).getComponent(Interface.panelHolder.get(Interface.tabPane.getSelectedIndex()).getComponentCount()-2);
+		star.setBackground(Color.MAGENTA);
+		extraStar.setBackground(Color.MAGENTA);
+		star.setBounds((int)position.getX()-5, (int)position.getY()-5, 10, 10);
+		extraStar.setBounds((int)position.getX()+ 41, (int)position.getY() + 12, 10, 10);
+		((JComponent) star).setBorder(new RoundedCornerBorder());
+		((JComponent) extraStar).setBorder(new RoundedCornerBorder());
+		selectedGenePointer =  position;
+	}
+	
+	public Point getSelectedGenePointer(){
+		return selectedGenePointer;
+	}
+	
+	public void setSelectedGeneIndex(int index){
+		selectedGeneIndex = index;
+	}
+	
+	public int getSelectedGeneIndex(){
+		return selectedGeneIndex;
 	}
 	
 	public void setSelectedSites(HashMap < String ,List<Integer>> selection){
@@ -532,9 +568,7 @@ public class TabsInfo {
 				loadedFilesMap = new HashMap<String, File>();
 			}
 			loadedFilesMap.put(file.getName(), file);
-			
 			Character metaType = this.getMetaType();
-			
 			Genes.changeBgColor(0, metaType);
 			
 		}

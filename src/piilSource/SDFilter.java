@@ -56,7 +56,14 @@ public class SDFilter extends JDialog{
 						SwingWorker<Void, Void> analyzeWorker = new SwingWorker<Void, Void>() {
 							protected Void doInBackground() {
 								Genes.setSignificantSites();
-								Genes.changeBgColor(activeTab.getPointer(), 'M');
+								if (activeTab.getViewMode() == 1){
+									Genes.changeBgColor(activeTab.getPointer(), 'M');
+								}
+								else {
+//									PiilMenubar.singleSampleView.doClick();
+//									Genes.changeBgColor(activeTab.getPointer(), 'M');
+//									activeTab.setViewMode((byte) 2);
+								}
 								return null;
 							}
 

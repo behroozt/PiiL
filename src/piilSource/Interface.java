@@ -21,13 +21,19 @@ package piilSource;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -37,6 +43,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
@@ -55,7 +62,7 @@ public class Interface extends JFrame{
 	static ArrayList<JPanel> panelHolder;
 	static JButton editFields;
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
-	static JScrollPane toolbox;
+	static JScrollPane toolbox, informationPane;
 	
 	public static void main(String[] args) {
 		new Interface();
@@ -89,30 +96,36 @@ public class Interface extends JFrame{
 		
 		bodyFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);		
 		
-//		bodyFrame.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);		
-//		bodyFrame.addWindowListener(new java.awt.event.WindowAdapter() {
-//		    @Override
-//		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-//		        if (JOptionPane.showConfirmDialog(bodyFrame, 
-//		            "Are you sure to quit PiiL?", "Closing confirmation", 
-//		            JOptionPane.YES_NO_OPTION,
-//		            JOptionPane.QUESTION_MESSAGE, icon) == JOptionPane.YES_OPTION){
-//		            System.exit(0);
-//		        }
-//		    }
-//		});
+		bodyFrame.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);		
+		bodyFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		        if (JOptionPane.showConfirmDialog(bodyFrame, 
+		            "Are you sure to quit PiiL?", "Closing confirmation", 
+		            JOptionPane.YES_NO_OPTION,
+		            JOptionPane.QUESTION_MESSAGE, icon) == JOptionPane.YES_OPTION){
+		            System.exit(0);
+		        }
+		    }
+		});
 		
 		sampleInfoPanel = new JPanel();
-		sampleInfoPanel.setPreferredSize(new Dimension(1000, 30));
-		sampleInfoPanel.setLayout(new BorderLayout());
-		sampleInfoLabel = new JLabel(" Sample Info");
+		sampleInfoPanel.setPreferredSize(new Dimension(1000, 45));
+		sampleInfoPanel.setLayout(new GridBagLayout());
+		sampleInfoLabel = new JLabel(" Sample's Information");
 		sampleInfoLabel.setEnabled(false);
-		sampleInfoLabel.setPreferredSize(new Dimension(1000,18));
-		
+//		sampleInfoLabel.setPreferredSize(new Dimension(5000,18));
+		informationPane = new JScrollPane(sampleInfoLabel);
+		informationPane.setPreferredSize(new Dimension(950,40));
+		informationPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		informationPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		sampleInfoPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+		sampleInfoLabel.setOpaque(true);
+		sampleInfoLabel.setBackground(sampleInfoPanel.getBackground());
 		sampleInfoLabel.setForeground(sampleInfoPanel.getBackground());
+		informationPane.setBackground(sampleInfoPanel.getBackground());
 		editFields = new JButton("Edit Fields");
-		editFields.setPreferredSize(new Dimension(100,20));
+		editFields.setPreferredSize(new Dimension(120,40));
 		editFields.setEnabled(false);
 		editFields.setVisible(true);
 		editFields.addActionListener(new ActionListener() {
@@ -206,15 +219,38 @@ public class Interface extends JFrame{
 		};
 		
 		tabPane.addChangeListener(changeListener);
-
-		sampleInfoPanel.add(sampleInfoLabel, BorderLayout.WEST);
-		sampleInfoPanel.add(editFields, BorderLayout.EAST);
+		tabPane.addMouseListener(new MouseListener() {
+			
+			public void mouseReleased(MouseEvent arg0) {}
+		
+			public void mousePressed(MouseEvent arg0) {}
+			
+			public void mouseExited(MouseEvent arg0) {}
+			
+			public void mouseEntered(MouseEvent arg0) {}
+			
+			public void mouseClicked(MouseEvent mc) {
+				if (mc.getClickCount() == 2){
+					TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
+					if (pathway.getMetaFilePath() != null){
+						JOptionPane.showMessageDialog(bodyFrame, "Meta data loaded: " + pathway.getMetaFilePath().getName(), "Meta data information", JOptionPane.INFORMATION_MESSAGE, icon);
+					}
+					
+				}
+				
+			}
+		});
+		
+		addComp(sampleInfoPanel, informationPane, 0, 0, 4, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH);
+		addComp(sampleInfoPanel, editFields, 4, 0, 1, 1, 0,0, GridBagConstraints.EAST, GridBagConstraints.BOTH);
+//		sampleInfoPanel.add(informationPane, BorderLayout.WEST);
+//		sampleInfoPanel.add(editFields, BorderLayout.EAST);
 		drawingPanel.add(sampleInfoPanel, BorderLayout.NORTH);
 		drawingPanel.add(tabPane);
 		gridConstraints.insets = new Insets(1,15,4,1);
 		
 		bodyFrame.add(backgroundPanel,BorderLayout.CENTER);
-//		new Splash(3000);	
+		new Splash(3000);	
 		bodyFrame.setIconImage(createImage("/resources/icon.png").getImage());
 		
 		bodyFrame.setVisible(true);
@@ -227,7 +263,7 @@ public class Interface extends JFrame{
 	}
 
 	public static void setSampleInfoLabel(String text, boolean enable){
-		sampleInfoLabel.setText(text);
+		sampleInfoLabel.setText(" " + text + " ");
 		sampleInfoLabel.setEnabled(enable);
 		sampleInfoLabel.setForeground(Color.BLACK);
 	}

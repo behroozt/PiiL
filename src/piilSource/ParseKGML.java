@@ -116,13 +116,20 @@ public class ParseKGML {
 				JLabel element = node.getValue().getLabel();
 				Interface.panelHolder.get(tabIndex).add(element,BorderLayout.CENTER);
 			}
+			JLabel star = new JLabel();
+			JLabel extraStar = new JLabel();
+			star.setOpaque(true);
+			star.setBackground(Interface.panelHolder.get(tabIndex).getBackground());
+			extraStar.setOpaque(true);
+			extraStar.setBackground(Interface.panelHolder.get(tabIndex).getBackground());
+//			star.setBounds((int) graphicsItems.get(0).getBounds().getX(), (int) graphicsItems.get(0).getBounds().getY(),10,10);
+			Interface.panelHolder.get(tabIndex).add(star,BorderLayout.CENTER);
+			Interface.panelHolder.get(tabIndex).add(extraStar,BorderLayout.CENTER);
 	        DrawShapes shapes = new DrawShapes(graphicsItems,edgeItems);
 	        shapes.setPreferredSize(new Dimension((int) maxX,(int) maxY));
 			Interface.panelHolder.get(tabIndex).add(shapes,BorderLayout.CENTER);
 	        Interface.scrollPaneHolder.get(tabIndex).getVerticalScrollBar().setUnitIncrement(16);
 			Interface.scrollPaneHolder.get(tabIndex).getHorizontalScrollBar().setUnitIncrement(16);
-			
-			
 		}
 		else {
 			JOptionPane.showMessageDialog(Interface.bodyFrame, "There is a problem with the input file. Please check it or try a different one.","Error",0,icon);

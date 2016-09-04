@@ -18,25 +18,35 @@
 
 package piilSource;
 
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 public class ModifySampleFields{
 	
 	JPanel myPanel;
 	JLabel choose;
+	JScrollPane checkBoxPane;
 	TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
+	JButton selectAll;
+	List<String> options;
+	List<String> header;
+	JCheckBox[] myList;
 	
 	public ModifySampleFields() {
 		
@@ -45,10 +55,11 @@ public class ModifySampleFields{
 		choose = new JLabel("Select the fields to be shown for each sample:");
 		
 		CheckBoxList fieldCheckBox = new CheckBoxList();
-		
-		List<String> header = pathway.getSamplesInfo().get("-1");
-		List<String> options = pathway.getSamplesInfo().get("0");
-		JCheckBox[] myList = new JCheckBox[header.size()];
+		selectAll = new JButton("Uncheck All");
+		selectAll.setSize(100, 20);
+		header = pathway.getSamplesInfo().get("-1");
+		options = pathway.getSamplesInfo().get("0");
+		myList = new JCheckBox[header.size()];
 		for (int i=0; i < header.size(); i ++){
 			JCheckBox check = new JCheckBox(header.get(i));
 			myList[i] = check;
@@ -58,8 +69,31 @@ public class ModifySampleFields{
 			myList[index].setSelected(true);
 		}
 		fieldCheckBox.setListData(myList);
+		checkBoxPane = new JScrollPane(fieldCheckBox);
 		myPanel.add(choose);
-		myPanel.add(fieldCheckBox);
+		myPanel.add(checkBoxPane);
+		myPanel.add(selectAll);
+		
+		selectAll.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent bc) {
+				if (selectAll.getText().equals("Check All")){
+					selectAll.setText("Uncheck All");
+					for (int i = 0; i < options.size(); i ++){
+						int index = header.indexOf(options.get(i));
+						myList[index].setSelected(true);
+					}
+				}
+				else {
+					selectAll.setText("Check All");
+					for (int i = 0; i < options.size(); i ++){
+						int index = header.indexOf(options.get(i));
+						myList[index].setSelected(false);
+					}
+				}
+				
+			}
+		});
 		
 		int result = JOptionPane.showConfirmDialog(null, myPanel, "Please choose ...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, icon);
 		if (result == JOptionPane.OK_OPTION) {
