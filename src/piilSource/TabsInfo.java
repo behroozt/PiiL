@@ -354,6 +354,7 @@ public class TabsInfo {
 					if (flag){
 						String[] barcode = item.split("-");
 						barcode_id = barcode[0] + "-" + barcode[1] + "-" + barcode[2];
+						
 					}
 					else {
 						barcode_id = item;

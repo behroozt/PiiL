@@ -154,7 +154,7 @@ public class PiilMenubar extends JMenuBar{
 //		duplicateAction = new JMenuItem("Only the pathway");
 //		duplicateMetaData = new JMenuItem("Pathway with its loaded metadata");
 //		duplicateMetaData.setEnabled(false);
-//		snapShot = new JMenuItem("Take a snapshot of PiiL");
+		snapShot = new JMenuItem("Take a snapshot of PiiL");
 		manageColors = new JMenuItem("Manage color-coding");
 		manageColors.setEnabled(false);
 		filterSites = new JMenuItem("Exclude non-differentiating CpG sites");
@@ -191,7 +191,7 @@ public class PiilMenubar extends JMenuBar{
 		
 //		duplicatePathway.add(duplicateAction);
 //		duplicatePathway.add(duplcateMetaData);
-//		menuTools.add(snapShot);
+		menuTools.add(snapShot);
 		menuTools.add(duplicateAction);
 		menuTools.add(manageColors);
 		menuTools.add(filterSites);
@@ -218,7 +218,7 @@ public class PiilMenubar extends JMenuBar{
 		exportEntire.addActionListener(lForMenu);
 		exportGenes.addActionListener(lForMenu);
 		duplicateAction.addActionListener(lForMenu);
-//		snapShot.addActionListener(lForMenu);
+		snapShot.addActionListener(lForMenu);
 		reportAction.addActionListener(lForMenu);
 		aboutAction.addActionListener(lForMenu);
 		manualAction.addActionListener(lForMenu);
@@ -732,10 +732,10 @@ public class PiilMenubar extends JMenuBar{
 			} // end of duplicateAction
 			
 			/* snapShot item clicked */
-//			else if (ice.getSource() == snapShot){
-//				export = new CustomExport();
-//				export.showExportDialog(Interface.bodyFrame, "Snapshot ...", (JComponent) Interface.backgroundPanel, "PiiL snapshot");
-//			}
+			else if (ice.getSource() == snapShot){
+				export = new CustomExport();
+				export.showExportDialog(Interface.bodyFrame, "Snapshot ...", (JComponent) Interface.backgroundPanel, "PiiL snapshot");
+			}
 			
 			// show multiple-sample view
 			else if (ice.getSource()== multiSampleView){

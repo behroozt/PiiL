@@ -192,11 +192,14 @@ public class ParseKGML {
 			theLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			
 			if (nodeType.equals("map")) {
-				if ((nodeLabel.length() * 7) > nodeWidth ){
+				if ((nodeLabel.length() * 7) > (nodeWidth+15) ){
+					theLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 6));
+				}
+				if ((nodeLabel.length() * 7) > (nodeWidth) ){
 					theLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
 				}
-				labelX = labelX + (nodeWidth / 2) - (labelWidth / 2);
-				theLabel.setBounds(labelX, labelY, labelWidth, nodeHeight);
+				labelX = labelX + ((nodeWidth+20) / 2) - ((labelWidth +20) / 2);
+				theLabel.setBounds(labelX, labelY, labelWidth+25, nodeHeight);
 			}
 			if (nodeType.equals("ortholog")){
 				theLabel.setOpaque(true);
@@ -460,7 +463,7 @@ public class ParseKGML {
 				graphicsItems.add(nodeShape);
 			}
 			else if (graphicShape.equals("roundrectangle")){
-				nodeShape = new RoundRectangle2D.Float(x, y, width, height, 10, 10);
+				nodeShape = new RoundRectangle2D.Float(x, y, width+22, height, 10, 10);
 				graphicsItems.add(nodeShape);
 			}
 			else {

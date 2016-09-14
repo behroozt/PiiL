@@ -314,7 +314,10 @@ public class ControlPanel extends JPanel{
 			PiilMenubar.groupWiseView.setEnabled(true);
 		}
 		else {
-			Interface.setSampleInfoLabel(samplesIDsCombo.getSelectedItem().toString(), true);
+			if (samplesIDsCombo.getSelectedItem() != null){
+				Interface.setSampleInfoLabel(samplesIDsCombo.getSelectedItem().toString(), true);
+			}
+			
 			Interface.editFields.setEnabled(false);
 			PiilMenubar.groupWiseView.setEnabled(false);
 		}
