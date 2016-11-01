@@ -61,8 +61,6 @@ import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-
-
 public class ControlPanel extends JPanel{
 	
 	static JPanel buttonsPanel, holderPanel, mapPanel;
@@ -348,17 +346,18 @@ public class ControlPanel extends JPanel{
 				ControlPanel.disableControlPanel(true);
 			}
 		}
-	}
+	} // end of enableControlPanel
 
 	private static void setMatchedGene(String geneName) {
 		int tab = Interface.tabPane.getSelectedIndex();
 		TabsInfo pathway = ParseKGML.getTabInfo(tab);
 		
 		Rectangle bounds = null;
+		JLabel oneNode;
 		
 		for (Entry<String, Genes> target : pathway.getMapedGeneLabel().entrySet()) {
 
-			JLabel oneNode = target.getValue().getLabel();
+			oneNode = target.getValue().getLabel();
 			if (geneName.equals(oneNode.getText())) {
 				
 				bounds = oneNode.getBounds();
@@ -366,10 +365,9 @@ public class ControlPanel extends JPanel{
 			}
 		}
 		Interface.scrollPaneHolder.get(tab).getViewport().scrollRectToVisible(bounds);
-		
 		pathway.setSelectedGeneIndex(matchedGenesCombo.getSelectedIndex());
 		matchedGenesCombo.setSelectedIndex(pathway.getSelectedGeneIndex());
-		pathway.setSelectedGenePointer(new Point((int) bounds.getX(),(int) bounds.getY()));
+		pathway.setSelectedGenePointer(new Point((int) bounds.getX(),(int) bounds.getY()));	
 		
 	}
 
@@ -410,7 +408,7 @@ public class ControlPanel extends JPanel{
 		for (String item : hashsetList){
 			matchedGenesCombo.addItem(item);
 		}
-		matchedGenesCombo.setSelectedIndex(ParseKGML.tabInfoTracker.get(Interface.tabPane.getSelectedIndex()).getSelectedGeneIndex());
+		matchedGenesCombo.setSelectedIndex(Interface.tabInfoTracker.get(Interface.tabPane.getSelectedIndex()).getSelectedGeneIndex());
 		
 	}
 

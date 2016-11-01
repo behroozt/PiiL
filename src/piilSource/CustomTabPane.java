@@ -40,7 +40,6 @@ public class CustomTabPane extends JTabbedPane{
 	final ImageIcon logoIcon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 	
 	public void addTab(String title, Icon icon, Component component, String tip) {
-		
 		super.addTab(title, icon, component, tip);
 		int count = this.getTabCount() - 1;
 		setTabComponentAt(count, new CloseButtonTab(component, title, icon));

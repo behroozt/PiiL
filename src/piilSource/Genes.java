@@ -388,7 +388,6 @@ public class Genes {
 		double theMedian = expressionValues.getMedian();
 		double r = 0,b = 0,g = 0;
 		double logDifference = Math.log10(value+1) - Math.log10(theMedian);
-		
 		double foldDifference = 255 / ranges[2];
 		
 		if (logDifference == Double.NEGATIVE_INFINITY || logDifference == Double.POSITIVE_INFINITY || Double.isNaN(logDifference)){
@@ -527,21 +526,17 @@ class Statistics {
     double getMedian(){
     	
     	Arrays.sort(measurements);
-    	
     	if (measurements.length % 2 == 0) 
     	{
-    	    	  
     		double a = Double.parseDouble(measurements[(measurements.length / 2) - 1].toString()) +1 ;
     		double b = Double.parseDouble(measurements[(measurements.length / 2) ].toString()) + 1;
-//    	          return (measurements[(measurements.length / 2) - 1] + measurements[measurements.length / 2]) / 2.0;
-    		return a + b / 2.0;
+    		return (a + b) / 2.0;
     	} 
     	else 
     	{
     		return Double.parseDouble(measurements[measurements.length / 2].toString()) + 1;
     	}
     }
-
 
     boolean checkMissingValues() {
     	int naCounter = 0;

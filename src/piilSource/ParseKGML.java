@@ -59,15 +59,15 @@ public class ParseKGML {
 	HashMap<String, Nodes> nodeHandler;
 	HashMap<String, Genes> geneHandler;
 	List<Edges> edgeItems;
-	static ArrayList<TabsInfo> tabInfoTracker;
+//	static ArrayList<TabsInfo> tabInfoTracker;
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 	private String caption;
 	private File loadedFile;
 	Character loadSource;
 
 	public ParseKGML(Document xmlDoc, String tabCaption, File file, Character source) {
-		if (tabInfoTracker == null){
-        	tabInfoTracker = new ArrayList<TabsInfo>();
+		if (Interface.tabInfoTracker == null){
+        	Interface.tabInfoTracker = new ArrayList<TabsInfo>();
         }
 		geneHandler = new HashMap<String, Genes>();
 		edgeItems = new ArrayList<Edges>();
@@ -81,11 +81,11 @@ public class ParseKGML {
 	}
 
 	public static TabsInfo getTabInfo(int selectedTab){
-		return tabInfoTracker.get(selectedTab);
+		return Interface.tabInfoTracker.get(selectedTab);
 	}
 	
 	public static void closedTab(int selectedTab){
-		tabInfoTracker.remove(selectedTab);
+		Interface.tabInfoTracker.remove(selectedTab);
 	}
 
 	private void parse(Document kgmlInput) {
@@ -103,7 +103,7 @@ public class ParseKGML {
 			makeLabels(elementsList);
 			makeEdges(relationsList);
 			
-			TabsInfo pathway = tabInfoTracker.get(tabIndex);
+			TabsInfo pathway = Interface.tabInfoTracker.get(tabIndex);
 			pathway.setNodes(nodeHandler);
 			pathway.setGenes(geneHandler);
 			pathway.setDocument(kgmlInput);
@@ -152,7 +152,7 @@ public class ParseKGML {
         int tabIndex = Interface.tabPane.getTabCount() - 1;
         Interface.tabPane.setSelectedIndex(tabIndex);
         String nameWithoutExtension = extractName(newTabCaption);
-        tabInfoTracker.add(new TabsInfo(newTabCaption, loadedFile, loadSource, nameWithoutExtension));
+        Interface.tabInfoTracker.add(new TabsInfo(newTabCaption, loadedFile, loadSource, nameWithoutExtension));
 	}
 
 	private void makeLabels(NodeList allNodes) {
@@ -191,15 +191,24 @@ public class ParseKGML {
 			theLabel.setBounds(labelX, labelY, labelWidth, nodeHeight);
 			theLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			
+//			if (nodeType.equals("map")) {
+//				System.out.println(nodeLabel);
+//				if ((nodeLabel.length() * 7) > (nodeWidth+15) ){
+//					theLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 6));
+//				}
+//				if ((nodeLabel.length() * 7) > (nodeWidth) ){
+//					theLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
+//				}
+//				labelX = labelX + ((nodeWidth+20) / 2) - ((labelWidth +20) / 2);
+//				theLabel.setBounds(labelX, labelY, labelWidth+25, nodeHeight);
+//			}
+			
 			if (nodeType.equals("map")) {
-				if ((nodeLabel.length() * 7) > (nodeWidth+15) ){
-					theLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 6));
-				}
-				if ((nodeLabel.length() * 7) > (nodeWidth) ){
+				if ((nodeLabel.length() * 7) > nodeWidth ){
 					theLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
 				}
-				labelX = labelX + ((nodeWidth+20) / 2) - ((labelWidth +20) / 2);
-				theLabel.setBounds(labelX, labelY, labelWidth+25, nodeHeight);
+				labelX = labelX + (nodeWidth / 2) - (labelWidth / 2);
+				theLabel.setBounds(labelX, labelY, labelWidth, nodeHeight);
 			}
 			if (nodeType.equals("ortholog")){
 				theLabel.setOpaque(true);
@@ -463,7 +472,7 @@ public class ParseKGML {
 				graphicsItems.add(nodeShape);
 			}
 			else if (graphicShape.equals("roundrectangle")){
-				nodeShape = new RoundRectangle2D.Float(x, y, width+22, height, 10, 10);
+				nodeShape = new RoundRectangle2D.Float(x, y, width, height, 10, 10);
 				graphicsItems.add(nodeShape);
 			}
 			else {

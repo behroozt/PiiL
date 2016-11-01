@@ -127,21 +127,16 @@ public class BarChart extends ApplicationFrame {
         	classes = pathway.getIDsInGroups();
         }
 
-        int activeTab = Interface.tabPane.getSelectedIndex();
         List<String> categories = new ArrayList<String>();
         List<String> ids = ParseKGML.getTabInfo(activeTab).getSamplesIDs();
 
         for (int i =0; i < ids.size(); i++){
         	categories.add(ids.get(i));
         }
-
+        
         // create the dataset...
         final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         
-//        for (int i=0; i < list.get(0).size(); i++){
-//        	float value = Float.parseFloat(list.get(0).get(i));
-//        	dataset.addValue(value, series1, categories.get(i));
-//        }
         String geneCode = null;
         
         for (Entry<String, Genes> item : pathway.getMapedGeneLabel().entrySet()){
@@ -157,37 +152,28 @@ public class BarChart extends ApplicationFrame {
         
         if (metaLabel.equals("expression")){ // plot for expression values
         	
-        	for (int i = 0; i < list.get(0).size() ; i ++){
-            	sum = 0; value = 0;
-            	for (int j = 0; j < list.size() ; j ++){
-            		if (!isNumeric(list.get(j).get(i))){
-            			invalid ++;
-    					continue;
-    				}
-            		sum += Float.parseFloat(list.get(j).get(i));
-            	}
-            	value = sum / (list.size() - invalid);
-            	if (grouping){
-            		for (Entry<String, List<String>> item : classes.entrySet()){
-            			if (item.getValue().contains(categories.get(i))){
-            				dataset.addValue(value, item.getKey(), categories.get(i));
-            			}
-            		}
-            	}
-            	else {
-            		dataset.addValue(value, series1, categories.get(i));
-            	}
-            }
-        }
-        
-        else if (metaLabel.equals("beta")){  // plot for methylation values
-        	
-        	significantSites = new ArrayList<Integer>();
-            significantSites = pathway.getSelectedSites(geneCode);
-            
-            if (significantSites == null){ // include all CpG sites
-            	for (int i = 0; i < list.get(0).size() ; i ++){
-                	sum = 0; value = 0; invalid = 0;
+        	if (grouping){
+        		int sampleIndex;
+        		for (String group : classes.keySet()){
+        			for (String sampleID : classes.get(group)){
+        				sum = 0; value = 0; invalid = 0;
+        				sampleIndex = categories.indexOf(sampleID);
+        				for (int j = 0; j < list.size() ; j ++){
+                    		if (!isNumeric(list.get(j).get(sampleIndex))){
+                    			invalid ++;
+            					continue;
+            				}
+                    		sum += Float.parseFloat(list.get(j).get(sampleIndex));
+                    	}
+                    	value = sum / (list.size() - invalid);
+                    	dataset.addValue(value, group, sampleID);
+        			}
+        			
+        		}
+        	}
+        	else{
+        		for (int i = 0; i < list.get(0).size() ; i ++){
+                	sum = 0; value = 0;
                 	for (int j = 0; j < list.size() ; j ++){
                 		if (!isNumeric(list.get(j).get(i))){
                 			invalid ++;
@@ -196,45 +182,82 @@ public class BarChart extends ApplicationFrame {
                 		sum += Float.parseFloat(list.get(j).get(i));
                 	}
                 	value = sum / (list.size() - invalid);
-                	if (grouping){
-                		for (Entry<String, List<String>> item : classes.entrySet()){
-                			if (item.getValue().contains(categories.get(i))){
-                				dataset.addValue(value, item.getKey(), categories.get(i));
-                			}
-                		}
-                	}
-                	else {
-                		dataset.addValue(value, series1, categories.get(i));
-                	}
+                	dataset.addValue(value, series1, categories.get(i));
                 }
-            }
-            else { // there is a sd filter or some sites are selected
-            	for (int i = 0; i < list.get(0).size() ; i ++){
-            		sum =0; invalid = 0;
-            		for (int item : significantSites){
-        				if (item != -1){
-        					if (!isNumeric(list.get(item).get(i))){
-        						invalid ++;
-        						continue;
-        					}
-        					sum += Double.parseDouble(list.get(item).get(i));
+        	}
+        }
+        
+        else if (metaLabel.equals("beta")){  // plot for methylation values
+        	
+        	significantSites = new ArrayList<Integer>();
+            significantSites = pathway.getSelectedSites(geneCode);
+            
+            if (grouping){
+        		int sampleIndex;
+        		for (String group : classes.keySet()){
+        			for (String sampleID : classes.get(group)){
+        				sum = 0; value = 0; invalid = 0;
+        				sampleIndex = categories.indexOf(sampleID);
+        				if (significantSites == null){
+        					for (int j = 0; j < list.size() ; j ++){
+                        		if (!isNumeric(list.get(j).get(sampleIndex))){
+                        			invalid ++;
+                					continue;
+                				}
+                        		sum += Float.parseFloat(list.get(j).get(sampleIndex));
+                        	}
+                        	value = sum / (list.size() - invalid);
+                        	dataset.addValue(value, group, sampleID);
+        				}
+        				else { // some sites are selected
+        					for (int item : significantSites){
+                				if (item != -1){
+                					if (!isNumeric(list.get(item).get(sampleIndex))){
+                						invalid ++;
+                						continue;
+                					}
+                					sum += Double.parseDouble(list.get(item).get(sampleIndex));
+                				}
+                				
+                			}
+                    		value = sum / (significantSites.size() - invalid);
+                    		dataset.addValue(value, group, sampleID);
         				}
         				
         			}
-            		value = sum / (significantSites.size() - invalid);
-            		if (grouping){
-                		for (Entry<String, List<String>> item : classes.entrySet()){
-                			if (item.getValue().contains(categories.get(i))){
-                				dataset.addValue(value, item.getKey(), categories.get(i));
-                			}
-                		}
-                	}
-                	else {
+        			
+        		}
+        	}
+        	else {
+        		for (int i = 0; i < list.get(0).size() ; i ++){
+                	sum = 0; value = 0; invalid = 0;
+                	if (significantSites == null){
+    					for (int j = 0; j < list.size() ; j ++){
+                    		if (!isNumeric(list.get(j).get(i))){
+                    			invalid ++;
+            					continue;
+            				}
+                    		sum += Float.parseFloat(list.get(j).get(i));
+                    	}
+                    	value = sum / (list.size() - invalid);
+                    	dataset.addValue(value, series1, categories.get(i));
+    				}
+    				else { // some sites are selected
+    					for (int item : significantSites){
+            				if (item != -1){
+            					if (!isNumeric(list.get(item).get(i))){
+            						invalid ++;
+            						continue;
+            					}
+            					sum += Double.parseDouble(list.get(item).get(i));
+            				}
+            				
+            			}
+                		value = sum / (significantSites.size() - invalid);
                 		dataset.addValue(value, series1, categories.get(i));
-                	}
-            	}
-            }
-            
+    				}
+                }
+        	}
         }
         
        

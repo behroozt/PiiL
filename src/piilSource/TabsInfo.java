@@ -89,6 +89,8 @@ public class TabsInfo {
 	float sdThreshold;
 	int selectedGeneIndex;
 	Point selectedGenePointer;
+	String reloadbleSplitor;
+	static ArrayList<String> gridGenesList;
 	
 	public TabsInfo(String tabCaption, File path, Character source, String pathway) {
 		pointer = 0;
@@ -123,7 +125,18 @@ public class TabsInfo {
 		sdThreshold = 0;
 		selectedGeneIndex = 0;
 		selectedGenePointer = new Point(0, 0);
+		gridGenesList = new ArrayList<String>();
 		
+	}
+	
+	public void setGridGenesList(ArrayList<String> list){
+		for (String item : list){
+			gridGenesList.add(item);
+		}
+	}
+	
+	public ArrayList<String> getGridGenesList(){
+		return gridGenesList;
 	}
 	
 	public void setSelectedGenePointer(Point position){
@@ -284,6 +297,11 @@ public class TabsInfo {
 	}
 	
 	public HashMap<String, List<String>> resetIDsInGroups(int newGroupingIndex){
+		
+		if (newGroupingIndex == -1){
+			idsInGroups = null;
+			return idsInGroups;
+		}
 		
 		if (idsInGroups == null){
 			idsInGroups = new LinkedHashMap<String, List<String>>();
@@ -818,6 +836,15 @@ public class TabsInfo {
 	
 	public List<Integer> getSitesForGene(String geneID){
 		return mappedGeneSelectedSites.get(geneID);
+	}
+
+	public void setSplitor(String separator) {
+		reloadbleSplitor = separator;
+		
+	}
+	
+	public String getReloadableSplitor(){
+		return reloadbleSplitor;
 	}
 
 }

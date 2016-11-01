@@ -23,10 +23,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GradientPaint;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -36,8 +40,11 @@ import org.freehep.util.export.ExportDialog;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.IntervalXYDataset;
@@ -49,10 +56,15 @@ public class Histogram extends ApplicationFrame {
 	String metaLabel;
 	JPanel histogramPanel, buttonsPanel;
 	JButton exportButton, closeButton;
+	int activeTab = Interface.tabPane.getSelectedIndex();
+	TabsInfo pathway = ParseKGML.getTabInfo(activeTab);
+	List<Integer> significantSites;
+	String geneName;
 	
 	public Histogram(final String s, List<List<String>> list, Character meta)
 	{
 		super(s);
+		geneName = s;
 		metaLabel = (meta.equals('M')) ? "beta" : "expression"; 
 		histogramPanel = createDemoPanel(s,list,metaLabel);
 		histogramPanel.setPreferredSize(new Dimension(500, 270));
@@ -96,35 +108,120 @@ public class Histogram extends ApplicationFrame {
 
 	}
 	
-	public static JPanel createDemoPanel(String s, List<List<String>> collection, String metaLabel){
+	public JPanel createDemoPanel(String s, List<List<String>> collection, String metaLabel){
 		JFreeChart jfreechart = createChart(s,createDataset(collection,metaLabel),metaLabel);
 		return new ChartPanel(jfreechart);
 	}
 
-	private static IntervalXYDataset createDataset(List<List<String>> betaValues, String metaLabel){
+	private IntervalXYDataset createDataset(List<List<String>> betaValues, String metaLabel){
 
+		boolean grouping = false;
+        HashMap<String, List<String>> classes = null ;
+        if (pathway.getIDsInGroups() != null){
+        	grouping = true;
+        	classes = pathway.getIDsInGroups();
+        }
+		
 		HistogramDataset histogramdataset = new HistogramDataset();
 		double ad[] = new double[betaValues.get(0).size()];
 		
-		for (int i=0; i< betaValues.get(0).size(); i++){
-			for (int j=0; j < betaValues.size(); j++ ){
-				if (!isNumeric(betaValues.get(j).get(i))){
-					continue;
-				}
-				ad[i] += Double.parseDouble(betaValues.get(j).get(i));
-			}
-			ad[i] /= betaValues.size();
-		}
-		
-		if (metaLabel.equals("beta")){
-			histogramdataset.addSeries( metaLabel + " values", ad, 50, 0.00, 0.99);
-		}
-		else {
-			histogramdataset.addSeries(metaLabel + " values", ad, 50);
-		}
+		float sum;
+    	int invalid = 0;
+    	double value;
+    	
+    	List<String> categories = new ArrayList<String>();
+        List<String> ids = ParseKGML.getTabInfo(activeTab).getSamplesIDs();
+
+        for (int i =0; i < ids.size(); i++){
+        	categories.add(ids.get(i));
+        }
+    	
+    	
+    	if (metaLabel.equals("expression")){ // plot for expression values
+    		if (grouping){
+    			
+    			for (Entry<String, List<String>> item : classes.entrySet()){
+    				double groupValues[] = new double[item.getValue().size()]; 
+    				for (int i = 0; i < item.getValue().size(); i ++){
+    					int index = categories.indexOf(item.getValue().get(i));
+    					groupValues[i] = Double.parseDouble(betaValues.get(0).get(index));
+    				}
+    				histogramdataset.addSeries(item.getKey(), groupValues, 100);
+        		}
+    		}
+    		
+    		else {
+    			for (int i=0; i< betaValues.get(0).size(); i++){
+    				
+    				if (!isNumeric(betaValues.get(0).get(i))){
+						continue;
+					}
+					ad[i] = Double.parseDouble(betaValues.get(0).get(i));
+    			}
+    			histogramdataset.addSeries(metaLabel + " values", ad, 100);
+    			
+    		}
+        }
+    	
+    	else if (metaLabel.equals("beta")){
+    		String geneCode = null;
+            for (Entry<String, Genes> item : pathway.getMapedGeneLabel().entrySet()){
+            	if (item.getValue().getText().equals(geneName)){
+            		geneCode = item.getKey();
+            		continue;
+            	}
+            }
+    		significantSites = new ArrayList<Integer>();
+            significantSites = pathway.getSelectedSites(geneCode);
+            
+            if (significantSites == null){ // include all CpG sites
+            	for (int i = 0; i < betaValues.get(0).size() ; i ++){
+                	sum = 0; value = 0; invalid = 0;
+                	for (int j = 0; j < betaValues.size() ; j ++){
+                		if (!isNumeric(betaValues.get(j).get(i))){
+                			invalid ++;
+        					continue;
+        				}
+                		sum += Float.parseFloat(betaValues.get(j).get(i));
+                	}
+                	ad[i] = sum / (betaValues.size() - invalid);
+            	}
+            }
+            else { // if there is a sd filter or site selection
+                
+            	for (int i = 0; i < betaValues.get(0).size() ; i ++){
+            		sum =0; invalid = 0;
+            		for (int item : significantSites){
+        				if (item != -1){
+        					if (!isNumeric(betaValues.get(item).get(i))){
+        						invalid ++;
+        						continue;
+        					}
+        					sum += Double.parseDouble(betaValues.get(item).get(i));
+        				}
+            		}
+            		ad[i] = sum / (significantSites.size() - invalid);
+            	}
+            } // end of sd filter
+            
+            if (grouping){
+            	for (Entry<String, List<String>> item : classes.entrySet()){
+            		double groupValues[] = new double[item.getValue().size()]; 
+            		for (int i = 0; i < item.getValue().size() - 1; i ++){
+            			int index = categories.indexOf(item.getValue().get(i));
+            			groupValues[i] = ad[index];
+            		}
+            		histogramdataset.addSeries(item.getKey(), groupValues, 100, 0.00, 0.99);
+            	}
+            }
+            else {
+            	histogramdataset.addSeries(metaLabel + " values", ad, 50, 0.00, 0.99);
+            }
+    	} // end of if beta
 		
 		return histogramdataset;
-	}
+		
+	} // end of createDataset
 
 	private static boolean isNumeric(String str) {
 		try {  
@@ -139,10 +236,17 @@ public class Histogram extends ApplicationFrame {
 	private static JFreeChart createChart(String s, IntervalXYDataset intervalxydataset, String metaLabel)
 	{
 		JFreeChart jfreechart = ChartFactory.createHistogram("Histogram of the " + metaLabel + " values for all samples - " + s, null, null, intervalxydataset, PlotOrientation.VERTICAL, true, true, false);
+		jfreechart.setBackgroundPaint(Color.white); 
 		XYPlot xyplot = (XYPlot)jfreechart.getPlot();
-		xyplot.setForegroundAlpha(0.85F);
+		xyplot.setBackgroundPaint(Color.lightGray);
+		xyplot.setDomainGridlinePaint(Color.red);
+		xyplot.setRangeGridlinePaint(Color.white);
+		xyplot.setForegroundAlpha(0.5F);
+//		xyplot.setBackgroundImageAlpha(0.0F);
 		XYBarRenderer xybarrenderer = (XYBarRenderer)xyplot.getRenderer();
 		xybarrenderer.setDrawBarOutline(false);
+
+		
 		return jfreechart;
 	}
 

@@ -51,7 +51,7 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI;
 public class Interface extends JFrame{
 	
 	static JFrame bodyFrame;
-	JPanel thePanel, sampleInfoPanel, bodyPanel, sidePanel, menuPanel, drawingPanel, controlPanel;
+	JPanel thePanel, sampleInfoPanel, bodyPanel, sidePanel, menuPanel, controlPanel, drawingPanel;
 	static JPanel backgroundPanel;
 	static JLabel sampleInfoLabel;
 	GridBagConstraints gridConstraints = new GridBagConstraints();
@@ -63,6 +63,7 @@ public class Interface extends JFrame{
 	static JButton editFields;
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 	static JScrollPane toolbox, informationPane;
+	static ArrayList<TabsInfo> tabInfoTracker;
 	
 	public static void main(String[] args) {
 		new Interface();
@@ -94,7 +95,7 @@ public class Interface extends JFrame{
 		bodyFrame.setSize(scrWidth, scrHeight);
 		bodyFrame.setTitle(" PiiL - Pathway interactive visualization tooL ");
 		
-		bodyFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);		
+		bodyFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);	
 		
 //		bodyFrame.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);		
 //		bodyFrame.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -188,12 +189,11 @@ public class Interface extends JFrame{
 				ControlPanel.stopTimer();
 				final JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
 				int selectedTab = sourceTabbedPane.getSelectedIndex();
-				
-				if (ParseKGML.tabInfoTracker.size() == 0) {
+				if (tabInfoTracker.size() == 0) {
 					ControlPanel.disableControlPanel(false);
 				}
 				else {
-					if (ParseKGML.tabInfoTracker.size() < sourceTabbedPane.getTabCount()){
+					if (tabInfoTracker.size() < sourceTabbedPane.getTabCount()){
 						ControlPanel.disableControlPanel(false);
 					}
 					else {
@@ -252,9 +252,7 @@ public class Interface extends JFrame{
 		bodyFrame.add(backgroundPanel,BorderLayout.CENTER);
 //		new Splash(3000);	
 		bodyFrame.setIconImage(createImage("/resources/icon.png").getImage());
-		
 		bodyFrame.setVisible(true);
-		
 	}
 	
 	private ImageIcon createImage(String path) {

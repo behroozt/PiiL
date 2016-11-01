@@ -235,36 +235,51 @@ public class ModifyGroup extends JOptionPane{
 				sum = 0;
 				caseAverage = 0;
 				valid = 0 ;
+
+				List<String> members = new ArrayList<String>(); 
+				
 				for (int j = 0; j < groups.get(chosenGroups.get(i)).size(); j++) {
 					String sampleID = groups.get(chosenGroups.get(i)).get(j);
 					int sampleIndex = pathway.getSamplesIDs().indexOf(sampleID);
 					
-					if ((pathway.getSDThreshold() > 0) | (pathway.getSelectedSites(gene.getKey()) != null)){
-						List<Integer> significantSites = pathway.getSelectedSites(gene.getKey());
-						
-						for (int item : significantSites){
-							if (item != -1){
-								if (!isNumeric(data.get(item).get(sampleIndex))){
-									continue;
-								}
-								sum += Double.parseDouble(data.get(item).get(sampleIndex));
-								valid ++;
-							}
-							
-						}
-						caseAverage = sum / valid ;
-						
-					}
-					else {
-						
+					if (type.equals('E')){
 						for (int k = 0; k < data.size(); k++) {
 							if (!isNumeric(data.get(k).get(sampleIndex))){
 								continue;
 							}
-							sum += Double.parseDouble(data.get(k).get(sampleIndex));
-							valid ++;
+							members.add(data.get(k).get(sampleIndex));
 						}
-						caseAverage = sum / valid;
+						Statistics expressionValues = new Statistics(members);
+						caseAverage = expressionValues.getMedian();
+					}
+					else {
+						if ((pathway.getSDThreshold() > 0) | (pathway.getSelectedSites(gene.getKey()) != null)){
+							List<Integer> significantSites = pathway.getSelectedSites(gene.getKey());
+						
+							for (int item : significantSites){
+								if (item != -1){
+									if (!isNumeric(data.get(item).get(sampleIndex))){
+										continue;
+									}
+									sum += Double.parseDouble(data.get(item).get(sampleIndex));
+									valid ++;
+								}
+							
+							}
+							caseAverage = sum / valid ;
+						
+						}
+						else {
+						
+							for (int k = 0; k < data.size(); k++) {
+								if (!isNumeric(data.get(k).get(sampleIndex))){
+									continue;
+								}
+								sum += Double.parseDouble(data.get(k).get(sampleIndex));
+								valid ++;
+							}
+							caseAverage = sum / valid;
+						}
 					}
 					
 				}

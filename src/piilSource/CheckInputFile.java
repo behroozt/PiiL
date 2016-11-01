@@ -74,7 +74,6 @@ public class CheckInputFile {
 		inputTypeLabel =  new JLabel("The data type:");
 		selectedFile = input;
 		fileLabel = new JLabel(input.getName() + " was selected.");
-		fileLabel.setPreferredSize(new Dimension(300,20));
 		if (type.equals('M')){
 			inputTypeCombo = new JComboBox(methylationInputTypes);
 		}

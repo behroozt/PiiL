@@ -28,10 +28,11 @@ import javax.swing.JFrame;
 public class AboutPiil extends JDialog{
 	
 	JFrame aboutFrame;
+	ImageIcon aboutImage = new ImageIcon(getClass().getResource("/resources/aboutPiil.png"));
 	
 	public AboutPiil(){
 		
-		ImageIcon aboutImage = new ImageIcon(getClass().getResource("/resources/aboutPiil.png"));
+		
 		ImagePanel panel = new ImagePanel(aboutImage.getImage());
 		aboutFrame = new JFrame();
 		aboutFrame.setSize(440, 290);

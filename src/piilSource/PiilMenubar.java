@@ -79,7 +79,8 @@ public class PiilMenubar extends JMenuBar{
 
 	JMenuItem exitAction, loadAction, aboutAction, exportEntire, manualAction, exportVisible,
 	newAction, openAction, openWebAction, newSamplesInfo, reportAction, newMethylation,
-	duplicateAction, duplicateMetaData, newExpression, exportGenes, snapShot, citeUs, highlightGenes, checkUpdates;
+	duplicateAction, duplicateMetaData, newExpression, exportGenes, snapShot, citeUs, 
+	highlightGenes, checkUpdates, piilgridAction;
 	JMenu menuFile, menuLoad, menuHelp, openKGML, menuTools, loadMethylation,
 	loadExpression, duplicatePathway, menuView;
 	static JMenuItem multiSampleView, singleSampleView, groupWiseView, manageColors, filterSites;
@@ -120,6 +121,7 @@ public class PiilMenubar extends JMenuBar{
 		openKGML = new JMenu("Open KGML");
 		openAction = new JMenuItem("from hard drive");
 		openWebAction = new JMenuItem("from web");
+		piilgridAction = new JMenuItem("Generate a PiiLgrid");
 		exitAction = new JMenuItem("Exit");
 				
 		// Load menu items
@@ -172,6 +174,7 @@ public class PiilMenubar extends JMenuBar{
 		openKGML.add(openWebAction);
 //		menuFile.add(newAction);
 		menuFile.add(openKGML);
+		menuFile.add(piilgridAction);
 		menuFile.add(exitAction);
 		menuLoad.add(loadMethylation);
 		menuLoad.add(loadExpression);
@@ -230,6 +233,7 @@ public class PiilMenubar extends JMenuBar{
 		checkUpdates.addActionListener(lForMenu);
 		manageColors.addActionListener(lForMenu);
 		filterSites.addActionListener(lForMenu);
+		piilgridAction.addActionListener(lForMenu);
 		
 		return menubar;
 	}
@@ -245,7 +249,7 @@ public class PiilMenubar extends JMenuBar{
 			validFormat = true;			
 			waitMessage.setText(" Loading organisms and pathways lists from the KEGG database ... ");
 			final JDialog dialog = new JDialog(Interface.bodyFrame, "Loading data",ModalityType.APPLICATION_MODAL);
-			dialog.setUndecorated(true);
+//			dialog.setUndecorated(true);
 			JProgressBar progressBar = new JProgressBar();
 			progressBar.setIndeterminate(true);
 			JPanel panel = new JPanel(new BorderLayout());
@@ -297,6 +301,22 @@ public class PiilMenubar extends JMenuBar{
         			JOptionPane.showMessageDialog(Interface.bodyFrame, "Unable to parse the input file. Make sure you are connected to the internet and/or check your KGML file format.","Error",0,icon);
         		}
 			} // end of openAction
+			
+			/* PiiLway item clicked */
+			else if (ice.getSource() == piilgridAction){
+				fileSelector = new JFileChooser();
+				fileSelector.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+				fileSelector.setCurrentDirectory(directory);
+				int returnVal = fileSelector.showOpenDialog(null);
+				
+				if (returnVal == JFileChooser.APPROVE_OPTION) { 
+        			final File file = fileSelector.getSelectedFile();
+        			openedDirectory = fileSelector.getSelectedFile().getAbsolutePath();
+        			final String tabCaption = file.getName().toString();
+        			new PiiLgridMaker(file);
+				}
+				
+			} // end of PiiLway action 
         			
 			/* exit item clicked */
 			else if (ice.getSource() == exitAction){
@@ -352,6 +372,7 @@ public class PiilMenubar extends JMenuBar{
 								openedDirectory = fileSelector.getSelectedFile().getAbsolutePath();
 								theTab.setMetaType('M');
 								theTab.setMetaFilePath(file);
+								theTab.setSplitor(input.getSeparator());
 							
 								waitMessage.setText(" Please wait while the loaded file is being analyzed ... ");
 								SwingWorker<Void, Void> methylLoader = new SwingWorker<Void, Void>() {
@@ -387,6 +408,7 @@ public class PiilMenubar extends JMenuBar{
 													String fileName = reloadFile.getActionCommand();
 													thisTab.setMetaType('M');
 													thisTab.setMetaFilePath(file);
+													thisTab.setSplitor(input.getSeparator());
 
 													File reloadableFile = TabsInfo.getLoadedFilePath(fileName);
 														
@@ -606,6 +628,7 @@ public class PiilMenubar extends JMenuBar{
 						int returnVal = fileSelector.showOpenDialog(null);
 						if (returnVal == JFileChooser.APPROVE_OPTION) {
 							final File file = fileSelector.getSelectedFile();
+							openedDirectory = fileSelector.getSelectedFile().getAbsolutePath();
 							try {
 								pathway.highlightInPathway(file);
 								pathway.setMetaType('H');  // H for highlight genes
@@ -624,7 +647,7 @@ public class PiilMenubar extends JMenuBar{
 			/* export visible item clicked */
 			else if (ice.getSource() == exportVisible){
 				int tabIndex = Interface.tabPane.getSelectedIndex();
-				if (ParseKGML.tabInfoTracker == null || ParseKGML.getTabInfo(tabIndex) == null){
+				if (Interface.tabInfoTracker == null || ParseKGML.getTabInfo(tabIndex) == null){
 					JOptionPane.showMessageDialog(Interface.bodyFrame, "You need to open a KGML file first!","Warning", 0, icon);
 				}
 				else {
@@ -639,7 +662,7 @@ public class PiilMenubar extends JMenuBar{
 			/* export entire pathway item clicked */
 			else if (ice.getSource() == exportEntire){
 				int index = Interface.tabPane.getSelectedIndex();
-				if (ParseKGML.tabInfoTracker == null || ParseKGML.getTabInfo(index) == null){
+				if (Interface.tabInfoTracker == null || ParseKGML.getTabInfo(index) == null){
 					JOptionPane.showMessageDialog(Interface.bodyFrame, "You need to open a KGML file first!","Warning", 0, icon);
 				}
 				else{
@@ -653,12 +676,12 @@ public class PiilMenubar extends JMenuBar{
 			
 			/* export matched genes list item clicked */
 			else if (ice.getSource() == exportGenes){
-				if (ParseKGML.tabInfoTracker == null ){
+				if (Interface.tabInfoTracker == null ){
 					JOptionPane.showMessageDialog(Interface.bodyFrame, "You need to open a KGML file first!","Warning", 0, icon);
 				}
 				else {
 					boolean metaExists = false;
-					for (int i = 0; i < ParseKGML.tabInfoTracker.size(); i ++){
+					for (int i = 0; i < Interface.tabInfoTracker.size(); i ++){
 						if (ParseKGML.getTabInfo(i).getMetaType() != ' '){
 							metaExists = true;
 						}
@@ -689,7 +712,7 @@ public class PiilMenubar extends JMenuBar{
 							
 					    	List<String> v = new ArrayList<String>();
 					    	
-					    	for (int i = 0; i < ParseKGML.tabInfoTracker.size(); i ++){
+					    	for (int i = 0; i < Interface.tabInfoTracker.size(); i ++){
 					    		TabsInfo info = ParseKGML.getTabInfo(i);
 					    		outFile.printf("loaded file: "
 										+ info.getMetaFilePath().getName() + " checked in '" + info.getPathwayName() + "' pathway");
@@ -722,9 +745,17 @@ public class PiilMenubar extends JMenuBar{
 					File loadedFile = pathway.getLoadedFilePath();
 					Document doc = pathway.getDocument();
 					Character source = pathway.getLoadSource();
-					String tabCaption = (pathway.getLoadSource().equals('H')) ? loadedFile
-							.getName().toString() : pathway.getPathwayName();
-					new ParseKGML(doc, tabCaption, loadedFile, source);
+					String tabCaption = (pathway.getLoadSource().equals('H')) ? loadedFile.getName().toString() : pathway.getPathwayName();
+					if (pathway.getLoadSource().equals('L')){
+						new PiiLgridMaker(pathway.getGridGenesList());
+					}
+					else if (pathway.getLoadSource().equals('G')){
+						new PiiLgridMaker(pathway.getLoadedFilePath());
+					}
+					else{
+						new ParseKGML(doc, tabCaption, loadedFile, source);
+					}
+					
 				}
 				else {
 					JOptionPane.showMessageDialog(Interface.bodyFrame, "There is no pathway to duplicate!","Warning",0,icon);
@@ -859,9 +890,11 @@ public class PiilMenubar extends JMenuBar{
 				
 				if (pathway.getViewMode() == 2){
 					pathway.setViewMode((byte) 0);
-					ControlPanel.enableControlPanel(activeTab);
+					ControlPanel.enableControlPanel(pathway.getPointer());
 				}
+				
 				pathway.setViewMode((byte) 0);
+				
 				boolean anyExpanded = false;
 				for (Entry<String, Genes> gene : pathway.getMapedGeneLabel().entrySet()) {
 					Genes geneNode = gene.getValue();
@@ -895,6 +928,7 @@ public class PiilMenubar extends JMenuBar{
 					Interface.scrollPaneHolder.get(activeTab).getVerticalScrollBar().setUnitIncrement(16);
 					Interface.scrollPaneHolder.get(activeTab).getHorizontalScrollBar().setUnitIncrement(16);
 					pathway.setSelectedGenesCount(0);
+					pathway.resetIDsInGroups(-1); // remove the ids in groups
 				}
 			} // end of single-sample view
 			

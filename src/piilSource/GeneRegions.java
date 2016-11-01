@@ -87,6 +87,7 @@ public class GeneRegions extends JFrame{
 	static Collection<String> tag;
 	
 	public GeneRegions(String entryID, int index, TabsInfo tab){
+		
 		activeTab  = index;
 		pathway = tab;
 		nodeID = entryID;
@@ -118,14 +119,13 @@ public class GeneRegions extends JFrame{
 				export.showExportDialog(magnifyFrame, "Export view as ...",northPanel, geneName + "_regions");
 			}
 		});
+		
 		applyButton.addActionListener(new ActionListener() {
-			
 			public void actionPerformed(ActionEvent bc) {
 				List<Integer> selected = new ArrayList<Integer>(); 
 				for (int i = 0 ; i < allLabels.size() ; i ++){
 					if (allLabels.get(i).isSelected()){
-						selected.add(i);
-						
+						selected.add(i);						
 					}
 				}
 				if (selected.size() == 0){
@@ -138,22 +138,17 @@ public class GeneRegions extends JFrame{
 						selection.put(gene.getKey(),selected);
 					}
 				}
-				
 				pathway.setSelectedSites(selection);
+				
 				if (Controler.samplesIDsCombo.getSelectedIndex() == pathway.getPointer()){
 					Genes.changeBgColor(pathway.getPointer(),pathway.getMetaType());
 				}
 				else {
 					ControlPanel.samplesIDsCombo.setSelectedIndex(Controler.getPointer());
 				}
-				
-//				HashMap<String, List<Integer>> test = pathway.getAllSites();
-//				for (Entry<String, List<Integer>> item : test.entrySet()){
-//					System.out.println(item.getKey() + " " + item.getValue());
-//				}
-				
 			}
 		});
+		
 		closeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Controler.stopTimer();
@@ -212,12 +207,14 @@ public class GeneRegions extends JFrame{
 		
 		magnifyFrame = new JFrame();
 		magnifyFrame.setLayout(new BorderLayout());
+		
 		magnifyFrame.addWindowListener(new java.awt.event.WindowAdapter() {
 		    
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
 		        Controler.stopTimer();
 		    }
 		});
+		
 		northPanel = new JPanel();
 		southPanel = new JPanel();
 		mainPanel = new JPanel();
@@ -259,7 +256,7 @@ public class GeneRegions extends JFrame{
 			
 			region.setAlignmentX(GridBagConstraints.WEST);
 			region.setBorderPainted(true);
-			if (sdThreshold > 0 ){
+			if (sdThreshold > 0 || selectedSites != null){
 				
 				for (Integer item : selectedSites){
 					if (item == i ){

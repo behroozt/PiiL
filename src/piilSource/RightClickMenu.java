@@ -26,7 +26,12 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -42,7 +47,7 @@ public class RightClickMenu {
 	
 
 	JPopupMenu menu;
-	JMenuItem histogram,rawData,  cpgView, geneCards, pubmed, ensembl, multipleSamples;
+	JMenuItem histogram,rawData,  cpgView, geneCards, pubmed, ensembl, multipleSamples, similarGenes;
 	JMenu geneInfo;
 	String entryID;
 	int activeTab;
@@ -52,6 +57,7 @@ public class RightClickMenu {
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 
 	public RightClickMenu(Component component, int x, int y, String nodeID, Point point) {
+		
 		activeTab = Interface.tabPane.getSelectedIndex();
 		pathway = ParseKGML.getTabInfo(activeTab);
 		type = pathway.getMetaType();
@@ -63,6 +69,7 @@ public class RightClickMenu {
 		rawData = new JMenuItem("Barplot for raw data");
 		cpgView = new JMenuItem("Show CpG site(s) details");
 		multipleSamples = new JMenuItem("Show multiple-sample view");
+		similarGenes = new JMenuItem("Find genes with similar pattern");
 		geneCards = new JMenuItem("GeneCards");
 		pubmed = new JMenuItem("Pubmed");
 		ensembl = new JMenuItem("Ensembl");
@@ -72,6 +79,7 @@ public class RightClickMenu {
 		menu.add(rawData);
 		menu.add(cpgView);
 		menu.add(multipleSamples);
+		menu.add(similarGenes);
 		geneInfo.add(geneCards);
 		geneInfo.add(pubmed);
 		geneInfo.add(ensembl);
@@ -85,6 +93,7 @@ public class RightClickMenu {
 				rawData.setEnabled(false);
 				cpgView.setEnabled(false);
 				multipleSamples.setEnabled(false);
+				similarGenes.setEnabled(false);
 			}
 			else {
 				if (gene.getExpandStatus()){
@@ -93,12 +102,17 @@ public class RightClickMenu {
 				else {
 					multipleSamples.setText("Multipe-sample view");
 				}
+				if (pathway.getMetaType().equals('E')){
+					cpgView.setEnabled(false);
+					similarGenes.setEnabled(false);
+				}
 			}
 			if (pathway.getMapedGeneData().size() == 0){
 				histogram.setEnabled(false);
 				rawData.setEnabled(false);
 				cpgView.setEnabled(false);
 				multipleSamples.setEnabled(false);
+				similarGenes.setEnabled(false);
 			}
 		}
 		else {
@@ -106,6 +120,7 @@ public class RightClickMenu {
 			rawData.setEnabled(false);
 			cpgView.setEnabled(false);
 			multipleSamples.setEnabled(false);
+			similarGenes.setEnabled(false);
 		}
 		
 		ListenForClick lForClick = new ListenForClick();
@@ -116,6 +131,7 @@ public class RightClickMenu {
 		pubmed.addActionListener(lForClick);
 		ensembl.addActionListener(lForClick);
 		multipleSamples.addActionListener(lForClick);
+		similarGenes.addActionListener(lForClick);
 	}
 
 	private class ListenForClick implements ActionListener{
@@ -161,16 +177,6 @@ public class RightClickMenu {
 					JOptionPane.showMessageDialog(Interface.bodyFrame, "Unable to browse Ensembl website!","Error", 0, icon);				}
 			} // end of ensemble
 			
-			else if (mc.getSource() == cpgView){
-				Collection<String> theRegion = pathway.getMapedGeneRegion().get(entryID);
-				if (theRegion == null){
-					JOptionPane.showMessageDialog(Interface.bodyFrame, "No CpG site detail is available for this gene!","Message", 0, icon);
-				}
-				else{
-					new GeneRegions(entryID,activeTab,pathway);
-				}
-			} // end of cpgView
-			
 			else if (mc.getSource() == multipleSamples){
 				
 				Genes gene = pathway.getGenes().get(entryID);
@@ -202,7 +208,56 @@ public class RightClickMenu {
 				}
 				gene.getLabel().setVisible(true);
 				gene.setExpandStatus();
-			}
+			} // end of multipleSamples
+			
+			else if (mc.getSource() == cpgView){
+				
+				Collection<String> theRegion = pathway.getMapedGeneRegion().get(entryID);
+				
+				if (theRegion == null){
+					JOptionPane.showMessageDialog(Interface.bodyFrame, "No CpG site detail is available for this gene!","Message", 0, icon);
+				}
+				else{
+					new GeneRegions(entryID,activeTab,pathway);
+				}
+			} // end of cpgView
+			
+			else if (mc.getSource() == similarGenes){
+				File inputFile = pathway.getMetaFilePath();
+				int numberOfSamples = pathway.getSamplesIDs().size();
+				float sum = 0;
+				List<Float> siteValues = new ArrayList<Float>();
+				String geneName = pathway.getMapedGeneLabel().get(entryID).getText();
+				
+				if (pathway.getSelectedSites(entryID) == null){
+					int numberOfRegions = pathway.getMapedGeneRegion().get(entryID).size();
+					
+					for (int i = 0 ; i < numberOfSamples; i ++){
+						sum = 0;
+						for (int j = 0 ; j < numberOfRegions; j ++){
+							if (!isNumeric(pathway.getMapedGeneData().get(entryID).get(j).get(i))){
+								continue;
+							}
+							sum += Float.parseFloat(pathway.getMapedGeneData().get(entryID).get(j).get(i));
+						}
+						siteValues.add(sum / numberOfRegions);
+					}
+				}
+				else {
+					int numberOfSignificantSites = pathway.getSelectedSites(entryID).size();
+					for (int i = 0 ; i < numberOfSamples; i ++){
+						sum = 0;
+						for (int j : pathway.getSelectedSites(entryID)){
+							if (!isNumeric(pathway.getMapedGeneData().get(entryID).get(j).get(i))){
+								continue;
+							}
+							sum += Float.parseFloat(pathway.getMapedGeneData().get(entryID).get(j).get(i));
+						}
+						siteValues.add(sum / numberOfSignificantSites);
+					}
+				}
+				new SimilarityFinder(pathway, inputFile, geneName, siteValues);
+			} // end of similarGenes
 		} // end of actionPerformed
 	} // end of listenForClick
 
