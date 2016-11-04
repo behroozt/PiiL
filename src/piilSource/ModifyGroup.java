@@ -160,12 +160,12 @@ public class ModifyGroup extends JOptionPane{
 				}
 			}
 			pathway.setShowableGroups(chosenGroups);
-			GroupSamples(pathway, chosenGroups);
+			GroupSamples(chosenGroups);
 			
 		}
 	}
 
-	private void GroupSamples(TabsInfo pathway, List<String> chosenGroups){
+	private void GroupSamples( List<String> chosenGroups){
 		
 		pathway.setViewMode((byte) 2);
 		ControlPanel.disableControlPanel(true);
@@ -175,7 +175,7 @@ public class ModifyGroup extends JOptionPane{
 		double sum;
 		double caseAverage;
 		int valid;
-
+		
 		for (Entry<String, Genes> gene : pathway.getMapedGeneLabel().entrySet()) {
 			JLabel[] extraLabels = new JLabel[chosenGroups.size()];
 			Genes geneNode = gene.getValue();
@@ -185,10 +185,12 @@ public class ModifyGroup extends JOptionPane{
 			final String nodeID = gene.getKey();
 			JLabel geneLabel = geneNode.getLabel();
 			geneLabel.setVisible(false);
+			
 			if (geneNode.getExpandStatus() == false){
 				geneNode.setExpandStatus();
 			}
 			else {
+				
 				JLabel[] expandedOnes = geneNode.getExpandedLabels();
 				int expansionSize = expandedOnes.length;
 				for (int i = 0; i < (expansionSize); i++){
@@ -219,7 +221,7 @@ public class ModifyGroup extends JOptionPane{
 			}
 			
 			for (int i = 0; i < chosenGroups.size(); i++) {
-				
+
 				String hint = chosenGroups.get(i);
 				JLabel newOne = new JLabel();
 				int newX = 0, newY = 0;
@@ -228,8 +230,8 @@ public class ModifyGroup extends JOptionPane{
 				newOne.setBounds(newX, newY, width, height);
 				newOne.setOpaque(true);
 				newOne.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-				
 				newOne.setToolTipText(hint);
+				
 				Interface.panelHolder.get(activeTab).add(newOne, BorderLayout.CENTER);
 				extraLabels[i] = newOne;
 				sum = 0;
@@ -281,9 +283,7 @@ public class ModifyGroup extends JOptionPane{
 							caseAverage = sum / valid;
 						}
 					}
-					
 				}
-
 				
 				
 				if (type.equals('M')) {
@@ -357,20 +357,29 @@ public class ModifyGroup extends JOptionPane{
 
 			geneNode.addExpandedLabels(extraLabels);
 		} // end of for each gene
-
-		DrawShapes shapes = new DrawShapes(pathway.getGraphicsItems(), pathway.getEdges());
-		shapes.setPreferredSize(new Dimension((int) pathway.getMaxX(), (int) pathway.getMaxY()));
-		Component[] components = Interface.panelHolder.get(activeTab).getComponents();
-		for (int i = 0; i < components.length; i++) {
-			if (components[i].getClass().equals(shapes.getClass())) {
-				Interface.panelHolder.get(activeTab).remove(components[i]);
+		
+		if (pathway.getLoadSource().equals('H') || pathway.getLoadSource().equals('W')){
+			DrawShapes shapes = new DrawShapes(pathway.getGraphicsItems(), pathway.getEdges());
+			shapes.setPreferredSize(new Dimension((int) pathway.getMaxX(), (int) pathway.getMaxY()));
+			Component[] components = Interface.panelHolder.get(activeTab).getComponents();
+			for (int i = 0; i < components.length; i++) {
+				if (components[i].getClass().equals(shapes.getClass())) {
+					Interface.panelHolder.get(activeTab).remove(components[i]);
+				}
 			}
+			Interface.panelHolder.get(activeTab).add(shapes,BorderLayout.CENTER);
 		}
-		Interface.setSampleInfoLabel(chosenGroups, true, pathway.getBaseGroupIndex());
-		Interface.panelHolder.get(activeTab).add(shapes,BorderLayout.CENTER);
+		else {
+			JLabel PiiLLogo = new JLabel("", icon, JLabel.CENTER);
+			PiiLLogo.setVisible(false);
+			Interface.panelHolder.get(activeTab).add(PiiLLogo,BorderLayout.CENTER);
+		}
 		Interface.bodyFrame.repaint();
 		Interface.scrollPaneHolder.get(activeTab).getVerticalScrollBar().setUnitIncrement(16);
 		Interface.scrollPaneHolder.get(activeTab).getHorizontalScrollBar().setUnitIncrement(16);
+		
+		Interface.setSampleInfoLabel(chosenGroups, true, pathway.getBaseGroupIndex());
+		
 	} // end of GroupSamples
 
 	private static boolean isNumeric(String str) {

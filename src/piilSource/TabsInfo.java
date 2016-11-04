@@ -91,6 +91,7 @@ public class TabsInfo {
 	Point selectedGenePointer;
 	String reloadbleSplitor;
 	static ArrayList<String> gridGenesList;
+	int metaFileLines = 0;
 	
 	public TabsInfo(String tabCaption, File path, Character source, String pathway) {
 		pointer = 0;
@@ -127,6 +128,14 @@ public class TabsInfo {
 		selectedGenePointer = new Point(0, 0);
 		gridGenesList = new ArrayList<String>();
 		
+	}
+	
+	public void setMetaFileLines(int lines){
+		metaFileLines = lines;
+	}
+	
+	public int getMetaFileLines(){
+		return metaFileLines;
 	}
 	
 	public void setGridGenesList(ArrayList<String> list){

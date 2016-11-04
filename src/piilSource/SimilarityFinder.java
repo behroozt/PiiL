@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,7 +90,6 @@ public class SimilarityFinder {
 	static JProgressBar progressBar;
 	Task task;
 	
-	final static int interval = 2000;
 	final JDialog dialog = new JDialog(Interface.bodyFrame, "Loading data",ModalityType.APPLICATION_MODAL);
 	
 	
@@ -155,11 +155,10 @@ public class SimilarityFinder {
 		generateButton.setPreferredSize(new Dimension(140,33));
 		generateButton.setEnabled(false);
 		
-		progressBar = new JProgressBar(0, 480000);
+		progressBar = new JProgressBar(0, pathway.getMetaFileLines());
         progressBar.setValue(0);
         progressBar.setStringPainted(true);
-        progressBar.setIndeterminate(false);
-        progressBar.setStringPainted(false);
+        
 		
 		northPanel = new JPanel(); 
 		northPanel.setLayout(new BorderLayout());
@@ -233,16 +232,6 @@ public class SimilarityFinder {
 	
 			public void actionPerformed(ActionEvent e) {
 				
-//				JLabel waitMessage = new JLabel("Analyzing the data");
-//				
-//				JPanel panel = new JPanel(new BorderLayout());
-//				panel.add(progressBar, BorderLayout.CENTER);
-//				panel.add(waitMessage, BorderLayout.PAGE_START);
-//				dialog.add(panel);
-//				dialog.pack();
-//				dialog.setLocationRelativeTo(Interface.bodyFrame);
-//				
-				
 				if (percentageField.getText() != null){
 					percentage = (int) Float.parseFloat(percentageField.getText());
 				}
@@ -265,8 +254,6 @@ public class SimilarityFinder {
 			        saveButton.setEnabled(false);
 			        generateButton.setEnabled(false);
 			        task.execute();
-					
-//			        dialog.setVisible(true);
 				}
 				else {
 					model.getDataVector().removeAllElements();
@@ -421,10 +408,7 @@ public class SimilarityFinder {
 	
 	
 	class Task extends SwingWorker<Void, Void> {
-        /*
-         * Main task. Executed in background thread.
-         */
-        @Override
+       
         public Void doInBackground() {
         	int progress = 0;
             //Initialize progress property.
@@ -449,7 +433,6 @@ public class SimilarityFinder {
 					elements = line.split(dataSplitor);
 					geneInfo = elements[0].split("_");
 					if (! geneInfo[0].equals(geneName) && (elements.length -1) == numberOfSamples){
-//    			if ( (elements.length -1) == numberOfSamples){	
 						distance = calculateEuclidianDistance(Arrays.copyOfRange(elements, 1, elements.length));
 						if (distance >= 0){
 							distanceMap.put(distance,elements[0]);
@@ -457,6 +440,18 @@ public class SimilarityFinder {
 					}
 					
 				} // end of while
+				findButton.setEnabled(true);
+	            saveButton.setEnabled(true);
+	            generateButton.setEnabled(true);
+	            progressBar.setStringPainted(true);
+	            progressLabel.setText(Integer.toString(rowCounter));
+				model.getDataVector().removeAllElements();
+				
+				for (int i = 0 ; i < percentage; i++){
+					geneColumn = (String) distanceMap.values().toArray()[i];
+					model.addRow(new Object[]{geneColumn.split("_")[0], geneColumn.split("_")[1], distanceMap.keySet().toArray()[i], Boolean.TRUE});
+				}
+				progressBar.setValue(progressBar.getMaximum());
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -465,49 +460,11 @@ public class SimilarityFinder {
 				e.printStackTrace();
 			}
             
-            
-//        	try {
-//				analyzeData();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-            
-//        	setProgress(100);
-//            while (progress < 480000) {
-//                //Sleep for up to one second.
-//                try {
-//                    Thread.sleep(2000);
-//                } catch (InterruptedException ignore) {}
-//                //Make random progress.
-//                progress = rowCounter;
-//                setProgress(rowCounter);
-//            }
             return null;
         }
 
-        /*
-         * Executed in event dispatching thread
-         */
-        @Override
         public void done() {
             Toolkit.getDefaultToolkit().beep();
-            findButton.setEnabled(true);
-            saveButton.setEnabled(true);
-            generateButton.setEnabled(true);
-            progressBar.setIndeterminate(false);
-            
-            progressLabel.setText(Integer.toString(rowCounter));
-			model.getDataVector().removeAllElements();
-			
-			for (int i = 0 ; i < percentage; i++){
-				geneColumn = (String) distanceMap.values().toArray()[i];
-				model.addRow(new Object[]{geneColumn.split("_")[0], geneColumn.split("_")[1], distanceMap.keySet().toArray()[i], Boolean.TRUE});
-			}
-            
-//            progressBar.setStringPainted(false);
-            
-            
         }
     }
 	

@@ -126,15 +126,6 @@ public class PiiLgridMaker {
 		PiiLLogo.setVisible(false);
 		Interface.panelHolder.get(tabIndex).add(PiiLLogo,BorderLayout.CENTER);
 		
-		JLabel star = new JLabel();
-		JLabel extraStar = new JLabel();
-		star.setOpaque(true);
-		star.setBackground(Interface.panelHolder.get(tabIndex).getBackground());
-		extraStar.setOpaque(true);
-		extraStar.setBackground(Interface.panelHolder.get(tabIndex).getBackground());
-		Interface.panelHolder.get(tabIndex).add(star,BorderLayout.CENTER);
-		Interface.panelHolder.get(tabIndex).add(extraStar,BorderLayout.CENTER);
-		
 		Interface.panelHolder.get(tabIndex).setPreferredSize((new Dimension((int) maxX,(int) maxY)));
 		
 		Interface.scrollPaneHolder.get(tabIndex).getVerticalScrollBar().setUnitIncrement(16);
@@ -165,15 +156,6 @@ public class PiiLgridMaker {
 		JLabel PiiLLogo = new JLabel("", icon, JLabel.CENTER);
 		PiiLLogo.setVisible(false);
 		Interface.panelHolder.get(tabIndex).add(PiiLLogo,BorderLayout.CENTER);
-		
-		JLabel star = new JLabel();
-		JLabel extraStar = new JLabel();
-		star.setOpaque(true);
-		star.setBackground(Interface.panelHolder.get(tabIndex).getBackground());
-		extraStar.setOpaque(true);
-		extraStar.setBackground(Interface.panelHolder.get(tabIndex).getBackground());
-		Interface.panelHolder.get(tabIndex).add(star,BorderLayout.CENTER);
-		Interface.panelHolder.get(tabIndex).add(extraStar,BorderLayout.CENTER);
 		
 		Interface.panelHolder.get(tabIndex).setPreferredSize((new Dimension((int) maxX,(int) maxY)));
 		

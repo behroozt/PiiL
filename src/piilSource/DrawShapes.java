@@ -69,7 +69,5 @@ public class DrawShapes extends JComponent{
 			graphical.draw(item);
 		}
 	}
-	
-	
 
 }

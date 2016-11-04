@@ -34,8 +34,10 @@ import java.awt.event.MouseListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -80,11 +82,11 @@ public class PiilMenubar extends JMenuBar{
 	JMenuItem exitAction, loadAction, aboutAction, exportEntire, manualAction, exportVisible,
 	newAction, openAction, openWebAction, newSamplesInfo, reportAction, newMethylation,
 	duplicateAction, duplicateMetaData, newExpression, exportGenes, snapShot, citeUs, 
-	highlightGenes, checkUpdates, piilgridAction;
+	highlightGenes, checkUpdates, piilgridAction, significantSites, filterSites;
 	JMenu menuFile, menuLoad, menuHelp, openKGML, menuTools, loadMethylation,
 	loadExpression, duplicatePathway, menuView;
-	static JMenuItem multiSampleView, singleSampleView, groupWiseView, manageColors, filterSites;
-	static JMenu loadSamplesInfo;
+	static JMenuItem multiSampleView, singleSampleView, groupWiseView, manageColors ;
+	static JMenu loadSamplesInfo, selectSubset;
 	JMenu menuPathwayImage;
 	JMenu menuExport;
 	JMenuBar menubar;
@@ -96,7 +98,7 @@ public class PiilMenubar extends JMenuBar{
 	byte validInput;
 	JLabel waitMessage = new JLabel();
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
-	final Double version = 0.08;
+	final Double version = 0.10;
 	String latestVersion;
 	
 	public PiilMenubar(){
@@ -157,10 +159,15 @@ public class PiilMenubar extends JMenuBar{
 //		duplicateMetaData = new JMenuItem("Pathway with its loaded metadata");
 //		duplicateMetaData.setEnabled(false);
 		snapShot = new JMenuItem("Take a snapshot of PiiL");
+		snapShot.setVisible(false);
 		manageColors = new JMenuItem("Manage color-coding");
 		manageColors.setEnabled(false);
-		filterSites = new JMenuItem("Exclude non-differentiating CpG sites");
-		filterSites.setEnabled(false);
+		filterSites = new JMenuItem("Exclude sites by standard deviation filtering");
+		significantSites = new JMenuItem("Load a list of significant sites");
+		selectSubset = new JMenu("Select a subset of CpG sites");
+		selectSubset.setEnabled(false);
+		
+		
 				        
 		// Help menu items
 		menuHelp = new JMenu("Help");
@@ -197,7 +204,9 @@ public class PiilMenubar extends JMenuBar{
 		menuTools.add(snapShot);
 		menuTools.add(duplicateAction);
 		menuTools.add(manageColors);
-		menuTools.add(filterSites);
+		menuTools.add(selectSubset);
+		selectSubset.add(filterSites);
+		selectSubset.add(significantSites);
 		menuHelp.add(aboutAction);
 		menuHelp.add(manualAction);
 		menuHelp.add(reportAction);
@@ -234,6 +243,7 @@ public class PiilMenubar extends JMenuBar{
 		manageColors.addActionListener(lForMenu);
 		filterSites.addActionListener(lForMenu);
 		piilgridAction.addActionListener(lForMenu);
+		significantSites.addActionListener(lForMenu);
 		
 		return menubar;
 	}
@@ -300,7 +310,7 @@ public class PiilMenubar extends JMenuBar{
         		if (!validFormat){
         			JOptionPane.showMessageDialog(Interface.bodyFrame, "Unable to parse the input file. Make sure you are connected to the internet and/or check your KGML file format.","Error",0,icon);
         		}
-			} // end of openAction
+			} // end of openAction			
 			
 			/* PiiLway item clicked */
 			else if (ice.getSource() == piilgridAction){
@@ -378,6 +388,11 @@ public class PiilMenubar extends JMenuBar{
 								SwingWorker<Void, Void> methylLoader = new SwingWorker<Void, Void>() {
 									protected Void doInBackground() {
 										try {
+											LineNumberReader lineNumberReader = null;
+											lineNumberReader = new LineNumberReader(new FileReader(file));
+											lineNumberReader.skip(Long.MAX_VALUE);
+											int lines = lineNumberReader.getLineNumber();
+											theTab.setMetaFileLines(lines);
 											validInput = theTab.getGenesList(file,input);
 										
 										} catch (IOException e) {
@@ -409,6 +424,7 @@ public class PiilMenubar extends JMenuBar{
 													thisTab.setMetaType('M');
 													thisTab.setMetaFilePath(file);
 													thisTab.setSplitor(input.getSeparator());
+													thisTab.setMetaFileLines(theTab.getMetaFileLines());
 
 													File reloadableFile = TabsInfo.getLoadedFilePath(fileName);
 														
@@ -940,7 +956,6 @@ public class PiilMenubar extends JMenuBar{
 				pathway.setViewMode((byte) 2);
 				
 				new ModifyGroup();
-//				GroupSamples(pathway, activeTab);
 				
 			} // end of group-wise view
 			
@@ -952,6 +967,19 @@ public class PiilMenubar extends JMenuBar{
 			/* filer sites item clicked */
 			else if(ice.getSource() == filterSites){
 				new SDFilter();
+			}
+			
+			/* filter sites according to a list */
+			else if (ice.getSource() == significantSites){
+				fileSelector = new JFileChooser();
+				fileSelector.setFileFilter(null);
+				directory = new File(openedDirectory);
+				fileSelector.setCurrentDirectory(directory);
+				int returnVal = fileSelector.showOpenDialog(null);
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					new SignificantSiteSelector(fileSelector.getSelectedFile());	
+				}
+				
 			}
 			
 			/* about item clicked */

@@ -294,8 +294,12 @@ public class ControlPanel extends JPanel{
 			samplesIDsCombo.setSelectedIndex(tabPointer);
 			samplesIDsCombo.addItemListener(lForCombo);
 			matchedGenesCombo.setSelectedIndex(pathway.getSelectedGeneIndex());
-			setMatchedGene(matchedGenesCombo.getSelectedItem().toString());
-			matchedGenesCombo.addItemListener(lForCombo);
+			
+			if (pathway.getLoadSource().equals('H') || pathway.getLoadSource().equals('W')){
+				setMatchedGene(matchedGenesCombo.getSelectedItem().toString());
+				matchedGenesCombo.addItemListener(lForCombo);	
+			}
+			
 			for (Component theComponent: buttonsPanel.getComponents()){
 				if (theComponent.getClass() != JSlider.class) {
 					theComponent.setEnabled(true);
@@ -327,17 +331,18 @@ public class ControlPanel extends JPanel{
 		PiilMenubar.multiSampleView.setEnabled(true);
 		PiilMenubar.singleSampleView.setEnabled(true);
 		if (pathway.getMetaType().equals('M')){
-			PiilMenubar.filterSites.setEnabled(true);
+			PiilMenubar.selectSubset.setEnabled(true);
 			Interface.tabPane.setToolTipTextAt(activeTab, "Methylation data loaded");
 			metaDataLabel.setText("DNA Methylation");
 			metaDataLabel.setEnabled(true);
 			
 		}
 		else if (pathway.getMetaType().equals('E')){
-			PiilMenubar.filterSites.setEnabled(false);
+			
 			Interface.tabPane.setToolTipTextAt(activeTab, "Expression data loaded");
 			metaDataLabel.setText("Gene Expression");
 			metaDataLabel.setEnabled(true);
+			PiilMenubar.selectSubset.setEnabled(false);
 			
 		}
 		if (pathway.getIDsInGroups() != null && pathway.getIDsInGroups().size() > 0){
@@ -458,7 +463,7 @@ public class ControlPanel extends JPanel{
 		PiilMenubar.setSampleIdMenu(false);
 //		colorMap.setVisible(enabled);
 		PiilMenubar.multiSampleView.setEnabled(false);
-		PiilMenubar.filterSites.setEnabled(enabled);
+		PiilMenubar.selectSubset.setEnabled(enabled);
 		PiilMenubar.singleSampleView.setEnabled(enabled);
 		
 		

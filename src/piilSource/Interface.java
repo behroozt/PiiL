@@ -95,20 +95,20 @@ public class Interface extends JFrame{
 		bodyFrame.setSize(scrWidth, scrHeight);
 		bodyFrame.setTitle(" PiiL - Pathway interactive visualization tooL ");
 		
-		bodyFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);	
+//		bodyFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);	
 		
-//		bodyFrame.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);		
-//		bodyFrame.addWindowListener(new java.awt.event.WindowAdapter() {
-//		    @Override
-//		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-//		        if (JOptionPane.showConfirmDialog(bodyFrame, 
-//		            "Are you sure to quit PiiL?", "Closing confirmation", 
-//		            JOptionPane.YES_NO_OPTION,
-//		            JOptionPane.QUESTION_MESSAGE, icon) == JOptionPane.YES_OPTION){
-//		            System.exit(0);
-//		        }
-//		    }
-//		});
+		bodyFrame.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);		
+		bodyFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		        if (JOptionPane.showConfirmDialog(bodyFrame, 
+		            "Are you sure to quit PiiL?", "Closing confirmation", 
+		            JOptionPane.YES_NO_OPTION,
+		            JOptionPane.QUESTION_MESSAGE, icon) == JOptionPane.YES_OPTION){
+		            System.exit(0);
+		        }
+		    }
+		});
 		
 		sampleInfoPanel = new JPanel();
 		sampleInfoPanel.setPreferredSize(new Dimension(1000, 45));
@@ -250,7 +250,7 @@ public class Interface extends JFrame{
 		gridConstraints.insets = new Insets(1,15,4,1);
 		
 		bodyFrame.add(backgroundPanel,BorderLayout.CENTER);
-//		new Splash(3000);	
+		new Splash(3000);	
 		bodyFrame.setIconImage(createImage("/resources/icon.png").getImage());
 		bodyFrame.setVisible(true);
 	}
