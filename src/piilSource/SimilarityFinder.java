@@ -26,6 +26,8 @@ import java.awt.Toolkit;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
@@ -37,8 +39,10 @@ import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
 import javax.swing.ImageIcon;
@@ -53,11 +57,14 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.RowSorter;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import org.w3c.dom.Document;
 
@@ -68,10 +75,10 @@ public class SimilarityFinder {
 	
 	File input;
 	JPanel northTop, northCenter, northBottom, northPanel, centerPanel, southPanel, containerPanel, southTop, southBottom;	
-	JLabel progressNote, selectStartLabel, selectEndLabel, loadedFileLabel, rowCounterLabel, progressLabel, selectMiddleLabel;
+	JLabel progressNote, selectStartLabel, selectEndLabel, loadedFileLabel, rowCounterLabel, progressLabel, selectMiddleLabel, findingLabel;
 	JTextField percentageField;
 	static int rowCounter;
-	JComboBox similarityChoice;
+	JComboBox similarityChoice, findingChoice;
 	String geneName;
 	List<Float> targetGeneValues;
 	int numberOfSamples;
@@ -88,26 +95,46 @@ public class SimilarityFinder {
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 	GridBagConstraints c = new GridBagConstraints();
 	static JProgressBar progressBar;
-	Task task;
+	WholeDataset allGenesTask;
+	CurrentPathway matchedGenesTask;
+	Character metaType;
 	
-	final JDialog dialog = new JDialog(Interface.bodyFrame, "Loading data",ModalityType.APPLICATION_MODAL);
-	
+	final JDialog dialog = new JDialog(Interface.bodyFrame, "Loading data",ModalityType.APPLICATION_MODAL);	
 	
 	public SimilarityFinder(TabsInfo tabInfo, File file, String name, List<Float> siteValues) {
 		
 		input = file;
 		pathway = tabInfo;
 		geneName = name;
+		metaType = pathway.getMetaType();
 		targetGeneValues = siteValues;
 		numberOfSamples = pathway.getSamplesIDs().size();
 		distanceMap = new TreeMap<Float, String>();
 		String[] choices = {"most", "least"};
 		similarityChoice = new JComboBox(choices);
+		String[] options = {"The highlighted genes in the pathway", "The whole loaded metadata"};
+		findingChoice = new JComboBox(options);
+		findingChoice.addItemListener(new ItemListener() {
+			
+			public void itemStateChanged(ItemEvent arg0) {
+				distanceMap.clear();
+				model.getDataVector().removeAllElements();
+			}
+		});
 		
-		model = new DefaultTableModel(new Object[]{"Gene", "CpG ID/coordinate", "Distance", "Selected"}, 0);
+		if (metaType.equals('M')){
+			model = new DefaultTableModel(new Object[]{"Gene", "CpG ID/coordinate", "Distance", "Selected"}, 0);
+			progressBar = new JProgressBar(0, pathway.getMetaFileLines());
+		}
+		else {
+			model = new DefaultTableModel(new Object[]{"Gene", "Distance", "Selected"}, 0);
+			progressBar = new JProgressBar(0, 25000);
+		}
+		
 		
 		genesTable = new JTable(model) {
             @Override
+            
             public TableCellRenderer getCellRenderer(int row, int column) {
                 if(getValueAt(row, column) instanceof Boolean) {
                     return super.getDefaultRenderer(Boolean.class);
@@ -154,12 +181,12 @@ public class SimilarityFinder {
 		generateButton = new JButton("Generate PiiLgrid");
 		generateButton.setPreferredSize(new Dimension(140,33));
 		generateButton.setEnabled(false);
+		findingLabel = new JLabel("Check the targeted gene against ");
 		
-		progressBar = new JProgressBar(0, pathway.getMetaFileLines());
+		
         progressBar.setValue(0);
-        progressBar.setStringPainted(true);
+        progressBar.setStringPainted(false);        
         
-		
 		northPanel = new JPanel(); 
 		northPanel.setLayout(new BorderLayout());
 		centerPanel = new JPanel();
@@ -181,8 +208,8 @@ public class SimilarityFinder {
 		northCenter.add(selectMiddleLabel);
 		northCenter.add(similarityChoice);
 		northCenter.add(selectEndLabel);
-		northBottom.add(rowCounterLabel, BorderLayout.WEST);
-		northBottom.add(progressLabel, BorderLayout.CENTER);
+		northBottom.add(findingLabel, BorderLayout.WEST);
+		northBottom.add(findingChoice, BorderLayout.CENTER);
 		northBottom.add(findButton, BorderLayout.EAST);
 		
 		northPanel.add(northTop, BorderLayout.NORTH);
@@ -228,6 +255,34 @@ public class SimilarityFinder {
 			}
 		});
 		
+		allGenesTask = new WholeDataset();
+        allGenesTask.addPropertyChangeListener(new PropertyChangeListener() {
+			
+			@Override
+			public void propertyChange(PropertyChangeEvent e) {
+				if ("progress".equals(e.getPropertyName())) {
+	                progressBar.setIndeterminate(false);
+	                progressBar.setValue((Integer) e.getNewValue());
+	            }
+				
+			}
+		});
+        
+        matchedGenesTask = new CurrentPathway();
+        matchedGenesTask.addPropertyChangeListener(new PropertyChangeListener() {
+			
+			@Override
+			public void propertyChange(PropertyChangeEvent e) {
+				if ("progress".equals(e.getPropertyName())) {
+	                progressBar.setIndeterminate(false);
+	                progressBar.setValue((Integer) e.getNewValue());
+	            }
+				
+			}
+		});
+		
+		
+		
 		findButton.addActionListener(new ActionListener() {
 	
 			public void actionPerformed(ActionEvent e) {
@@ -238,30 +293,34 @@ public class SimilarityFinder {
 				
 				if (distanceMap.entrySet().isEmpty()){
 					progressBar.setStringPainted(true);
-					task = new Task();
-			        task.addPropertyChangeListener(new PropertyChangeListener() {
-						
-						@Override
-						public void propertyChange(PropertyChangeEvent e) {
-							if ("progress".equals(e.getPropertyName())) {
-				                progressBar.setIndeterminate(false);
-				                progressBar.setValue((Integer) e.getNewValue());
-				            }
-							
-						}
-					});
-			        findButton.setEnabled(false);
+					findButton.setEnabled(false);
 			        saveButton.setEnabled(false);
 			        generateButton.setEnabled(false);
-			        task.execute();
+			        loadButton.setEnabled(false);
+			        
+			        if (findingChoice.getSelectedIndex() == 0){
+			        	matchedGenesTask.execute();
+			        }
+			        else {
+			        	allGenesTask.execute();
+			        }
 				}
 				else {
+					RowSorter rs = genesTable.getRowSorter();
+					rs.setSortKeys(null);
 					model.getDataVector().removeAllElements();
+					
+					if (percentage > distanceMap.values().size()){
+						percentage = distanceMap.values().size();
+						percentageField.setText(Integer.toString(distanceMap.values().size()));
+					}
+					
 					if (similarityChoice.getSelectedIndex() == 0){  // list most similar genes
+						
 						for (int i = 0 ; i < percentage; i++){
 							geneColumn = (String) distanceMap.values().toArray()[i];
 							model.addRow(new Object[]{geneColumn.split("_")[0], geneColumn.split("_")[1], distanceMap.keySet().toArray()[i], new Boolean(true)});
-						}	
+						}
 					}
 					else { // list least similar genes
 						int lastItemIndex = distanceMap.size() - 1;
@@ -333,46 +392,6 @@ public class SimilarityFinder {
 		int result = JOptionPane.showConfirmDialog(null, containerPanel, "Finding similar patterns to gene " + geneName, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, icon);
 		
 	} // end of constructor
-	
-
-	protected void analyzeData() throws IOException {
-		
-		BufferedReader br = new BufferedReader(new FileReader(input));
-		String line = null;
-		String dataSplitor = pathway.getReloadableSplitor();
-		progressLabel.setVisible(true);
-		rowCounterLabel.setVisible(true);
-		String header = br.readLine();
-		String[] elements;
-		String[] geneInfo;
-		float distance;
-		
-		rowCounter = 0;
-		
-		while ((line = br.readLine()) != null){
-			rowCounter++;
-			elements = line.split(dataSplitor);
-			geneInfo = elements[0].split("_");
-			if (! geneInfo[0].equals(geneName) && (elements.length -1) == numberOfSamples){
-//			if ( (elements.length -1) == numberOfSamples){	
-				distance = calculateEuclidianDistance(Arrays.copyOfRange(elements, 1, elements.length));
-				if (distance >= 0){
-					distanceMap.put(distance,elements[0]);
-				}
-			}
-			
-		} // end of while
-		
-		progressLabel.setText(Integer.toString(rowCounter));
-		model.getDataVector().removeAllElements();
-		
-		for (int i = 0 ; i < percentage; i++){
-			geneColumn = (String) distanceMap.values().toArray()[i];
-			model.addRow(new Object[]{geneColumn.split("_")[0], geneColumn.split("_")[1], distanceMap.keySet().toArray()[i], Boolean.TRUE});
-		}
-		
-	} // end of analyzeData
-
 
 	private float calculateEuclidianDistance(String[] values) {
 		
@@ -394,6 +413,45 @@ public class SimilarityFinder {
 		}
 		return (float) Math.sqrt(sum);
 	}
+	
+	private float calculateEuclidianDistance(List<Float> siteValues) {
+		float sum = 0;
+		int invalid = 0;
+		float difference;
+		
+		if (metaType.equals('E')){
+			float siteSum = 0, targetSum = 0;
+			for (int i = 0 ; i < siteValues.size(); i++){
+				siteSum += siteValues.get(i);
+				targetSum += targetGeneValues.get(i);
+			}
+			for (int i = 0; i < numberOfSamples ; i ++){
+				
+				if (!isNumeric(siteValues.get(i).toString())){
+					invalid ++;
+					continue;
+				}
+				difference = (targetGeneValues.get(i) / targetSum) - (siteValues.get(i) / siteSum);
+				sum += Math.pow(difference, 2);
+			}
+		}
+		else if (metaType.equals('M')){
+			for (int i = 0; i < numberOfSamples ; i ++){
+				
+				if (!isNumeric(siteValues.get(i).toString())){
+					invalid ++;
+					continue;
+				}
+				difference = targetGeneValues.get(i) - siteValues.get(i);
+				sum += Math.pow(difference, 2);
+			}
+		}
+		
+		if (invalid >= numberOfSamples){
+			return -1;
+		}
+		return (float) Math.sqrt(sum);
+	}
 
 
 	private boolean isNumeric(String str) {
@@ -407,7 +465,7 @@ public class SimilarityFinder {
 	}
 	
 	
-	class Task extends SwingWorker<Void, Void> {
+	class WholeDataset extends SwingWorker<Void, Void> {
        
         public Void doInBackground() {
         	int progress = 0;
@@ -419,39 +477,73 @@ public class SimilarityFinder {
 				String line = null;
 				String dataSplitor = pathway.getReloadableSplitor();
 				progressLabel.setVisible(true);
+				progressBar.setVisible(true);
 				rowCounterLabel.setVisible(true);
 				String header = br.readLine();
 				String[] elements;
 				String[] geneInfo;
 				float distance;
 				
-				rowCounter = 0;
-				
-				while ((line = br.readLine()) != null){
-					rowCounter++;
-					progressBar.setValue(rowCounter);
-					elements = line.split(dataSplitor);
-					geneInfo = elements[0].split("_");
-					if (! geneInfo[0].equals(geneName) && (elements.length -1) == numberOfSamples){
-						distance = calculateEuclidianDistance(Arrays.copyOfRange(elements, 1, elements.length));
-						if (distance >= 0){
-							distanceMap.put(distance,elements[0]);
+				if (metaType.equals('M')){
+					rowCounter = 0;
+					while ((line = br.readLine()) != null){
+						rowCounter++;
+						progressBar.setValue(rowCounter);
+						elements = line.split(dataSplitor);
+						geneInfo = elements[0].split("_");
+						if (! geneInfo[0].equals(geneName) && (elements.length -1) == numberOfSamples){
+							distance = calculateEuclidianDistance(Arrays.copyOfRange(elements, 1, elements.length));
+							if (distance > 0){
+								distanceMap.put(distance,elements[0]);
+							}
 						}
-					}
+					} // end of while
 					
-				} // end of while
+					model.getDataVector().removeAllElements();
+					if (percentage > distanceMap.values().size()){
+						percentage = distanceMap.values().size();
+						percentageField.setText(Integer.toString(distanceMap.values().size()));
+					}
+					for (int i = 0 ; i < percentage; i++){
+						geneColumn = (String) distanceMap.values().toArray()[i];
+						model.addRow(new Object[]{geneColumn.split("_")[0], geneColumn.split("_")[1], distanceMap.keySet().toArray()[i], Boolean.TRUE});
+					}
+				}
+				else if (metaType.equals('E')){
+					String currentGene;
+					rowCounter = 0;
+					while ((line = br.readLine()) != null){
+						rowCounter++;
+						progressBar.setValue(rowCounter);
+						elements = line.split(dataSplitor);
+						currentGene = elements[0];
+						if (! currentGene.equals(geneName) && (elements.length -1) == numberOfSamples){
+							distance = calculateEuclidianDistance(Arrays.copyOfRange(elements, 1, elements.length));
+							if (distance > 0){
+								distanceMap.put(distance,elements[0]);
+							}
+						}
+					} // end of while
+					
+					model.getDataVector().removeAllElements();
+					if (percentage > distanceMap.values().size()){
+						percentage = distanceMap.values().size();
+						percentageField.setText(Integer.toString(distanceMap.values().size()));
+					}
+					for (int i = 0 ; i < percentage; i++){
+						geneColumn = (String) distanceMap.values().toArray()[i];
+						model.addRow(new Object[]{geneColumn, distanceMap.keySet().toArray()[i], Boolean.TRUE});
+					}
+				}
+				
 				findButton.setEnabled(true);
 	            saveButton.setEnabled(true);
 	            generateButton.setEnabled(true);
 	            progressBar.setStringPainted(true);
+	            loadButton.setEnabled(true);
 	            progressLabel.setText(Integer.toString(rowCounter));
-				model.getDataVector().removeAllElements();
-				
-				for (int i = 0 ; i < percentage; i++){
-					geneColumn = (String) distanceMap.values().toArray()[i];
-					model.addRow(new Object[]{geneColumn.split("_")[0], geneColumn.split("_")[1], distanceMap.keySet().toArray()[i], Boolean.TRUE});
-				}
 				progressBar.setValue(progressBar.getMaximum());
+				
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -468,5 +560,122 @@ public class SimilarityFinder {
         }
     }
 	
+	class CurrentPathway extends SwingWorker<Void, Void> {
+
+		@Override
+		protected Void doInBackground() throws Exception {
+			
+			int progress = 0;
+			float sum;
+			String entryID;
+			int numberOfRegions;
+			int numberOfSignificantSites;
+			float distance;
+            setProgress(0);
+            List<Float> siteValues = new ArrayList<Float>();
+            
+            for (Entry<String, List<List<String>>> item : pathway.getMapedGeneData().entrySet()){
+            	
+            	siteValues.clear();
+            	entryID = item.getKey();
+            	String geneName = pathway.getMapedGeneLabel().get(entryID).getText() + "_--";
+
+            	if (metaType.equals('M')){
+            		
+            		if (pathway.getSelectedSites(entryID) == null){
+	            		
+                		if (pathway.getMapedGeneRegion().get(entryID) == null){
+                			continue;
+                		}
+    					numberOfRegions = pathway.getMapedGeneRegion().get(entryID).size();
+    					
+    					for (int i = 0 ; i < numberOfSamples; i ++){
+    						sum = 0;
+    						for (int j = 0 ; j < numberOfRegions; j ++){
+    							if (!isNumeric(pathway.getMapedGeneData().get(entryID).get(j).get(i))){
+    								continue;
+    							}
+    							sum += Float.parseFloat(pathway.getMapedGeneData().get(entryID).get(j).get(i));
+    						}
+    						siteValues.add(sum / numberOfRegions);
+    					}
+    				}
+
+                	else {
+                		if (pathway.getSelectedSites(entryID).get(0) == -1){
+                    		continue;
+                    	}
+                		if (pathway.getSelectedSites(entryID) == null){
+                			continue;
+                		}
+    					numberOfSignificantSites = pathway.getSelectedSites(entryID).size();
+    					for (int i = 0 ; i < numberOfSamples; i ++){
+    						sum = 0;
+    						for (int j : pathway.getSelectedSites(entryID)){
+    							if (!isNumeric(pathway.getMapedGeneData().get(entryID).get(j).get(i))){
+    								continue;
+    							}
+    							sum += Float.parseFloat(pathway.getMapedGeneData().get(entryID).get(j).get(i));
+    						}
+    						siteValues.add(sum / numberOfSignificantSites);
+    					}
+    				}
+            		
+            	}
+            	else if (metaType.equals('E')){
+            		
+            		for (int i = 0 ; i < numberOfSamples; i ++){
+            			if (!isNumeric(pathway.getMapedGeneData().get(entryID).get(0).get(i))){
+							continue;
+						}
+            			siteValues.add(Float.parseFloat(pathway.getMapedGeneData().get(entryID).get(0).get(i)));
+            		}
+            	}
+            	
+            	distance = calculateEuclidianDistance(siteValues);
+				if (distance > 0){
+					
+					distanceMap.put(distance, geneName);
+				}
+				
+            } // end of for
+            
+            if (percentage > distanceMap.values().size()){
+				percentage = distanceMap.values().size();
+				percentageField.setText(Integer.toString(distanceMap.values().size()));
+			}
+            
+            if (metaType.equals('E')){
+            	model.getDataVector().removeAllElements();
+				
+				for (int i = 0 ; i < percentage; i++){
+					geneColumn = (String) distanceMap.values().toArray()[i];
+					model.addRow(new Object[]{geneColumn.split("_")[0], distanceMap.keySet().toArray()[i], Boolean.TRUE});
+				}
+            }
+            
+            else if (metaType.equals('M')){
+            	model.getDataVector().removeAllElements();
+            	for (int i = 0 ; i < percentage; i++){
+					geneColumn = (String) distanceMap.values().toArray()[i];
+					model.addRow(new Object[]{geneColumn.split("_")[0], "--", distanceMap.keySet().toArray()[i], Boolean.TRUE});
+				}
+            }
+            
+            findButton.setEnabled(true);
+            saveButton.setEnabled(true);
+            generateButton.setEnabled(true);
+            progressBar.setStringPainted(true);
+            loadButton.setEnabled(true);
+            progressLabel.setText(Integer.toString(rowCounter));
+			progressBar.setValue(progressBar.getMaximum());
+			
+			return null;
+		}
+
+		public void done() {
+            Toolkit.getDefaultToolkit().beep();
+        }	
+	}
 
 }

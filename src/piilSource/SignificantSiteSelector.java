@@ -130,7 +130,6 @@ public class SignificantSiteSelector {
 				for (int i= 0; i < region.getValue().size() ; i ++){
 					siteID = region.getValue().toArray()[i].toString().split("_")[0];
 					if (significantSites.contains(siteID)){
-						System.out.println(siteID);
 						selectedSites.add(i);
 					}
 				}
@@ -167,7 +166,7 @@ public class SignificantSiteSelector {
 			splitBy = ",";
 		}
 		else if (separator.equals("dash")){
-			splitBy = " ";
+			splitBy = "-";
 		}
 		else {
 			splitBy = ";";

@@ -179,7 +179,7 @@ public class ModifyGroup extends JOptionPane{
 		for (Entry<String, Genes> gene : pathway.getMapedGeneLabel().entrySet()) {
 			JLabel[] extraLabels = new JLabel[chosenGroups.size()];
 			Genes geneNode = gene.getValue();
-			if (geneNode.getLabel().getBackground() == Color.DARK_GRAY){
+			if (geneNode.getLabel().getBackground() == Color.LIGHT_GRAY){
 				continue;
 			}
 			final String nodeID = gene.getKey();
@@ -197,7 +197,6 @@ public class ModifyGroup extends JOptionPane{
 					Interface.panelHolder.get(activeTab).remove(expandedOnes[i]);
 				}
 			}
-			
 			
 			JLabel label = pathway.getMapedGeneLabel().get(nodeID).getLabel();
 			int x = (int) label.getBounds().getX();
@@ -251,8 +250,6 @@ public class ModifyGroup extends JOptionPane{
 							}
 							members.add(data.get(k).get(sampleIndex));
 						}
-						Statistics expressionValues = new Statistics(members);
-						caseAverage = expressionValues.getMedian();
 					}
 					else {
 						if ((pathway.getSDThreshold() > 0) | (pathway.getSelectedSites(gene.getKey()) != null)){
@@ -283,12 +280,15 @@ public class ModifyGroup extends JOptionPane{
 							caseAverage = sum / valid;
 						}
 					}
-				}
-				
+				} // end of for each member of the group
 				
 				if (type.equals('M')) {
 					bgColor = Genes.paintLabel(caseAverage);
 				} else if (type.equals('E')){
+					
+					Statistics expressionValues = new Statistics(members);
+					caseAverage = expressionValues.getMedian();
+					
 					if (baseCombo.isEnabled()){
 						List<List<String>> baseData = new ArrayList<List<String>>();
 						List<String> baseValues = new ArrayList<String>();
@@ -298,11 +298,12 @@ public class ModifyGroup extends JOptionPane{
 							baseValues.add(data.get(0).get(sampleIndex));
 						}
 						baseData.add(baseValues);
-						bgColor = Genes.paintLabel(caseAverage,	baseData);
+						bgColor = Genes.paintLabel(caseAverage,	baseData, 0);
 					}
 					else {
-						bgColor = Genes.paintLabel(caseAverage,	data);
+						bgColor = Genes.paintLabel(caseAverage,	data, 0);
 					}
+					
 				}
 
 				if (i == 0) {
@@ -323,8 +324,8 @@ public class ModifyGroup extends JOptionPane{
 							newOne.setForeground(Color.BLACK);
 						}
 					}
-					else if (bgColor == Color.DARK_GRAY){
-						newOne.setForeground(Color.WHITE);
+					if (bgColor == Color.LIGHT_GRAY){
+						newOne.setForeground(Color.BLACK);
 					}
 					newOne.addMouseListener(new MouseListener() {
 
@@ -353,7 +354,7 @@ public class ModifyGroup extends JOptionPane{
 				} // end if i==0
 
 				newOne.setBackground(bgColor);
-			} // end of for each member of the group
+			} // end of for each chosen group
 
 			geneNode.addExpandedLabels(extraLabels);
 		} // end of for each gene

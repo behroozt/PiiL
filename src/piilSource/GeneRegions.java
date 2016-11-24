@@ -71,7 +71,7 @@ public class GeneRegions extends JFrame{
 	int labelX, labelY,labelWidth, labelHeight, frameWidth, frameHeight, maxWidth;
 	static JPanel northPanel, southPanel, mainPanel, labelPanel, regionsPanel, controlPanel;
 	JPanel centerPanel;
-	static JFrame magnifyFrame;
+	JFrame magnifyFrame;
 	JButton exportButton, closeButton, applyButton;
 	String geneName;
 	JScrollPane regionsPane;

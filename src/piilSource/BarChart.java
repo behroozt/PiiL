@@ -308,6 +308,7 @@ public class BarChart extends ApplicationFrame {
         if (metaLabel.equals("beta")){
         	rangeAxis.setRange(0,1);
         	rangeAxis.setTickUnit(new NumberTickUnit(0.2));
+        	
         }
 
         // disable bar outlines...
@@ -316,12 +317,12 @@ public class BarChart extends ApplicationFrame {
         
         // set up gradient paints for series...
         final GradientPaint gp0 = new GradientPaint(
-            0.0f, 0.0f, Color.blue, 
-            0.0f, 0.0f, Color.blue
+            0.0f, 0.0f, new Color(0,0,150), 
+            0.0f, 0.0f, new Color(0,0,150)
         );
         final GradientPaint gp1 = new GradientPaint(
-            0.0f, 0.0f, Color.green, 
-            0.0f, 0.0f, Color.green
+            0.0f, 0.0f, new Color(0,80,0), 
+            0.0f, 0.0f, new Color(0,80,0)
         );
         final GradientPaint gp2 = new GradientPaint(
             0.0f, 0.0f, Color.red, 
@@ -335,13 +336,14 @@ public class BarChart extends ApplicationFrame {
                 0.0f, 0.0f, Color.cyan, 
                 0.0f, 0.0f, Color.cyan
         );
-        renderer.setSeriesPaint(0, Color.BLUE);
-        renderer.setSeriesPaint(1, Color.GREEN);
+        renderer.setSeriesPaint(0, gp0);
+        renderer.setSeriesPaint(1, gp1);
         renderer.setSeriesPaint(2, gp2);
         renderer.setSeriesPaint(3, gp3);
         renderer.setSeriesPaint(4, gp4);
 
         final CategoryAxis domainAxis = plot.getDomainAxis();
+        
         domainAxis.setCategoryLabelPositions(
                 CategoryLabelPositions.createUpRotationLabelPositions(Math.PI / 6.0)
             );

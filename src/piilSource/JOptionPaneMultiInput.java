@@ -176,7 +176,7 @@ public class JOptionPaneMultiInput {
 			splitBy = ",";
 		}
 		else if (seperator.equals("dash")){
-			splitBy = " ";
+			splitBy = "-";
 		}
 		else {
 			splitBy = ";";

@@ -82,7 +82,7 @@ public class PiilMenubar extends JMenuBar{
 	JMenuItem exitAction, loadAction, aboutAction, exportEntire, manualAction, exportVisible,
 	newAction, openAction, openWebAction, newSamplesInfo, reportAction, newMethylation,
 	duplicateAction, duplicateMetaData, newExpression, exportGenes, snapShot, citeUs, 
-	highlightGenes, checkUpdates, piilgridAction, significantSites, filterSites;
+	highlightGenes, checkUpdates, piilgridAction, significantSites, sdFilterSites, regionFilterSites, valueFilterSites;
 	JMenu menuFile, menuLoad, menuHelp, openKGML, menuTools, loadMethylation,
 	loadExpression, duplicatePathway, menuView;
 	static JMenuItem multiSampleView, singleSampleView, groupWiseView, manageColors ;
@@ -162,7 +162,9 @@ public class PiilMenubar extends JMenuBar{
 		snapShot.setVisible(false);
 		manageColors = new JMenuItem("Manage color-coding");
 		manageColors.setEnabled(false);
-		filterSites = new JMenuItem("Exclude sites by standard deviation filtering");
+		sdFilterSites = new JMenuItem("Select sites by standard deviation filtering");
+		regionFilterSites = new JMenuItem("Select sites by genomic region name");
+		valueFilterSites = new JMenuItem("Select sites by their beta values");
 		significantSites = new JMenuItem("Load a list of significant sites");
 		selectSubset = new JMenu("Select a subset of CpG sites");
 		selectSubset.setEnabled(false);
@@ -205,7 +207,9 @@ public class PiilMenubar extends JMenuBar{
 		menuTools.add(duplicateAction);
 		menuTools.add(manageColors);
 		menuTools.add(selectSubset);
-		selectSubset.add(filterSites);
+		selectSubset.add(sdFilterSites);
+		selectSubset.add(regionFilterSites);
+		selectSubset.add(valueFilterSites);
 		selectSubset.add(significantSites);
 		menuHelp.add(aboutAction);
 		menuHelp.add(manualAction);
@@ -241,7 +245,9 @@ public class PiilMenubar extends JMenuBar{
 		groupWiseView.addActionListener(lForMenu);
 		checkUpdates.addActionListener(lForMenu);
 		manageColors.addActionListener(lForMenu);
-		filterSites.addActionListener(lForMenu);
+		sdFilterSites.addActionListener(lForMenu);
+		regionFilterSites.addActionListener(lForMenu);
+		valueFilterSites.addActionListener(lForMenu);
 		piilgridAction.addActionListener(lForMenu);
 		significantSites.addActionListener(lForMenu);
 		
@@ -864,7 +870,7 @@ public class PiilMenubar extends JMenuBar{
 								if (type.equals('M')) {
 									bgColor = Genes.paintLabel(sum	/ data.size());
 								} else {
-									bgColor = Genes.paintLabel(sum / data.size(), data);
+									bgColor = Genes.paintLabel(sum / data.size(), data, 1);
 								}
 
 								newOne.setBackground(bgColor);
@@ -930,16 +936,23 @@ public class PiilMenubar extends JMenuBar{
 					JOptionPane.showMessageDialog(Interface.bodyFrame, "All genes are already in single-sample view!","Warning", 0, icon);
 				}
 				else {
-					DrawShapes shapes = new DrawShapes(pathway.getGraphicsItems(), pathway.getEdges());
-					shapes.setPreferredSize(new Dimension((int) pathway.getMaxX(), (int) pathway.getMaxY()));
-					Component[] components = Interface.panelHolder.get(activeTab).getComponents();
-					for (int i = 0; i < components.length; i++) {
-						if (components[i].getClass().equals(shapes.getClass())) {
-							Interface.panelHolder.get(activeTab).remove(components[i]);
+					if (pathway.getLoadSource().equals('H') || pathway.getLoadSource().equals('W')){
+						DrawShapes shapes = new DrawShapes(pathway.getGraphicsItems(), pathway.getEdges());
+						shapes.setPreferredSize(new Dimension((int) pathway.getMaxX(), (int) pathway.getMaxY()));
+						Component[] components = Interface.panelHolder.get(activeTab).getComponents();
+						for (int i = 0; i < components.length; i++) {
+							if (components[i].getClass().equals(shapes.getClass())) {
+								Interface.panelHolder.get(activeTab).remove(components[i]);
+							}
 						}
+						Interface.panelHolder.get(activeTab).add(shapes,BorderLayout.CENTER);
 					}
+					else {
+						JLabel PiiLLogo = new JLabel("", icon, JLabel.CENTER);
+						PiiLLogo.setVisible(false);
+						Interface.panelHolder.get(activeTab).add(PiiLLogo,BorderLayout.CENTER);
+					}				
 					
-					Interface.panelHolder.get(activeTab).add(shapes,BorderLayout.CENTER);
 					Interface.bodyFrame.repaint();
 					Interface.scrollPaneHolder.get(activeTab).getVerticalScrollBar().setUnitIncrement(16);
 					Interface.scrollPaneHolder.get(activeTab).getHorizontalScrollBar().setUnitIncrement(16);
@@ -964,10 +977,20 @@ public class PiilMenubar extends JMenuBar{
 				new ColorCodeManager();
 			} // end of manageColorCoding
 			
-			/* filer sites item clicked */
-			else if(ice.getSource() == filterSites){
+			/* SD filter sites item clicked */
+			else if(ice.getSource() == sdFilterSites){
 				new SDFilter();
+			} 
+			
+			/* select sites by region name item clicked */
+			else if(ice.getSource() == regionFilterSites){
+				new RegionFilter();
 			}
+			
+			/* select sites by their beta values */
+			else if (ice.getSource() == valueFilterSites){
+				new ValueFilter();
+			} 
 			
 			/* filter sites according to a list */
 			else if (ice.getSource() == significantSites){
@@ -977,6 +1000,7 @@ public class PiilMenubar extends JMenuBar{
 				fileSelector.setCurrentDirectory(directory);
 				int returnVal = fileSelector.showOpenDialog(null);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					openedDirectory = fileSelector.getSelectedFile().getAbsolutePath();
 					new SignificantSiteSelector(fileSelector.getSelectedFile());	
 				}
 				

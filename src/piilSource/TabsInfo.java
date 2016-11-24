@@ -349,7 +349,7 @@ public class TabsInfo {
 			splitBy = ",";
 		}
 		else if (seperator.equals("dash")){
-			splitBy = " ";
+			splitBy = "-";
 		}
 		else {
 			splitBy = ";";

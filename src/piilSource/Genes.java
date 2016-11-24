@@ -30,7 +30,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
-import javax.swing.border.EtchedBorder;
+
 
 public class Genes {
 	
@@ -144,7 +144,7 @@ public class Genes {
 	}
 	
 	public static void setSignificantSites(){
-		
+		int fail = 0,pass =0, geneNum = 0;
 		int activeTab = Interface.tabPane.getSelectedIndex();
 		TabsInfo thisTab = ParseKGML.getTabInfo(activeTab);
 		List<List<String>> data;
@@ -171,12 +171,10 @@ public class Genes {
 			if (selectedSites.size() == 0){
 				selectedSites.add(-1);
 			}
-			
 			selection.put(oneNode.getKey(), selectedSites);
 		}
 		
 		thisTab.setSelectedSites(selection);
-		
 	}
 	
 
@@ -258,7 +256,9 @@ public class Genes {
 					}
 					
 					else if ( (threshold > 0)){  // there is an SD filter
-						
+						if (thisTab.getSelectedSites(oneNode.getKey()) == null){
+							continue;
+						}
 						if (thisTab.getSelectedSites(oneNode.getKey()).get(0) == -1){
 							// none of the sites have passed SD filtering
 							validSites = 0;
@@ -317,28 +317,33 @@ public class Genes {
 	private void setBgColor(double parseDouble) {
 		Color bgColor = null;
 		if (parseDouble == -1){
-			bgColor = Color.DARK_GRAY;
+			bgColor = Color.LIGHT_GRAY;
 			geneNode.setForeground(Color.WHITE);
+			geneNode.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 		}
 		else {
 			bgColor = getColor(parseDouble);
+			geneNode.setBorder(BorderFactory.createLineBorder(new Color(139,69,19), 2));
 		}
 		geneNode.setBackground(bgColor);
-		geneNode.setBorder(BorderFactory.createLineBorder(new Color(139,69,19), 2));
+		
 		borderStyle = BorderFactory.createLineBorder(new Color(139,69,19), 2);
 	}
 	
 	private void setSpecialBgColor(double parseDouble) {
 		Color bgColor = null;
 		if (parseDouble == -1){
-			bgColor = Color.DARK_GRAY;
+			bgColor = Color.LIGHT_GRAY;
+			geneNode.setBorder(BorderFactory.createMatteBorder(2,2,2,2, Color.LIGHT_GRAY));
 			geneNode.setForeground(Color.WHITE);
+			
 		}
 		else {
 			bgColor = getColor(parseDouble);
+			geneNode.setBorder(BorderFactory.createMatteBorder(2,2,2,2, new Color(0,170,0)));
 		}
 		geneNode.setBackground(bgColor);
-		geneNode.setBorder(BorderFactory.createMatteBorder(2,2,2,2, new Color(0,170,0)));
+		
 		borderStyle = BorderFactory.createMatteBorder(2,2,2,2,new Color(0,170,0));
 	}
 	
@@ -457,13 +462,13 @@ public class Genes {
 		return myColor;
 	}
 	
-	public static Color paintLabel(double value, List<List<String>> values) {
+	public static Color paintLabel(double value, List<List<String>> values, int increase) {
 		
 		Statistics expressionValues = new Statistics(values.get(0));
 		double theMean = expressionValues.getMean();
 		double theMedian = expressionValues.getMedian();
 		double r = 0,b = 0,g = 0;
-		double logDifference = Math.log10(value+1) - Math.log10(theMedian);
+		double logDifference = Math.log10(value+increase) - Math.log10(theMedian);
 		double foldDifference = 255 / ranges[2];
 		
 		if (logDifference == Double.NEGATIVE_INFINITY || logDifference == Double.POSITIVE_INFINITY || Double.isNaN(logDifference)){
@@ -512,15 +517,18 @@ public class Genes {
 class Statistics {
     List<String> data;
     int size; 
-    Object[] measurements;
+    Float[] measurements;
     boolean missingvalues = false;
 
     public Statistics(List<String> list) 
     {
         this.data = list;
         size = list.size();
-        this.measurements = list.toArray();
-
+//        this.measurements = list.toArray();
+        measurements = new Float[list.size()];
+        for (int i = 0 ; i < list.size(); i++){
+        	measurements[i] = Float.parseFloat(list.get(i));
+        }
     }
     
     double getMedian(){

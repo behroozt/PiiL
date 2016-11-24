@@ -104,7 +104,7 @@ public class RightClickMenu {
 				}
 				if (pathway.getMetaType().equals('E')){
 					cpgView.setEnabled(false);
-					similarGenes.setEnabled(false);
+//					similarGenes.setEnabled(false);
 				}
 			}
 			if (pathway.getMapedGeneData().size() == 0){
@@ -229,33 +229,42 @@ public class RightClickMenu {
 				List<Float> siteValues = new ArrayList<Float>();
 				String geneName = pathway.getMapedGeneLabel().get(entryID).getText();
 				
-				if (pathway.getSelectedSites(entryID) == null){
-					int numberOfRegions = pathway.getMapedGeneRegion().get(entryID).size();
-					
-					for (int i = 0 ; i < numberOfSamples; i ++){
-						sum = 0;
-						for (int j = 0 ; j < numberOfRegions; j ++){
-							if (!isNumeric(pathway.getMapedGeneData().get(entryID).get(j).get(i))){
-								continue;
+				if (pathway.getMetaType().equals('M')){
+					if (pathway.getSelectedSites(entryID) == null){
+						int numberOfRegions = pathway.getMapedGeneRegion().get(entryID).size();
+						
+						for (int i = 0 ; i < numberOfSamples; i ++){
+							sum = 0;
+							for (int j = 0 ; j < numberOfRegions; j ++){
+								if (!isNumeric(pathway.getMapedGeneData().get(entryID).get(j).get(i))){
+									continue;
+								}
+								sum += Float.parseFloat(pathway.getMapedGeneData().get(entryID).get(j).get(i));
 							}
-							sum += Float.parseFloat(pathway.getMapedGeneData().get(entryID).get(j).get(i));
+							siteValues.add(sum / numberOfRegions);
 						}
-						siteValues.add(sum / numberOfRegions);
+					}
+					else {
+						int numberOfSignificantSites = pathway.getSelectedSites(entryID).size();
+						for (int i = 0 ; i < numberOfSamples; i ++){
+							sum = 0;
+							for (int j : pathway.getSelectedSites(entryID)){
+								if (!isNumeric(pathway.getMapedGeneData().get(entryID).get(j).get(i))){
+									continue;
+								}
+								sum += Float.parseFloat(pathway.getMapedGeneData().get(entryID).get(j).get(i));
+							}
+							siteValues.add(sum / numberOfSignificantSites);
+						}
 					}
 				}
-				else {
-					int numberOfSignificantSites = pathway.getSelectedSites(entryID).size();
-					for (int i = 0 ; i < numberOfSamples; i ++){
-						sum = 0;
-						for (int j : pathway.getSelectedSites(entryID)){
-							if (!isNumeric(pathway.getMapedGeneData().get(entryID).get(j).get(i))){
-								continue;
-							}
-							sum += Float.parseFloat(pathway.getMapedGeneData().get(entryID).get(j).get(i));
-						}
-						siteValues.add(sum / numberOfSignificantSites);
+				else if (pathway.getMetaType().equals('E')){
+					for (int i = 0 ; i < numberOfSamples ; i++){
+						siteValues.add(Float.parseFloat(pathway.getMapedGeneData().get(entryID).get(0).get(i)));
 					}
 				}
+				
+				
 				new SimilarityFinder(pathway, inputFile, geneName, siteValues);
 			} // end of similarGenes
 		} // end of actionPerformed
@@ -323,7 +332,7 @@ public class RightClickMenu {
 				bgColor = Genes.paintLabel(sum/data.size());
 			}
 			else {
-				bgColor = Genes.paintLabel(sum/data.size(), data);
+				bgColor = Genes.paintLabel(sum/data.size(), data, 1);
 			}
 			
 			newOne.setBackground(bgColor);

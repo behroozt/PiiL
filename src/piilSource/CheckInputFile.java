@@ -155,7 +155,7 @@ public class CheckInputFile {
 			splitBy = ",";
 		}
 		else if (separator.equals("dash")){
-			splitBy = " ";
+			splitBy = "-";
 		}
 		else {
 			splitBy = ";";

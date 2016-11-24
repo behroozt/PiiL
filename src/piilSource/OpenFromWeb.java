@@ -34,6 +34,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.File;
@@ -128,6 +130,12 @@ public class OpenFromWeb extends JDialog{
 		searchPathway = new JTextField();
 		searchOrganism.setPreferredSize(organismCombo.getPreferredSize());
 		searchPathway.setPreferredSize(organismCombo.getPreferredSize());
+		
+		webFrame.addWindowListener( new WindowAdapter() {
+		    public void windowOpened( WindowEvent e ){
+		        searchPathway.requestFocus();
+		    }
+		}); 
 		
 		waitMessage.setText(" Fetching available pathways for the selected organism from the KEGG database ... ");
 		
