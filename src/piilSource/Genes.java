@@ -516,36 +516,37 @@ public class Genes {
 
 class Statistics {
     List<String> data;
-    int size; 
+    int size;
     Float[] measurements;
     boolean missingvalues = false;
-
-    public Statistics(List<String> list) 
+    
+    public Statistics(List<String> list)
     {
         this.data = list;
         size = list.size();
-//        this.measurements = list.toArray();
-        measurements = new Float[list.size()];
-        for (int i = 0 ; i < list.size(); i++){
-        	measurements[i] = Float.parseFloat(list.get(i));
-        }
+        //        this.measurements = list.toArray();
+        
     }
     
     double getMedian(){
     	
-    	Arrays.sort(measurements);
-    	if (measurements.length % 2 == 0) 
+    	measurements = new Float[data.size()];
+        for (int i = 0 ; i < data.size(); i++){
+        	measurements[i] = Float.parseFloat(data.get(i));
+        }
+        Arrays.sort(measurements);
+    	if (measurements.length % 2 == 0)
     	{
     		double a = Double.parseDouble(measurements[(measurements.length / 2) - 1].toString()) +1 ;
     		double b = Double.parseDouble(measurements[(measurements.length / 2) ].toString()) + 1;
     		return (a + b) / 2.0;
-    	} 
-    	else 
+    	}
+    	else
     	{
     		return Double.parseDouble(measurements[measurements.length / 2].toString()) + 1;
     	}
     }
-
+    
     boolean checkMissingValues() {
     	int naCounter = 0;
     	
@@ -566,7 +567,7 @@ class Statistics {
 		}
 		return false;
 	}
-
+    
 	double getMean()
     {
         double sum = 0.0;
@@ -588,17 +589,17 @@ class Statistics {
         
         return sum/(size - naCounter);
     }
-
+    
     private boolean isNumeric(String str) {
-    	try {  
-		    double d = Double.parseDouble(str);  
-		}  
-		catch(NumberFormatException nfe){  
-		    return false;  
-		}  
+    	try {
+		    double d = Double.parseDouble(str);
+		}
+		catch(NumberFormatException nfe){
+		    return false;
+		}
 		return true;
 	}
-
+    
 	double getVariance()
     {
         double mean = getMean();
@@ -617,10 +618,10 @@ class Statistics {
         		temp += (mean-(Double.parseDouble(a)+1))*(mean-(Double.parseDouble(a)+1));
         	}
         }
-            
+        
         return temp/(size - naCounter);
     }
-
+    
     double getStdDev()
     {
         return Math.sqrt(getVariance());
