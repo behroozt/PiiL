@@ -317,16 +317,33 @@ public class SimilarityFinder {
 					
 					if (similarityChoice.getSelectedIndex() == 0){  // list most similar genes
 						
-						for (int i = 0 ; i < percentage; i++){
-							geneColumn = (String) distanceMap.values().toArray()[i];
-							model.addRow(new Object[]{geneColumn.split("_")[0], geneColumn.split("_")[1], distanceMap.keySet().toArray()[i], new Boolean(true)});
+						if (metaType.equals('M')){
+							for (int i = 0 ; i < percentage; i++){
+								geneColumn = (String) distanceMap.values().toArray()[i];
+								model.addRow(new Object[]{geneColumn.split("_")[0], geneColumn.split("_")[1], distanceMap.keySet().toArray()[i], new Boolean(true)});
+							}
 						}
+						else {
+							for (int i = 0 ; i < percentage; i++){
+								geneColumn = (String) distanceMap.values().toArray()[i];
+								model.addRow(new Object[]{geneColumn.split("_")[0], distanceMap.keySet().toArray()[i], Boolean.TRUE});
+							}
+						}
+						
 					}
 					else { // list least similar genes
 						int lastItemIndex = distanceMap.size() - 1;
-						for (int i = lastItemIndex ; i > lastItemIndex - percentage ; i --){
-							geneColumn = (String) distanceMap.values().toArray()[i];
-							model.addRow(new Object[]{geneColumn.split("_")[0], geneColumn.split("_")[1], distanceMap.keySet().toArray()[i], new Boolean(true)});
+						if (metaType.equals('M')){
+							for (int i = lastItemIndex ; i > lastItemIndex - percentage ; i --){
+								geneColumn = (String) distanceMap.values().toArray()[i];
+								model.addRow(new Object[]{geneColumn.split("_")[0], geneColumn.split("_")[1], distanceMap.keySet().toArray()[i], new Boolean(true)});
+							}
+						}
+						else {
+							for (int i = lastItemIndex ; i > lastItemIndex - percentage ; i --){
+								geneColumn = (String) distanceMap.values().toArray()[i];
+								model.addRow(new Object[]{geneColumn.split("_")[0], distanceMap.keySet().toArray()[i], Boolean.TRUE});
+							}
 						}
 					}
 				}
@@ -357,19 +374,33 @@ public class SimilarityFinder {
 			    	List<String> v = new ArrayList<String>();
 			    	String rowData;
 			    	
-			    	outFile.println("Gene,CpG ID/coordinate,distance");
-			    	for (int row = 0; row < genesTable.getRowCount(); row++) {
-			    		rowData = "";
-			    		
-			    		if ((Boolean) genesTable.getValueAt(row, 3)){
-			    			for (int col = 0; col < genesTable.getColumnCount() - 1; col++) {
-				    	    	rowData += genesTable.getValueAt(row, col) + ",";
-				    	    }
-			    			outFile.println(rowData.substring(0, rowData.length()-1));
-			    		}
+			    	if (genesTable.getColumnCount() == 4){
+			    		outFile.println("Gene,CpG ID/coordinate,distance");
+				    	for (int row = 0; row < genesTable.getRowCount(); row++) {
+				    		rowData = "";
+				    		
+				    		if ((Boolean) genesTable.getValueAt(row, 3)){
+				    			for (int col = 0; col < genesTable.getColumnCount() - 1; col++) {
+					    	    	rowData += genesTable.getValueAt(row, col) + ",";
+					    	    }
+				    			outFile.println(rowData.substring(0, rowData.length()-1));
+				    		}
+				    	}
+			    	}
+			    	else {
+			    		outFile.println("Gene,distance");
+				    	for (int row = 0; row < genesTable.getRowCount(); row++) {
+				    		rowData = "";
+				    		
+				    		if ((Boolean) genesTable.getValueAt(row, 2)){
+				    			for (int col = 0; col < genesTable.getColumnCount() - 1; col++) {
+					    	    	rowData += genesTable.getValueAt(row, col) + ",";
+					    	    }
+				    			outFile.println(rowData.substring(0, rowData.length()-1));
+				    		}
+				    	}
 			    	}
 			    	outFile.close();
-			    	
 			    }
 				
 			}
@@ -399,15 +430,34 @@ public class SimilarityFinder {
 		int invalid = 0;
 		float difference;
 		
-		for (int i = 0; i < numberOfSamples ; i ++){
-			
-			if (!isNumeric(values[i])){
-				invalid ++;
-				continue;
+		if (metaType.equals('E')){
+			float siteSum = 0, targetSum = 0;
+			for (int i = 0 ; i < values.length; i++){
+				siteSum += Float.parseFloat(values[i]);
+				targetSum += targetGeneValues.get(i);
 			}
-			difference = targetGeneValues.get(i) - Float.parseFloat(values[i]);
-			sum += Math.pow(difference, 2);
+			for (int i = 0; i < numberOfSamples ; i ++){
+				
+				if (!isNumeric(values[i])){
+					invalid ++;
+					continue;
+				}
+				difference = (targetGeneValues.get(i) / targetSum) - (Float.parseFloat(values[i]) / siteSum);
+				sum += Math.pow(difference, 2);
+			}
 		}
+		else if (metaType.equals('M')){
+			for (int i = 0; i < numberOfSamples ; i ++){
+				
+				if (!isNumeric(values[i])){
+					invalid ++;
+					continue;
+				}
+				difference = targetGeneValues.get(i) - Float.parseFloat(values[i]);
+				sum += Math.pow(difference, 2);
+			}
+		}
+		
 		if (invalid >= numberOfSamples){
 			return -1;
 		}
@@ -524,7 +574,6 @@ public class SimilarityFinder {
 							}
 						}
 					} // end of while
-					
 					model.getDataVector().removeAllElements();
 					if (percentage > distanceMap.values().size()){
 						percentage = distanceMap.values().size();
@@ -532,8 +581,12 @@ public class SimilarityFinder {
 					}
 					for (int i = 0 ; i < percentage; i++){
 						geneColumn = (String) distanceMap.values().toArray()[i];
-						model.addRow(new Object[]{geneColumn, distanceMap.keySet().toArray()[i], Boolean.TRUE});
+						model.addRow(new Object[]{geneColumn.split("_")[0], distanceMap.keySet().toArray()[i], Boolean.TRUE});
 					}
+//					for (int i = 0 ; i < percentage; i++){
+//						geneColumn = (String) distanceMap.values().toArray()[i];
+//						model.addRow(new Object[]{geneColumn, distanceMap.keySet().toArray()[i], Boolean.TRUE});
+//					}
 				}
 				
 				findButton.setEnabled(true);

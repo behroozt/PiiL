@@ -468,7 +468,7 @@ public class Genes {
 		double theMean = expressionValues.getMean();
 		double theMedian = expressionValues.getMedian();
 		double r = 0,b = 0,g = 0;
-		double logDifference = Math.log10(value+increase) - Math.log10(theMedian);
+		double logDifference =  (Math.log10(value+increase) / Math.log10(2.0) ) -  (Math.log10(theMedian) / Math.log10(2.0));
 		double foldDifference = 255 / ranges[2];
 		
 		if (logDifference == Double.NEGATIVE_INFINITY || logDifference == Double.POSITIVE_INFINITY || Double.isNaN(logDifference)){

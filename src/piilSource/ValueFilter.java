@@ -20,23 +20,19 @@
 package piilSource;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -311,7 +307,7 @@ public class ValueFilter extends JDialog{
 			Genes.changeBgColor(pathway.getPointer(), 'M');
 		} // end of if
 		else {
-			
+			int invalid;
 			for (Entry<String, List<List<String>>> site : pathway.getMapedGeneData().entrySet()){
 				List<Integer> selectedSites = new ArrayList<Integer>();
 				geneID = site.getKey();
@@ -319,8 +315,10 @@ public class ValueFilter extends JDialog{
 				selectedSites.clear();
 				for (int i= 0; i < site.getValue().size() ; i ++){
 					match = true;
+					invalid = 0;
 					for (int j = 0; j < numberOfSamples ; j ++){
 						if (!isNumeric (site.getValue().get(i).get(j))){
+							invalid ++;
 							continue;
 						}
 						if (!testCriteria(site.getValue().get(i).get(j))){
@@ -328,7 +326,7 @@ public class ValueFilter extends JDialog{
 							break;
 						}
 					}
-					if (match){
+					if (match && (invalid < (numberOfSamples / 3))){
 						selectedSites.add(i);
 					}
 				}

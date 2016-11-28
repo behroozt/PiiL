@@ -86,6 +86,7 @@ public class JOptionPaneMultiInput {
 		fileLabel = new JLabel(file.getName() + " was selected.");
 		tcga = new JCheckBox("Sample IDs are TCGA barcodes.");
 		tcga.setHorizontalTextPosition(SwingConstants.LEFT);
+		tcga.setSelected(true);
 		
 		addComp(myPanel, fileLabel, 0, 0, 2, 1, GridBagConstraints.EAST, GridBagConstraints.NONE);
 		addComp(myPanel, separatorLabel, 0, 1, 1, 1, GridBagConstraints.EAST, GridBagConstraints.NONE);

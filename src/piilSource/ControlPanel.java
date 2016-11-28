@@ -438,6 +438,7 @@ public class ControlPanel extends JPanel{
 		for (Component theComponent: buttonsPanel.getComponents()){
 			theComponent.setEnabled(false);
 		}
+		
 		matchedGenesCombo.removeAllItems();
 		matchedGenesCombo.setPrototypeDisplayValue("XXXXXXXX");
 		samplesIDsCombo.removeItemListener(lForCombo);

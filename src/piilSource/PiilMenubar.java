@@ -504,6 +504,7 @@ public class PiilMenubar extends JMenuBar{
 							final File file = input.getChosenFile();
 							theTab.setMetaType('E');
 							theTab.setMetaFilePath(file);
+							theTab.setSplitor(input.getSeparator());
 
 							waitMessage.setText(" Please wait while the loaded file is being analyzed ... ");
 							SwingWorker<Void, Void> expressionLoader = new SwingWorker<Void, Void>() {
@@ -537,6 +538,7 @@ public class PiilMenubar extends JMenuBar{
 													String fileName = reloadFile.getActionCommand();
 													thisTab.setMetaType('E');
 													thisTab.setMetaFilePath(file);
+													thisTab.setSplitor(input.getSeparator());
 													File reloadableFile = TabsInfo.getLoadedFilePath(fileName);
 
 													try {
