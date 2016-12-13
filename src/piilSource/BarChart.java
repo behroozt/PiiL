@@ -65,6 +65,7 @@ public class BarChart extends ApplicationFrame {
 	int activeTab = Interface.tabPane.getSelectedIndex();
 	TabsInfo pathway = ParseKGML.getTabInfo(activeTab);
 	List<Integer> significantSites;
+	String chartLabel = "";
 	
     public BarChart(final String title, List<List<String>> list, Character meta) {
     	
@@ -90,7 +91,7 @@ public class BarChart extends ApplicationFrame {
 		exportButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent bc) {
 				ExportDialog export = new ExportDialog();
-				export.showExportDialog(chartFrame, "Export view as ...",chartPanel, "Barplot of the " + metaLabel + " values for all samples - " + title);
+				export.showExportDialog(chartFrame, "Export view as ...",chartPanel, chartLabel);
 			}
 		});
 		closeButton.addActionListener(new ActionListener() {
@@ -167,6 +168,7 @@ public class BarChart extends ApplicationFrame {
                     	}
                     	value = sum / (list.size() - invalid);
                     	dataset.addValue(value, group, sampleID);
+                    	// *** System.out.println(sampleID + " " + value + " " + group);
         			}
         			
         		}
@@ -208,6 +210,8 @@ public class BarChart extends ApplicationFrame {
                         	}
                         	value = sum / (list.size() - invalid);
                         	dataset.addValue(value, group, sampleID);
+                        	// *** System.out.println(sampleID + " " + value + " " + group);
+                        
         				}
         				else { // some sites are selected
         					for (int item : significantSites){
@@ -219,15 +223,16 @@ public class BarChart extends ApplicationFrame {
                 					sum += Double.parseDouble(list.get(item).get(sampleIndex));
                 				}
                 				
-                			}
+                			} // for each significant site
                     		value = sum / (significantSites.size() - invalid);
                     		dataset.addValue(value, group, sampleID);
-        				}
+                    		// *** System.out.println(sampleID + " " + value + " " + group);
+        				} // some sites are selected
         				
-        			}
+        			} // for each sampleID in each group
         			
-        		}
-        	}
+        		} // for each group
+        	} // if grouping
         	else {
         		for (int i = 0; i < list.get(0).size() ; i ++){
                 	sum = 0; value = 0; invalid = 0;
@@ -260,7 +265,6 @@ public class BarChart extends ApplicationFrame {
         	}
         }
         
-       
         return dataset;       
     }
 
@@ -282,8 +286,14 @@ public class BarChart extends ApplicationFrame {
 	private JFreeChart createChart(String title, final CategoryDataset dataset, String metaLabel) {
         
         // create the chart...
-        final JFreeChart chart = ChartFactory.createBarChart(
-            "Barplot of the " + metaLabel + " values for all samples - " + title,         // chart title
+		chartLabel = metaLabel + " values of all samples - " + title;
+		
+		if (pathway.getViewMode() == 2){
+			String grpTag = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getSamplesInfo().get("-1").get(ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getGroupingIndex());
+			chartLabel += " - grouped by: " + grpTag; 
+		}
+		
+		final JFreeChart chart = ChartFactory.createBarChart(chartLabel,         // chart title
             "Samples",               // domain axis label
             metaLabel + " values",                  // range axis label
             dataset,                  // data
@@ -317,16 +327,16 @@ public class BarChart extends ApplicationFrame {
         
         // set up gradient paints for series...
         final GradientPaint gp0 = new GradientPaint(
-            0.0f, 0.0f, new Color(0,0,150), 
-            0.0f, 0.0f, new Color(0,0,150)
+            0.0f, 0.0f, new Color(255,140,0), 
+            0.0f, 0.0f, new Color(255,140,0)
         );
         final GradientPaint gp1 = new GradientPaint(
             0.0f, 0.0f, new Color(0,80,0), 
             0.0f, 0.0f, new Color(0,80,0)
         );
         final GradientPaint gp2 = new GradientPaint(
-            0.0f, 0.0f, Color.red, 
-            0.0f, 0.0f, Color.red
+            0.0f, 0.0f, Color.MAGENTA, 
+            0.0f, 0.0f, Color.MAGENTA
         );
         final GradientPaint gp3 = new GradientPaint(
                 0.0f, 0.0f, Color.yellow, 

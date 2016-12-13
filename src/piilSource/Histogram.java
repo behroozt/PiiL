@@ -60,6 +60,7 @@ public class Histogram extends ApplicationFrame {
 	TabsInfo pathway = ParseKGML.getTabInfo(activeTab);
 	List<Integer> significantSites;
 	String geneName;
+	String chartLabel = "";
 	
 	public Histogram(final String s, List<List<String>> list, Character meta)
 	{
@@ -83,7 +84,7 @@ public class Histogram extends ApplicationFrame {
 		exportButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent bc) {
 				ExportDialog export = new ExportDialog();
-				export.showExportDialog(chartFrame, "Export view as ...",histogramPanel, "Histogram of the " + metaLabel + " values for all samples - " + s);
+				export.showExportDialog(chartFrame, "Export view as ...",histogramPanel, chartLabel);
 			}
 		});
 		closeButton.addActionListener(new ActionListener() {
@@ -233,9 +234,15 @@ public class Histogram extends ApplicationFrame {
 		return true;
 	}
 
-	private static JFreeChart createChart(String s, IntervalXYDataset intervalxydataset, String metaLabel)
+	private JFreeChart createChart(String s, IntervalXYDataset intervalxydataset, String metaLabel)
 	{
-		JFreeChart jfreechart = ChartFactory.createHistogram("Histogram of the " + metaLabel + " values for all samples - " + s, null, null, intervalxydataset, PlotOrientation.VERTICAL, true, true, false);
+		chartLabel = metaLabel + " values of all samples - " + s;
+		
+		if (pathway.getViewMode() == 2){
+			String grpTag = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getSamplesInfo().get("-1").get(ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getGroupingIndex());
+			chartLabel += " - grouped by: " + grpTag; 
+		}
+		JFreeChart jfreechart = ChartFactory.createHistogram(chartLabel, null, null, intervalxydataset, PlotOrientation.VERTICAL, true, true, false);
 		jfreechart.setBackgroundPaint(Color.white); 
 		XYPlot xyplot = (XYPlot)jfreechart.getPlot();
 		xyplot.setBackgroundPaint(Color.lightGray);

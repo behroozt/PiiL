@@ -97,18 +97,18 @@ public class Interface extends JFrame{
 		
 		bodyFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);	
 		
-//		bodyFrame.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);		
-//		bodyFrame.addWindowListener(new java.awt.event.WindowAdapter() {
-//		    @Override
-//		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-//		        if (JOptionPane.showConfirmDialog(bodyFrame, 
-//		            "Are you sure to quit PiiL?", "Closing confirmation", 
-//		            JOptionPane.YES_NO_OPTION,
-//		            JOptionPane.QUESTION_MESSAGE, icon) == JOptionPane.YES_OPTION){
-//		            System.exit(0);
-//		        }
-//		    }
-//		});
+		bodyFrame.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);		
+		bodyFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		        if (JOptionPane.showConfirmDialog(bodyFrame, 
+		            "Are you sure to quit PiiL?", "Closing confirmation", 
+		            JOptionPane.YES_NO_OPTION,
+		            JOptionPane.QUESTION_MESSAGE, icon) == JOptionPane.YES_OPTION){
+		            System.exit(0);
+		        }
+		    }
+		});
 		
 		sampleInfoPanel = new JPanel();
 		sampleInfoPanel.setPreferredSize(new Dimension(1000, 45));
@@ -250,7 +250,7 @@ public class Interface extends JFrame{
 		gridConstraints.insets = new Insets(1,15,4,1);
 		
 		bodyFrame.add(backgroundPanel,BorderLayout.CENTER);
-//		new Splash(3000);	
+		new Splash(3000);	
 		bodyFrame.setIconImage(createImage("/resources/icon.png").getImage());
 		bodyFrame.setVisible(true);
 	}
@@ -268,6 +268,7 @@ public class Interface extends JFrame{
 	
 	public static void setSampleInfoLabel(List<String> hints, boolean enable, int baseIndex) {
 		String groups = "";
+		String grpTag = null;
 		for (String group : hints ){
 			int members = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getIDsInGroups().get(group).size();
 			groups += (String) group + " (" + members + ") " + ", ";
@@ -277,7 +278,9 @@ public class Interface extends JFrame{
 		if (baseIndex != -1){
 			groups = groups + " (the base group)";
 		}
-		sampleInfoLabel.setText(" Samples grouping (top to buttom): " + groups);
+		grpTag = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getSamplesInfo().get("-1").get(ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getGroupingIndex());
+		sampleInfoLabel.setText(" Samples grouped by '" + grpTag + "' (top to buttom): " + groups);
+		
 		sampleInfoLabel.setEnabled(enable);
 		sampleInfoLabel.setForeground(Color.BLACK);
 		
