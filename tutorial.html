@@ -1,0 +1,1205 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>PiiL tutorial</title>
+  </head>
+  <body>
+    <div align="center"><a href="http://behroozt.github.io/PiiL/"><img
+          alt="logo" src="images/tutorialHeader.png" width="614"
+          border="0" height="370"></a><br>
+      <br>
+      <table width="647" cellspacing="2" cellpadding="10" border="0"
+        bgcolor="#ffffff" height="61">
+        <tbody>
+          <tr>
+            <td valign="middle" align="center"><a
+                href="https://github.com/behroozt/PiiL/raw/master/PiiL-v0.11.jar"><font
+                  size="+1" color="#006600"><b>Latest Version .jar File</b></font></a></td>
+            <td valign="middle" align="center"><a
+                href="https://github.com/behroozt/PiiL.git"><font
+                  size="+1" color="#006600"><b>View on GitHub</b></font></a><br>
+            </td>
+            <td valign="middle" align="center"><a
+                href="http://behroozt.github.io/PiiL/tutorial.html"><font
+                  size="+1" color="#006600"><b>User Manual</b></font></a><br>
+            </td>
+            <td valign="middle" align="center"><font size="+1"
+                color="#006600"><b>Get PiiLer</b></font><br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+    </div>
+    <h1><a name="How_to"></a>How to?</h1>
+    <blockquote>
+      <h3><a name="Open_a_KGML_file"></a></h3>
+      <h3><a href="#Run_PiiL_">Run PiiL</a><br>
+      </h3>
+      <h3><a href="#Open_a_KGML_file_">Open a KGML file</a></h3>
+      <h3><a href="#Load_methylation_data_">Load methylation data</a></h3>
+      <h3><a href="#Exclude_non-differentiating_CpG_sites_">Select a
+          subset of CpG sites</a><br>
+      </h3>
+      <h3><a href="#Load_expression_data_">Load expression data</a></h3>
+      <h3><a href="#Load_samples_information_">Load samples information</a></h3>
+      <h3><a href="#Navigate_through_samples_">Navigate through samples</a></h3>
+      <h3><a href="#Right-click_menu_options_">Right-click menu options</a></h3>
+      <h3><a href="#Multiple-sample_view_">Multiple-sample view</a></h3>
+      <h3><a href="#Group-wise_view_">Group-wise view</a></h3>
+      <h3><a href="#Generate_a_PiiLgrid_"><b>Generate a PiiLgrid</b></a><br>
+      </h3>
+      <h3><a href="#Load_a_list_of_genes_to_be_highlighted">Highlight a
+          set of genes in a pathway</a></h3>
+      <h3><a href="#Export_pathway_to_image_">Export pathway to image</a></h3>
+      <h3><a href="#Export_list_of_matched_genes_in_each_">Export list
+          of matched genes in each pathway</a></h3>
+      <h3><a href="#Duplicate_the_current_pathway_in_a_new_">Duplicate
+          the current pathway in a new tab</a></h3>
+      <h3><a href="#Cite_us_">Cite us</a></h3>
+      <h3><a href="#What_the_name_PiiL_means">Decode the name "PiiL"</a><br>
+      </h3>
+    </blockquote>
+    <p><br>
+    </p>
+    <h2><a name="Run_PiiL_"></a>Run PiiL</h2>
+    <p>Get the latest version of PiiL, together with some data for
+      testing, from <b><a
+          href="https://github.com/behroozt/PiiL/archive/master.zip">here</a></b>.
+      Unzip the downloaded file. To run PiiL on Mac just double-click on
+      the .jar file.
+      For Windows and Linux platforms, open a terminal, go to the
+      directory that you have the .jar file and run "java -Xmx4096m -jar
+      PiiL-vx.xx.jar".<br>
+    </p>
+    <h3><a href="#How_to">back to top</a></h3>
+    <p><br>
+    </p>
+    <h2> </h2>
+    <h2><a name="Open_a_KGML_file_"></a>Open a KGML file</h2>
+    <p>There are two options to open a KGML file:</p>
+    <img alt="open KGML" src="images/openKGML.png" width="900"
+      height="591">
+    <p>1) Open it by selecting the pathway and organism name from the
+      KEGG database. This will download the file and for the next time
+      will use the downloaded file. <br>
+      2) Open an already downloaded KGML file from your hard drive.<br>
+      By typing in the boxes labeled as 'Search', the comboboxes list
+      only the pathways / organisms that contain the string typed in the
+      box.<br>
+      <br>
+      <img alt="open from web" src="images/openKGMLWeb.png" width="800"
+        height="220"><br>
+    </p>
+    <h3><a href="#How_to">back to top</a></h3>
+    <h6> </h6>
+    <h2><a name="Load_methylation_data_"></a>Load methylation data</h2>
+    <p>After opening a pathway, you can load your meta-data over that
+      pathway. The CpG IDs - if the data comes from a methylation array
+      - or CpG positions -if the data is from whole genome bisulphite
+      sequencing - need to be replaced with their annotated gene
+      name. Any other information (for example the CpG ID or its genomic
+      region) can come after an underscore in the first column. A script
+      to convert the data into this format is available here. <b>The
+        first row lists the samples IDs. The beta values must be between
+        0
+        and 1</b>.<br>
+      A valid input file looks like the following (the column separator
+      is selectable):<br>
+      <br>
+    </p>
+    <table width="676" cellspacing="2" cellpadding="2" border="0"
+      height="142">
+      <tbody>
+        <tr>
+          <td valign="top">sampleIDS<br>
+          </td>
+          <td valign="top">sample1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <br>
+          </td>
+          <td valign="top">sample2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <br>
+          </td>
+          <td valign="top">...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <br>
+          </td>
+          <td valign="top">sampleN<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">TLR2[_cg00000884_chr4:154609857_intronic]<br>
+          </td>
+          <td valign="top">beta_value<br>
+          </td>
+          <td valign="top">beta_value</td>
+          <td valign="top">...<br>
+          </td>
+          <td valign="top">beta_value</td>
+        </tr>
+        <tr>
+          <td valign="top">ELOVL1[_cg00001446_chr1:43831041_exonic]<br>
+          </td>
+          <td valign="top">beta_value</td>
+          <td valign="top">beta_value</td>
+          <td valign="top">...<br>
+          </td>
+          <td valign="top">beta_value</td>
+        </tr>
+        <tr>
+          <td valign="top">...<br>
+          </td>
+          <td valign="top">...<br>
+          </td>
+          <td valign="top">...<br>
+          </td>
+          <td valign="top">...<br>
+          </td>
+          <td valign="top">...<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">ROCK2[_cg00001594_chr2:11484705_UTR5]<br>
+          </td>
+          <td valign="top">beta_value<br>
+          </td>
+          <td valign="top">beta_value<br>
+          </td>
+          <td valign="top">...<br>
+          </td>
+          <td valign="top">beta_value<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><br>
+      To load the methylation data, click on <b>New</b> under <b><big>Load
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-&gt;
+          Methylation</big>. </b>Once a methylation data
+      file is loaded, it will be listed under the <b>Load -&gt;
+        Methylation</b> menu to be
+      used for other pathways directly.<br>
+      Customization of the input file is possible via a window that
+      emerges after selecting a file. If the file has been converted
+      with PiiLer you can just press OK.<br>
+    </p>
+    <img src="images/methylationInput.png" alt="methylation input"
+      width="690" height="425">
+    <p>The genes in the input file that match with the genes in the
+      pathway
+      are colored according to their beta values. Blue color codes the
+      hypo-methylation status (the closer the beta value is to zero the
+      color is darker blue) and red color codes the hyper-methylation
+      status (the closer the beta value is to 1 the color is darker
+      red).<br>
+      The samples IDs are listed in the first combobox and the matched
+      genes are listed in the second combobox where the number of
+      matches
+      is shown by the label below it. </p>
+    <img alt="load methylation" src="images/loadMethylation.png"
+      width="900" height="591"><br>
+    <br>
+    <br>
+    <h3><a href="#How_to">back to top</a></h3>
+    <br>
+    <h2><a name="Exclude_non-differentiating_CpG_sites_"></a>Select a
+      subset of CpG sites</h2>
+    <p>
+      <meta name="Title" content="">
+    </p>
+    <meta name="Keywords" content="">
+    PiiL provides four options to select a subset of all CpG sites that
+    hit each gene, available at <b>Tools -&gt; Select a subset of CpG
+      sites</b>. When these subselection is applied, the genes with no
+    CpG passing the criteria are colored in light gray.<br>
+    <br>
+    <blockquote><b>1) Selecting sites by standard deviation filtering</b><b>:</b>
+      This option aims to filter out the CpG sites that have very little
+      variation
+      over all samples according to an adjustable threshold for the
+      standard deviation of the beta values for a site over all samples.
+      This option facilitates the visibility of the sites that differ
+      significantly between the samples; where there are multiple CpG
+      sites hitting a gene that do not vary significantly between the
+      samples and averaging them for color-coding a gene the strong
+      signal
+      is weakened. <br>
+    </blockquote>
+    <blockquote><b>2) Selecting sites by genomic region name: </b>If
+      the CpG sites are annotated with a genomic region, the user can
+      select specific sites, for example the ones that are intronic,
+      exonic, UTR5 and so on.<b> </b><br>
+    </blockquote>
+    <blockquote><b>3) Selecting sites by their beta values: </b>includes
+      the sites based on user defined ranges for beta-values.<br>
+    </blockquote>
+    <blockquote><b>4) Loading a list of pre-selected sites: </b>a list
+      of pre-selected CpG sites can be loaded and the sites that do not
+      exist on the list will be excluded.<br>
+      <br>
+    </blockquote>
+    <h3><a href="#How_to">back to top</a></h3>
+    <p><br>
+    </p>
+    <big><big><big><big><big><big><big><big><big><big><big><big><big><span
+                                style="font-size:9.0pt;font-family:Helvetica;
+
+
+
+
+
+
+
+
+
+
+
+
+
+mso-fareast-font-family:&quot;Times
+                                New
+                                Roman&quot;;mso-bidi-font-family:&quot;Times
+
+
+
+
+
+
+
+
+
+
+
+
+New
+                                Roman&quot;;
+mso-ansi-language:EN-US;mso-fareast-language:EN-US;mso-bidi-language:AR-SA"></span></big></big></big></big></big></big></big></big></big></big></big></big>
+    </big>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="ProgId" content="Word.Document">
+    <meta name="Generator" content="Microsoft Word 14">
+    <meta name="Originator" content="Microsoft Word 14">
+    <link rel="File-List"
+href="file://localhost/Users/Behrooz/Library/Caches/TemporaryItems/msoclip/0clip_filelist.xml">
+    <!--[if gte mso 9]><xml>
+<o:DocumentProperties>
+<o:Revision>0</o:Revision>
+<o:TotalTime>0</o:TotalTime>
+<o:Pages>1</o:Pages>
+<o:Words>99</o:Words>
+<o:Characters>569</o:Characters>
+<o:Company>Uppsala University</o:Company>
+<o:Lines>4</o:Lines>
+<o:Paragraphs>1</o:Paragraphs>
+<o:CharactersWithSpaces>667</o:CharactersWithSpaces>
+<o:Version>14.0</o:Version>
+</o:DocumentProperties>
+<o:OfficeDocumentSettings>
+<o:AllowPNG/>
+</o:OfficeDocumentSettings>
+</xml><![endif]-->
+    <link rel="themeData"
+href="file://localhost/Users/Behrooz/Library/Caches/TemporaryItems/msoclip/0clip_themedata.xml">
+    <!--[if gte mso 9]><xml>
+<w:WordDocument>
+<w:View>Normal</w:View>
+<w:Zoom>0</w:Zoom>
+<w:TrackMoves/>
+<w:TrackFormatting/>
+<w:PunctuationKerning/>
+<w:ValidateAgainstSchemas/>
+<w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
+<w:IgnoreMixedContent>false</w:IgnoreMixedContent>
+<w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
+<w:DoNotPromoteQF/>
+<w:LidThemeOther>EN-US</w:LidThemeOther>
+<w:LidThemeAsian>JA</w:LidThemeAsian>
+<w:LidThemeComplexScript>X-NONE</w:LidThemeComplexScript>
+<w:Compatibility>
+<w:BreakWrappedTables/>
+<w:SnapToGridInCell/>
+<w:WrapTextWithPunct/>
+<w:UseAsianBreakRules/>
+<w:DontGrowAutofit/>
+<w:SplitPgBreakAndParaMark/>
+<w:EnableOpenTypeKerning/>
+<w:DontFlipMirrorIndents/>
+<w:OverrideTableStyleHps/>
+<w:UseFELayout/>
+</w:Compatibility>
+<m:mathPr>
+<m:mathFont m:val="Cambria Math"/>
+<m:brkBin m:val="before"/>
+<m:brkBinSub m:val="&#45;-"/>
+<m:smallFrac m:val="off"/>
+<m:dispDef/>
+<m:lMargin m:val="0"/>
+<m:rMargin m:val="0"/>
+<m:defJc m:val="centerGroup"/>
+<m:wrapIndent m:val="1440"/>
+<m:intLim m:val="subSup"/>
+<m:naryLim m:val="undOvr"/>
+</m:mathPr></w:WordDocument>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<w:LatentStyles DefLockedState="false" DefUnhideWhenUsed="true"
+DefSemiHidden="true" DefQFormat="false" DefPriority="99"
+LatentStyleCount="276">
+<w:LsdException Locked="false" Priority="0" SemiHidden="false"
+UnhideWhenUsed="false" QFormat="true" Name="Normal"/>
+<w:LsdException Locked="false" Priority="9" SemiHidden="false"
+UnhideWhenUsed="false" QFormat="true" Name="heading 1"/>
+<w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 2"/>
+<w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 3"/>
+<w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 4"/>
+<w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 5"/>
+<w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 6"/>
+<w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 7"/>
+<w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 8"/>
+<w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 9"/>
+<w:LsdException Locked="false" Priority="39" Name="toc 1"/>
+<w:LsdException Locked="false" Priority="39" Name="toc 2"/>
+<w:LsdException Locked="false" Priority="39" Name="toc 3"/>
+<w:LsdException Locked="false" Priority="39" Name="toc 4"/>
+<w:LsdException Locked="false" Priority="39" Name="toc 5"/>
+<w:LsdException Locked="false" Priority="39" Name="toc 6"/>
+<w:LsdException Locked="false" Priority="39" Name="toc 7"/>
+<w:LsdException Locked="false" Priority="39" Name="toc 8"/>
+<w:LsdException Locked="false" Priority="39" Name="toc 9"/>
+<w:LsdException Locked="false" Priority="35" QFormat="true" Name="caption"/>
+<w:LsdException Locked="false" Priority="10" SemiHidden="false"
+UnhideWhenUsed="false" QFormat="true" Name="Title"/>
+<w:LsdException Locked="false" Priority="1" Name="Default Paragraph Font"/>
+<w:LsdException Locked="false" Priority="11" SemiHidden="false"
+UnhideWhenUsed="false" QFormat="true" Name="Subtitle"/>
+<w:LsdException Locked="false" Priority="22" SemiHidden="false"
+UnhideWhenUsed="false" QFormat="true" Name="Strong"/>
+<w:LsdException Locked="false" Priority="20" SemiHidden="false"
+UnhideWhenUsed="false" QFormat="true" Name="Emphasis"/>
+<w:LsdException Locked="false" Priority="59" SemiHidden="false"
+UnhideWhenUsed="false" Name="Table Grid"/>
+<w:LsdException Locked="false" UnhideWhenUsed="false" Name="Placeholder Text"/>
+<w:LsdException Locked="false" Priority="1" SemiHidden="false"
+UnhideWhenUsed="false" QFormat="true" Name="No Spacing"/>
+<w:LsdException Locked="false" Priority="60" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light Shading"/>
+<w:LsdException Locked="false" Priority="61" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light List"/>
+<w:LsdException Locked="false" Priority="62" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light Grid"/>
+<w:LsdException Locked="false" Priority="63" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Shading 1"/>
+<w:LsdException Locked="false" Priority="64" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Shading 2"/>
+<w:LsdException Locked="false" Priority="65" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium List 1"/>
+<w:LsdException Locked="false" Priority="66" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium List 2"/>
+<w:LsdException Locked="false" Priority="67" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 1"/>
+<w:LsdException Locked="false" Priority="68" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 2"/>
+<w:LsdException Locked="false" Priority="69" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 3"/>
+<w:LsdException Locked="false" Priority="70" SemiHidden="false"
+UnhideWhenUsed="false" Name="Dark List"/>
+<w:LsdException Locked="false" Priority="71" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful Shading"/>
+<w:LsdException Locked="false" Priority="72" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful List"/>
+<w:LsdException Locked="false" Priority="73" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful Grid"/>
+<w:LsdException Locked="false" Priority="60" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light Shading Accent 1"/>
+<w:LsdException Locked="false" Priority="61" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light List Accent 1"/>
+<w:LsdException Locked="false" Priority="62" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light Grid Accent 1"/>
+<w:LsdException Locked="false" Priority="63" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Shading 1 Accent 1"/>
+<w:LsdException Locked="false" Priority="64" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Shading 2 Accent 1"/>
+<w:LsdException Locked="false" Priority="65" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium List 1 Accent 1"/>
+<w:LsdException Locked="false" UnhideWhenUsed="false" Name="Revision"/>
+<w:LsdException Locked="false" Priority="34" SemiHidden="false"
+UnhideWhenUsed="false" QFormat="true" Name="List Paragraph"/>
+<w:LsdException Locked="false" Priority="29" SemiHidden="false"
+UnhideWhenUsed="false" QFormat="true" Name="Quote"/>
+<w:LsdException Locked="false" Priority="30" SemiHidden="false"
+UnhideWhenUsed="false" QFormat="true" Name="Intense Quote"/>
+<w:LsdException Locked="false" Priority="66" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium List 2 Accent 1"/>
+<w:LsdException Locked="false" Priority="67" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 1 Accent 1"/>
+<w:LsdException Locked="false" Priority="68" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 2 Accent 1"/>
+<w:LsdException Locked="false" Priority="69" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 3 Accent 1"/>
+<w:LsdException Locked="false" Priority="70" SemiHidden="false"
+UnhideWhenUsed="false" Name="Dark List Accent 1"/>
+<w:LsdException Locked="false" Priority="71" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful Shading Accent 1"/>
+<w:LsdException Locked="false" Priority="72" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful List Accent 1"/>
+<w:LsdException Locked="false" Priority="73" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful Grid Accent 1"/>
+<w:LsdException Locked="false" Priority="60" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light Shading Accent 2"/>
+<w:LsdException Locked="false" Priority="61" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light List Accent 2"/>
+<w:LsdException Locked="false" Priority="62" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light Grid Accent 2"/>
+<w:LsdException Locked="false" Priority="63" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Shading 1 Accent 2"/>
+<w:LsdException Locked="false" Priority="64" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Shading 2 Accent 2"/>
+<w:LsdException Locked="false" Priority="65" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium List 1 Accent 2"/>
+<w:LsdException Locked="false" Priority="66" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium List 2 Accent 2"/>
+<w:LsdException Locked="false" Priority="67" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 1 Accent 2"/>
+<w:LsdException Locked="false" Priority="68" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 2 Accent 2"/>
+<w:LsdException Locked="false" Priority="69" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 3 Accent 2"/>
+<w:LsdException Locked="false" Priority="70" SemiHidden="false"
+UnhideWhenUsed="false" Name="Dark List Accent 2"/>
+<w:LsdException Locked="false" Priority="71" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful Shading Accent 2"/>
+<w:LsdException Locked="false" Priority="72" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful List Accent 2"/>
+<w:LsdException Locked="false" Priority="73" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful Grid Accent 2"/>
+<w:LsdException Locked="false" Priority="60" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light Shading Accent 3"/>
+<w:LsdException Locked="false" Priority="61" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light List Accent 3"/>
+<w:LsdException Locked="false" Priority="62" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light Grid Accent 3"/>
+<w:LsdException Locked="false" Priority="63" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Shading 1 Accent 3"/>
+<w:LsdException Locked="false" Priority="64" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Shading 2 Accent 3"/>
+<w:LsdException Locked="false" Priority="65" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium List 1 Accent 3"/>
+<w:LsdException Locked="false" Priority="66" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium List 2 Accent 3"/>
+<w:LsdException Locked="false" Priority="67" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 1 Accent 3"/>
+<w:LsdException Locked="false" Priority="68" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 2 Accent 3"/>
+<w:LsdException Locked="false" Priority="69" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 3 Accent 3"/>
+<w:LsdException Locked="false" Priority="70" SemiHidden="false"
+UnhideWhenUsed="false" Name="Dark List Accent 3"/>
+<w:LsdException Locked="false" Priority="71" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful Shading Accent 3"/>
+<w:LsdException Locked="false" Priority="72" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful List Accent 3"/>
+<w:LsdException Locked="false" Priority="73" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful Grid Accent 3"/>
+<w:LsdException Locked="false" Priority="60" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light Shading Accent 4"/>
+<w:LsdException Locked="false" Priority="61" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light List Accent 4"/>
+<w:LsdException Locked="false" Priority="62" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light Grid Accent 4"/>
+<w:LsdException Locked="false" Priority="63" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Shading 1 Accent 4"/>
+<w:LsdException Locked="false" Priority="64" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Shading 2 Accent 4"/>
+<w:LsdException Locked="false" Priority="65" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium List 1 Accent 4"/>
+<w:LsdException Locked="false" Priority="66" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium List 2 Accent 4"/>
+<w:LsdException Locked="false" Priority="67" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 1 Accent 4"/>
+<w:LsdException Locked="false" Priority="68" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 2 Accent 4"/>
+<w:LsdException Locked="false" Priority="69" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 3 Accent 4"/>
+<w:LsdException Locked="false" Priority="70" SemiHidden="false"
+UnhideWhenUsed="false" Name="Dark List Accent 4"/>
+<w:LsdException Locked="false" Priority="71" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful Shading Accent 4"/>
+<w:LsdException Locked="false" Priority="72" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful List Accent 4"/>
+<w:LsdException Locked="false" Priority="73" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful Grid Accent 4"/>
+<w:LsdException Locked="false" Priority="60" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light Shading Accent 5"/>
+<w:LsdException Locked="false" Priority="61" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light List Accent 5"/>
+<w:LsdException Locked="false" Priority="62" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light Grid Accent 5"/>
+<w:LsdException Locked="false" Priority="63" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Shading 1 Accent 5"/>
+<w:LsdException Locked="false" Priority="64" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Shading 2 Accent 5"/>
+<w:LsdException Locked="false" Priority="65" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium List 1 Accent 5"/>
+<w:LsdException Locked="false" Priority="66" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium List 2 Accent 5"/>
+<w:LsdException Locked="false" Priority="67" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 1 Accent 5"/>
+<w:LsdException Locked="false" Priority="68" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 2 Accent 5"/>
+<w:LsdException Locked="false" Priority="69" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 3 Accent 5"/>
+<w:LsdException Locked="false" Priority="70" SemiHidden="false"
+UnhideWhenUsed="false" Name="Dark List Accent 5"/>
+<w:LsdException Locked="false" Priority="71" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful Shading Accent 5"/>
+<w:LsdException Locked="false" Priority="72" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful List Accent 5"/>
+<w:LsdException Locked="false" Priority="73" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful Grid Accent 5"/>
+<w:LsdException Locked="false" Priority="60" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light Shading Accent 6"/>
+<w:LsdException Locked="false" Priority="61" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light List Accent 6"/>
+<w:LsdException Locked="false" Priority="62" SemiHidden="false"
+UnhideWhenUsed="false" Name="Light Grid Accent 6"/>
+<w:LsdException Locked="false" Priority="63" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Shading 1 Accent 6"/>
+<w:LsdException Locked="false" Priority="64" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Shading 2 Accent 6"/>
+<w:LsdException Locked="false" Priority="65" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium List 1 Accent 6"/>
+<w:LsdException Locked="false" Priority="66" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium List 2 Accent 6"/>
+<w:LsdException Locked="false" Priority="67" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 1 Accent 6"/>
+<w:LsdException Locked="false" Priority="68" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 2 Accent 6"/>
+<w:LsdException Locked="false" Priority="69" SemiHidden="false"
+UnhideWhenUsed="false" Name="Medium Grid 3 Accent 6"/>
+<w:LsdException Locked="false" Priority="70" SemiHidden="false"
+UnhideWhenUsed="false" Name="Dark List Accent 6"/>
+<w:LsdException Locked="false" Priority="71" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful Shading Accent 6"/>
+<w:LsdException Locked="false" Priority="72" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful List Accent 6"/>
+<w:LsdException Locked="false" Priority="73" SemiHidden="false"
+UnhideWhenUsed="false" Name="Colorful Grid Accent 6"/>
+<w:LsdException Locked="false" Priority="19" SemiHidden="false"
+UnhideWhenUsed="false" QFormat="true" Name="Subtle Emphasis"/>
+<w:LsdException Locked="false" Priority="21" SemiHidden="false"
+UnhideWhenUsed="false" QFormat="true" Name="Intense Emphasis"/>
+<w:LsdException Locked="false" Priority="31" SemiHidden="false"
+UnhideWhenUsed="false" QFormat="true" Name="Subtle Reference"/>
+<w:LsdException Locked="false" Priority="32" SemiHidden="false"
+UnhideWhenUsed="false" QFormat="true" Name="Intense Reference"/>
+<w:LsdException Locked="false" Priority="33" SemiHidden="false"
+UnhideWhenUsed="false" QFormat="true" Name="Book Title"/>
+<w:LsdException Locked="false" Priority="37" Name="Bibliography"/>
+<w:LsdException Locked="false" Priority="39" QFormat="true" Name="TOC Heading"/>
+</w:LatentStyles>
+</xml><![endif]-->
+    <style>
+<!--
+/* Font Definitions */
+@font-face
+{font-family:Times;
+panose-1:2 0 5 0 0 0 0 0 0 0;
+mso-font-charset:0;
+mso-generic-font-family:auto;
+mso-font-pitch:variable;
+mso-font-signature:3 0 0 0 1 0;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+{mso-style-unhide:no;
+mso-style-qformat:yes;
+mso-style-parent:"";
+margin:0cm;
+margin-bottom:.0001pt;
+line-height:12.0pt;
+mso-line-height-rule:exactly;
+mso-pagination:widow-orphan;
+font-size:10.0pt;
+mso-bidi-font-size:12.0pt;
+font-family:Times;
+mso-fareast-font-family:"Times New Roman";
+mso-bidi-font-family:"Times New Roman";}
+.MsoChpDefault
+{mso-style-type:export-only;
+mso-default-props:yes;
+font-family:Cambria;
+mso-ascii-font-family:Cambria;
+mso-ascii-theme-font:minor-latin;
+mso-fareast-font-family:"ＭＳ 明朝";
+mso-fareast-theme-font:minor-fareast;
+mso-hansi-font-family:Cambria;
+mso-hansi-theme-font:minor-latin;
+mso-bidi-font-family:"Times New Roman";
+mso-bidi-theme-font:minor-bidi;}
+@page WordSection1
+{size:612.0pt 792.0pt;
+margin:72.0pt 90.0pt 72.0pt 90.0pt;
+mso-header-margin:36.0pt;
+mso-footer-margin:36.0pt;
+mso-paper-source:0;}
+div.WordSection1
+{page:WordSection1;}
+-->
+</style><!--[if gte mso 10]>
+<style>
+/* Style Definitions */
+table.MsoNormalTable
+{mso-style-name:"Table Normal";
+mso-tstyle-rowband-size:0;
+mso-tstyle-colband-size:0;
+mso-style-noshow:yes;
+mso-style-priority:99;
+mso-style-parent:"";
+mso-padding-alt:0cm 5.4pt 0cm 5.4pt;
+mso-para-margin:0cm;
+mso-para-margin-bottom:.0001pt;
+mso-pagination:widow-orphan;
+font-size:12.0pt;
+font-family:Cambria;
+mso-ascii-font-family:Cambria;
+mso-ascii-theme-font:minor-latin;
+mso-hansi-font-family:Cambria;
+mso-hansi-theme-font:minor-latin;}
+</style>
+<![endif]--><!--StartFragment--><!--EndFragment-->
+    <p> </p>
+    <h2><a name="Load_expression_data_"></a>Load expression data</h2>
+    <p>Genes and their expression values (FPKM) are the second type of
+      meta-data that you can load on your pathway of interest. <b>Make
+        sure the input file has the sample IDs on the first row and gene
+        names on the first column</b>. For each gene, the expression
+      values appear on its following columns. <br>
+      A valid input file looks like the following (the column separator
+      is selectable):<br>
+      <br>
+    </p>
+    <table width="676" cellspacing="2" cellpadding="2" border="0"
+      height="142">
+      <tbody>
+        <tr>
+          <td valign="top">sampleIDS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <br>
+          </td>
+          <td valign="top">sample1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&nbsp;
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <br>
+          </td>
+          <td valign="top">sample2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <br>
+          </td>
+          <td valign="top">...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+          </td>
+          <td valign="top">sampleN<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">GeneA<br>
+          </td>
+          <td valign="top">expression_value<br>
+          </td>
+          <td valign="top">expression_value</td>
+          <td valign="top">...<br>
+          </td>
+          <td valign="top">expression_value</td>
+        </tr>
+        <tr>
+          <td valign="top">GeneB<br>
+          </td>
+          <td valign="top">expression_value</td>
+          <td valign="top">expression_value</td>
+          <td valign="top">...<br>
+          </td>
+          <td valign="top">expression_value</td>
+        </tr>
+        <tr>
+          <td valign="top">...<br>
+          </td>
+          <td valign="top">...<br>
+          </td>
+          <td valign="top">...<br>
+          </td>
+          <td valign="top">...<br>
+          </td>
+          <td valign="top">...<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">GeneX<br>
+          </td>
+          <td valign="top">expression_value </td>
+          <td valign="top">expression_value </td>
+          <td valign="top">...<br>
+          </td>
+          <td valign="top">expression_value </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><br>
+      To load the gene expression data, click on <b>New</b> under <b><big>Load
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-&gt;
+          Gene Expression</big>.&nbsp;</b>Once a gene expression data
+      file is loaded, it will be listed under the <b>Load -&gt; Gene expression</b>
+      menu to be used for other pathways directly.<br>
+      The genes in the input file that match with the genes in the
+      pathway are
+      color-coded according to the k-fold difference between their
+      expression level and the median expression of all the samples. The
+      samples IDs are listed in the first combobox and the matched
+      genes are listed in the second combobox where the number of
+      matches
+      is shown by the label below it.<br>
+    </p>
+    <img alt="load expression" src="images/loadExpression.png"
+      width="900" height="591"><br>
+    <br>
+    <br>
+    The
+    k-fold difference value is adjustable via <font size="+1"><b>Tools
+        -&gt; Manage</b></font>
+    color-coding and its default value is 4. Blue color codes the
+    over-expressed status and red color codes the under-expressed
+    status.<br>
+    <br>
+    <img src="images/rangeManager.png" alt="range manager" width="640"
+      height="297"><br>
+    <h3><br>
+    </h3>
+    <h3><a href="#How_to">back to top</a></h3>
+    <p><br>
+    </p>
+    <h2><a name="Load_samples_information_"></a>Load samples information</h2>
+    <p>If the samples in the loaded meta-data files have additional
+      information like gender, age, ethnicity, disease stage and so on,
+      you can load the file with matched sample IDs and the additional
+      data will be shown for each sample.<br>
+      Samples information can be loaded from <b><big>Load -&gt; Samples
+          information</big> </b>menu, by choosing New or a previously
+      loaded samples information file. In the form that shows up after
+      selecting the input file, you can change the default choices for
+      the 'columns separator' and the column containing sample IDs. <br>
+      If the samples are from TCGA data sets, check the related checkbox
+      for special matching according to TCGA sample barcodes.<br>
+      <br>
+    </p>
+    <img alt="sample info" src="images/sampleInfo.png" width="550"
+      height="323"><br>
+    If a valid file is loaded and the samples IDs in the input file
+    match with the ones loaded on the pathway, the additional
+    information for each sample is displayed while navigating through
+    samples. You can select which fields to be shown by clicking on the
+    'Edit Fields' button (in the top right corner).<br>
+    <br>
+    <img alt="sample info example" src="images/sampleInfoExample.png"
+      width="900" height="571"><br>
+    <h3><a href="#How_to">back to top</a></h3>
+    <br>
+    <h2><a name="Navigate_through_samples_"></a>Navigate through samples
+      <br>
+    </h2>
+    <p>When the meta data is loaded you can navigate through samples
+      using the buttons on the left side panel to see the status of the
+      genes in the pathway for each sample. The 'Play' button shows the
+      samples consecutively. If the 'Repeat' checkbox is checked the
+      playback is repeated from the beginning when the last sample is
+      shown. The speed of playback can be set using the slider. A short
+      explanation (tooltip) is shown when hovering and staying over side
+      panel items with the mouse.<br>
+    </p>
+    <img alt="navigate" src="images/navigateSamples.png" width="900"
+      height="591"><br>
+    <h3><a href="#How_to">back to top</a></h3>
+    <p><br>
+    </p>
+    <h2><a name="Right-click_menu_options_"></a>Right-click menu options
+    </h2>
+    <p>A menu is available for all the genes when you right-click on the
+      gene rectangle, with the following options:<br>
+    </p>
+    <p><b><big>1) Check this gene on
+          ...</big> :</b> The first option is enabled for all the genes.
+      This opens
+      a tab in the default browser and checks the target gene's
+      information on your selected database: GeneCards, Pubmed or
+      Ensemble.</p>
+    <img alt="right click menu" src="images/rightClickMenu.png"
+      width="900" height="591"><br>
+    <p><b>2)</b> <big><b>Histogram for all samples</b></big><b>:</b>
+      The second option makes
+      a histogram for the beta-values or expression values of all
+      samples for the targeted gene. <br>
+    </p>
+    <p><img alt="histogram" src="images/histogram.png" width="700"
+        height="394">&nbsp;<br>
+    </p>
+    <p><b><big>3) Barplot for raw data</big> </b>is
+      another representation of beta-values or expression values for all
+      samples.<br>
+    </p>
+    <img alt="barplot" src="images/barplot.png" width="700" height="394"><br>
+    <b>4)</b> <b>Show CpG site(s) details</b>: this option is available
+    when DNA methylation data has been loaded. A gene with a
+    green-colored border show that multiple CpG sites have been
+    annotated to this gene and the color is the average of all CpG
+    sites. If the genomic region is provided in the input data (genomic
+    region can be attached to the gene name after an underscore), you
+    can right click on the gene and all CpG sites for this gene -
+    labeled with the genomic region tag - shows up on the screen.
+    Through this feature the user can navigate through the samples and
+    check the status of each CpG site rather than the color coded as an
+    average of all the sites. In addition to the standard deviation
+    filtering option, the user can also select/deselect specific sites
+    to be included/excluded in the analysis. The sites with no valid or
+    not available (NA) beta values are shown in gray. By hovering the
+    mouse over each CpG site, its beta values will be shown.<br>
+    <br>
+    <img alt="genomic regions" src="images/genomicRegions.png"
+      width="700" height="514"><br>
+    <b><font size="+1">5)</font> </b><big><b>Multiple-sample view:</b></big>
+    this is explained
+    in <a href="#Multiple-sample_view">this</a> section.<br>
+    <br>
+    <b><font size="+1">6) Find genes with similar pattern: </font></b>using
+    this option, the methylation or expression pattern of the samples
+    for the selected genes are compared with the other genes in the
+    pathway, or all the genes in the loaded metadata file. The Euclidean
+    distance between the value of each sample for targeted gene and
+    other genes is calculated and the most similar or dissimilar ones
+    are listed. The results can be saved as a file to be used later. <br>
+    When choosing "The whole loaded metadata", it is possible to find
+    some genes that are not part of any KEGG pathway, in this case
+    "Generate PiiLgrid" option can be used to create a grid of genes
+    with no connection between them. PiiLgrid is explained in this
+    section.<br>
+    <br>
+    <img src="images/similarGenes.png" alt="similar genes" width="900"
+      height="591"><b> <br>
+      <font size="+1">7) sort samples:</font> </b>the final option
+    sorts the samples according to the methylation or expression values
+    of all the samples for the selected gene. The sorting can be done in
+    an ascending or descending order. This option can be used for the
+    playback option of while navigating through the samples.<br>
+    <h3><a href="#How_to">back to top</a></h3>
+    <br>
+    <h2><a name="Group-wise_view_"></a>Group-wise view</h2>
+    <p>Having loaded the samples information file, the values of
+      methylation/expression of each gene can be shown in a group-wise
+      manner. Samples can be grouped by one of the columns of the
+      samples information file. To see the pathway in Group-wise view
+      select <b><big>View -&gt; Group-wise view for all/selected genes.
+        </big></b>To go back to Single-sample view, select <b>View<big>
+          -&gt; Show single-sample view for all genes</big>.<br>
+      </b></p>
+    <img alt="grouping form" src="images/groupingForm.png" width="900"
+      height="240"><br>
+    <p>The grouping shows the average methylation/expression over the
+      samples belonging to each group. The samples grouping is
+      summarized with the name of each group and number of samples in
+      that group in the parenthesis. <br>
+      For the expression data, there are two options:<br>
+      1) comparing the average expression value of the samples of each
+      group to the average of all samples.<br>
+      2) comparing the average expression value of the samples of each
+      group, with the average of the samples belonging to a group chosen
+      as the 'base group'.<br>
+    </p>
+    <img alt="group-wise view" src="images/groupWiseView.png"
+      width="900" height="591"><br>
+    <br>
+    In the group-wise view mode, barplot and histogram are also shown
+    with the selected grouping.<br>
+    <br>
+    <img src="imges/barplotGrouped.png" alt="barplot grp" width="570"
+      height="321"><img src="images/histogramGrouped.png" alt="histogram
+      grp" width="570" height="321"><br>
+    <h3><a href="#How_to">back to top</a></h3>
+    <br>
+    <h2><a name="Multiple-sample_view_"></a><b>Multiple-sample view</b></h2>
+    This function visualizes the metadata for the current sample and the
+    next 10 samples, for the selected or all (not recommended because
+    the pathway will look very crowded) genes. If the number of samples
+    from the current one to the end of the sample set is less than 10,
+    as many as possible are displayed.<br>
+    To select a gene that is color-coded (i.e. has some metadata
+    loaded), double click on the gene rectangle. The selected genes'
+    borders turn to yellow. <br>
+    Hint: To choose the direction of expansion for multiple-sample view,
+    double-click on your desired quarter of the gene rectangle while
+    selecting it (image a gene rectangle is divided to four equal
+    rectangles). For example double clicking on the north-west quarter
+    of the gene sets it to show next samples on the right top side of
+    it.<br>
+    <br>
+    <br>
+    If you hover the mouse over the extended rectangles, a tooltip shows
+    the sample that rectangle is representing.<br>
+    You can right-click on any of the expanded genes and choose
+    Single-sample view to undo the expansion. To go back to
+    Single-sample view for all the expanded genes (the ones in
+    multiple-sample view), select <b><big>Tools -&gt; Show
+        single-sample view for all genes</big>.</b><br>
+    <h3><a href="file:///Users/Behrooz/PiiLFiles/index.html#How_to">back
+        to top</a></h3>
+    <h2><a name="Generate_a_PiiLgrid_"></a>
+      Generate a PiiLgrid</h2>
+    <p>Sometimes most of genes we are interested in are not part of any
+      of the KEGG pathways. In this scenario, PiiL provides a grid of
+      not connected genes called <b>PiiLgrid </b>where all the
+      functionalities of PiiL are applicable. A PiiLgrid can be
+      generated either via <font size="+1"><b>File -&gt; Generate a
+          PiiLgrid</b></font> or out of selected genes listed in the "<font
+        size="+1">Find genes with similar pattern</font>" form.<br>
+      In the first case, the input file is a text file with the name of
+      each gene on each row.<br>
+    </p>
+    <p><img src="images/piilgrid.png" alt="piilgrid" width="900"
+        height="592">&nbsp;<br>
+    </p>
+    <h3><a href="#How_to">back to top</a><br>
+    </h3>
+    <h2>
+    </h2>
+    <h2> </h2>
+    <h2><a name="Load_a_list_of_genes_to_be_highlighted"></a>Highlight a
+      list of genes in a targeted pathway</h2>
+    <p>If you have a list of genes and want to check the overlap of this
+      list with a pathway of interest, first open the pathway and then
+      select <b><big>Load -&gt; List of genes</big> </b>to load your
+      file. The genes that exist in the targeted pathway will be
+      highlighted with a red text and red border.<br>
+    </p>
+    <img alt="highlight genes" src="images/highlightGenes.png"
+      width="900" height="591">
+    <h3><a href="#How_to">back to top</a></h3>
+    <br>
+    <h2><a name="Export_pathway_to_image_"></a>Export pathway to image</h2>
+    The visualized pathway and its color-coded meta data can be exported
+    to a vector based image (and other formats). This function is
+    available under the<b> <big>Export -&gt; Current pathway to image</big></b>
+    menu with two options:<br>
+    1) The visible part of the pathway <br>
+    2) The entire pathway<br>
+    <h3><a href="#How_to">back to top</a></h3>
+    <p><br>
+    </p>
+    <h2><a name="Export_list_of_matched_genes_in_each_"></a>Export list
+      of matched genes in each pathway</h2>
+    After openning multipe pathways in multiple tabs and loading meta
+    data for each of them, this function can be used to get a summary of
+    each tab containing the pathway, the meta data loaded over that and
+    the list of genes that were matched in each pathway. By clicking on
+    <b><big>Export -&gt; List of matched genes in each pathway</big> </b>you
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+can
+    choose a file that keeps this summary.<br>
+    &nbsp;<br>
+    <h3><a href="#How_to">back to top</a></h3>
+    <br>
+    <h2><a name="Duplicate_the_current_pathway_in_a_new_"></a>Duplicate
+      the current pathway in a new tab</h2>
+    Having an open tab with a visualized pathway and meta data loaded,
+    you can choose the <b><big>Tools -&gt; Duplicate the current
+        pathway</big> </b>option to quickly duplicate the current tab's
+    pathway (without the metadata) in a new tab.<br>
+    <h3><a href="#How_to">back to top</a></h3>
+    <p><br>
+    </p>
+    <h2><a name="Cite_us_"></a>Cite us<br>
+    </h2>
+    If you <i>PiiL</i> your data please cite our publication ...<br>
+    <h3><a href="#How_to">back to top</a></h3>
+    <p><br>
+    </p>
+    <h2><a name="What_the_name_PiiL_means"></a>Decode the name "PiiL"<br>
+    </h2>
+    <p>Look at the logo carefully. Do you recognize a cute elephant
+      there?! Piil (pronounced as meal) means elephant in Persian (with
+      Sanskrit origin). And on a chess board the chessman called bishop
+      is actually a <i>piil </i>(elephant) standing next to a hosrse
+      (knight)! <br>
+    </p>
+    <h3><a href="#How_to">back to top</a></h3>
+  </body>
+</html>
