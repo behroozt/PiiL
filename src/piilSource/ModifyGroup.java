@@ -30,6 +30,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -160,6 +161,14 @@ public class ModifyGroup extends JOptionPane{
 				}
 			}
 			pathway.setShowableGroups(chosenGroups);
+			java.util.Collections.sort(chosenGroups);
+			if (chosenGroups.indexOf("NA") != -1){
+				String toMoveUp = "NA";
+			    while (chosenGroups.indexOf(toMoveUp) != (chosenGroups.size() -1)) {
+			        int i = chosenGroups.indexOf(toMoveUp);
+			        Collections.swap(chosenGroups, i, i + 1);
+			    }
+			}
 			GroupSamples(chosenGroups);
 			
 		}

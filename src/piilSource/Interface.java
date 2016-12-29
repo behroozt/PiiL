@@ -250,7 +250,7 @@ public class Interface extends JFrame{
 		gridConstraints.insets = new Insets(1,15,4,1);
 		
 		bodyFrame.add(backgroundPanel,BorderLayout.CENTER);
-		new Splash(3000);	
+//		new Splash(3000);	
 		bodyFrame.setIconImage(createImage("/resources/icon.png").getImage());
 		bodyFrame.setVisible(true);
 	}

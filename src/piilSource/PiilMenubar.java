@@ -179,8 +179,8 @@ public class PiilMenubar extends JMenuBar{
 		citeUs = new JMenuItem("How to cite us");
 		checkUpdates = new JMenuItem("Check for updates");
 		
-		openKGML.add(openAction);
 		openKGML.add(openWebAction);
+		openKGML.add(openAction);
 //		menuFile.add(newAction);
 		menuFile.add(openKGML);
 		menuFile.add(piilgridAction);

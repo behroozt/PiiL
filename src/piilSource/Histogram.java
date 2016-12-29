@@ -40,8 +40,6 @@ import org.freehep.util.export.ExportDialog;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
@@ -252,6 +250,33 @@ public class Histogram extends ApplicationFrame {
 //		xyplot.setBackgroundImageAlpha(0.0F);
 		XYBarRenderer xybarrenderer = (XYBarRenderer)xyplot.getRenderer();
 		xybarrenderer.setDrawBarOutline(false);
+        
+        // set up gradient paints for series...
+        final GradientPaint gp0 = new GradientPaint(
+            0.0f, 0.0f, new Color(255,140,0), 
+            0.0f, 0.0f, new Color(255,140,0)
+        );
+        final GradientPaint gp1 = new GradientPaint(
+            0.0f, 0.0f, new Color(0,80,0), 
+            0.0f, 0.0f, new Color(0,80,0)
+        );
+        final GradientPaint gp2 = new GradientPaint(
+            0.0f, 0.0f, Color.MAGENTA, 
+            0.0f, 0.0f, Color.MAGENTA
+        );
+        final GradientPaint gp3 = new GradientPaint(
+                0.0f, 0.0f, Color.yellow, 
+                0.0f, 0.0f, Color.yellow
+        );
+        final GradientPaint gp4 = new GradientPaint(
+                0.0f, 0.0f, Color.cyan, 
+                0.0f, 0.0f, Color.cyan
+        );
+        xybarrenderer.setSeriesPaint(0, gp0);
+        xybarrenderer.setSeriesPaint(1, gp1);
+        xybarrenderer.setSeriesPaint(2, gp2);
+        xybarrenderer.setSeriesPaint(3, gp3);
+        xybarrenderer.setSeriesPaint(4, gp4);
 
 		
 		return jfreechart;

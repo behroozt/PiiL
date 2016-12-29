@@ -75,7 +75,8 @@ public class ControlPanel extends JPanel{
 	static ImagePanel colorMap;
 	static ImagePanel relationMap;
 	static ListenForCombo lForCombo;
-	static JLabel metaDataLabel; 
+	static JLabel metaDataLabel;
+	static int sampleIDIndex;
 
 	public JPanel makeSidePanel() {
 		holderPanel = new JPanel();
@@ -236,12 +237,16 @@ public class ControlPanel extends JPanel{
 	    	int numberOfSamples = pathway.getSamplesIDs().size();
 	    	Character type = pathway.getMetaType();
 	    	int newPointer = pathway.movePointerForward();
-	    	Genes.changeBgColor(newPointer,type);
+	    	samplesIDsCombo.setSelectedIndex(newPointer);
+	    	sampleIDIndex = pathway.getSamplesIDs().indexOf(samplesIDsCombo.getSelectedItem());
+	    	Genes.changeBgColor(sampleIDIndex,type);
 	    	setIndexLabel(newPointer);
-      	  	samplesIDsCombo.setSelectedIndex(newPointer);
       	  	
       	  	if (pathway.getSamplesInfo() != null && pathway.getSamplesInfo().size() > 0){
-				setSampleInfoLabel(newPointer);
+				setSampleInfoLabel(sampleIDIndex);
+			}
+      	    else {
+				Interface.setSampleInfoLabel(samplesIDsCombo.getItemAt(newPointer).toString(), true);
 			}
       	  	
 
@@ -252,7 +257,7 @@ public class ControlPanel extends JPanel{
 	  			else{
 	  				stopTimer();
 					playButton.setEnabled(false);
-					timerSpeed.setValue(2);
+//					timerSpeed.setValue(2);
 					
 	  			}
       	  	}
@@ -631,12 +636,13 @@ public class ControlPanel extends JPanel{
 					int newPointer = samplesIDsCombo.getSelectedIndex();
 					TabsInfo pathway = ParseKGML.getTabInfo(activeTab);
 					pathway.assignPointer(newPointer);
-					Genes.changeBgColor(newPointer,pathway.getMetaType());
+					sampleIDIndex = pathway.getSamplesIDs().indexOf(samplesIDsCombo.getSelectedItem());
+					Genes.changeBgColor(sampleIDIndex,pathway.getMetaType());
 					setIndexLabel(newPointer);
 					samplesIDsCombo.setSelectedIndex(newPointer);
 					samplesIDsCombo.setToolTipText("Sample ID: " + samplesIDsCombo.getSelectedItem().toString());
 					if (pathway.getSamplesInfo() != null && pathway.getSamplesInfo().size() > 0){
-	    				setSampleInfoLabel(newPointer);
+	    				setSampleInfoLabel(sampleIDIndex);
 	    			}
 					else {
         				Interface.setSampleInfoLabel(samplesIDsCombo.getItemAt(newPointer).toString(), true);

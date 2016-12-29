@@ -168,25 +168,28 @@ public class BarChart extends ApplicationFrame {
                     	}
                     	value = sum / (list.size() - invalid);
                     	dataset.addValue(value, group, sampleID);
-                    	// *** System.out.println(sampleID + " " + value + " " + group);
+                    	System.out.println(sampleID + " " + value + " " + group);
         			}
         			
         		}
-        	}
+        	} // end of if-grouping - expression 
         	else{
+        		int realIndex = 0;
         		for (int i = 0; i < list.get(0).size() ; i ++){
+        			realIndex = pathway.getSamplesIDs().indexOf(ControlPanel.samplesIDsCombo.getItemAt(i));
                 	sum = 0; value = 0;
                 	for (int j = 0; j < list.size() ; j ++){
-                		if (!isNumeric(list.get(j).get(i))){
+                		
+                		if (!isNumeric(list.get(j).get(realIndex))){
                 			invalid ++;
         					continue;
         				}
-                		sum += Float.parseFloat(list.get(j).get(i));
+                		sum += Float.parseFloat(list.get(j).get(realIndex));
                 	}
                 	value = sum / (list.size() - invalid);
-                	dataset.addValue(value, series1, categories.get(i));
+                	dataset.addValue(value, series1, categories.get(realIndex));
                 }
-        	}
+        	} // end of else-grouping - expression
         }
         
         else if (metaLabel.equals("beta")){  // plot for methylation values
@@ -210,7 +213,7 @@ public class BarChart extends ApplicationFrame {
                         	}
                         	value = sum / (list.size() - invalid);
                         	dataset.addValue(value, group, sampleID);
-                        	// *** System.out.println(sampleID + " " + value + " " + group);
+                        	System.out.println(sampleID + " " + value + " " + group);
                         
         				}
         				else { // some sites are selected
@@ -226,44 +229,47 @@ public class BarChart extends ApplicationFrame {
                 			} // for each significant site
                     		value = sum / (significantSites.size() - invalid);
                     		dataset.addValue(value, group, sampleID);
-                    		// *** System.out.println(sampleID + " " + value + " " + group);
+                    		System.out.println(sampleID + " " + value + " " + group);
         				} // some sites are selected
         				
         			} // for each sampleID in each group
         			
         		} // for each group
-        	} // if grouping
-        	else {
+        	} // end of if-grouping - methylation
+            
+        	else { // no grouping methylation
+        		int realIndex = 0;
         		for (int i = 0; i < list.get(0).size() ; i ++){
                 	sum = 0; value = 0; invalid = 0;
+                	realIndex = pathway.getSamplesIDs().indexOf(ControlPanel.samplesIDsCombo.getItemAt(i));
                 	if (significantSites == null){
     					for (int j = 0; j < list.size() ; j ++){
-                    		if (!isNumeric(list.get(j).get(i))){
+                    		if (!isNumeric(list.get(j).get(realIndex))){
                     			invalid ++;
             					continue;
             				}
-                    		sum += Float.parseFloat(list.get(j).get(i));
+                    		sum += Float.parseFloat(list.get(j).get(realIndex));
                     	}
                     	value = sum / (list.size() - invalid);
-                    	dataset.addValue(value, series1, categories.get(i));
+                    	dataset.addValue(value, series1, categories.get(realIndex));
     				}
     				else { // some sites are selected
     					for (int item : significantSites){
             				if (item != -1){
-            					if (!isNumeric(list.get(item).get(i))){
+            					if (!isNumeric(list.get(item).get(realIndex))){
             						invalid ++;
             						continue;
             					}
-            					sum += Double.parseDouble(list.get(item).get(i));
+            					sum += Double.parseDouble(list.get(item).get(realIndex));
             				}
             				
             			}
                 		value = sum / (significantSites.size() - invalid);
-                		dataset.addValue(value, series1, categories.get(i));
+                		dataset.addValue(value, series1, categories.get(realIndex));
     				}
                 }
-        	}
-        }
+        	} // end of else-grouping - methylation
+        } // end of beta-values
         
         return dataset;       
     }

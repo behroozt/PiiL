@@ -34,10 +34,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -47,8 +53,9 @@ public class RightClickMenu {
 	
 
 	JPopupMenu menu;
-	JMenuItem histogram,rawData,  cpgView, geneCards, pubmed, ensembl, multipleSamples, similarGenes;
-	JMenu geneInfo;
+	JMenuItem histogram,rawData,  cpgView, geneCards, pubmed, ensembl, multipleSamples, similarGenes,
+	sortAscending, sortDescending;
+	JMenu geneInfo, sortSamples;
 	String entryID;
 	int activeTab;
 	TabsInfo pathway;
@@ -70,6 +77,9 @@ public class RightClickMenu {
 		cpgView = new JMenuItem("Show CpG site(s) details");
 		multipleSamples = new JMenuItem("Show multiple-sample view");
 		similarGenes = new JMenuItem("Find genes with similar pattern");
+		sortSamples = new JMenu("Sort samples");
+		sortAscending = new JMenuItem("Ascending");
+		sortDescending = new JMenuItem("Descending");
 		geneCards = new JMenuItem("GeneCards");
 		pubmed = new JMenuItem("Pubmed");
 		ensembl = new JMenuItem("Ensembl");
@@ -80,9 +90,12 @@ public class RightClickMenu {
 		menu.add(cpgView);
 		menu.add(multipleSamples);
 		menu.add(similarGenes);
+		menu.add(sortSamples);
 		geneInfo.add(geneCards);
 		geneInfo.add(pubmed);
 		geneInfo.add(ensembl);
+		sortSamples.add(sortAscending);
+		sortSamples.add(sortDescending);
 		menu.show(component, x,y);
 		
 		
@@ -106,6 +119,13 @@ public class RightClickMenu {
 					cpgView.setEnabled(false);
 //					similarGenes.setEnabled(false);
 				}
+			}
+			if (gene.getLabel().getBackground().equals(Color.LIGHT_GRAY)){
+				histogram.setEnabled(false);
+				rawData.setEnabled(false);
+				sortSamples.setEnabled(false);
+				multipleSamples.setEnabled(false);
+				similarGenes.setEnabled(false);
 			}
 			if (pathway.getMapedGeneData().size() == 0){
 				histogram.setEnabled(false);
@@ -132,12 +152,15 @@ public class RightClickMenu {
 		ensembl.addActionListener(lForClick);
 		multipleSamples.addActionListener(lForClick);
 		similarGenes.addActionListener(lForClick);
+		sortAscending.addActionListener(lForClick);
+		sortDescending.addActionListener(lForClick);
 	}
 
 	private class ListenForClick implements ActionListener{
 		
 		String geneName = pathway.getGenes().get(entryID).getText();
 		String URL;
+		int sampleIDIndex;
 		
 		public void actionPerformed(ActionEvent mc) {
 			
@@ -229,7 +252,7 @@ public class RightClickMenu {
 				List<Float> siteValues = new ArrayList<Float>();
 				String geneName = pathway.getMapedGeneLabel().get(entryID).getText();
 				
-				if (pathway.getMetaType().equals('M')){
+				if (type.equals('M')){
 					if (pathway.getSelectedSites(entryID) == null){
 						int numberOfRegions = pathway.getMapedGeneRegion().get(entryID).size();
 						
@@ -258,7 +281,7 @@ public class RightClickMenu {
 						}
 					}
 				}
-				else if (pathway.getMetaType().equals('E')){
+				else if (type.equals('E')){
 					for (int i = 0 ; i < numberOfSamples ; i++){
 						siteValues.add(Float.parseFloat(pathway.getMapedGeneData().get(entryID).get(0).get(i)));
 					}
@@ -267,6 +290,109 @@ public class RightClickMenu {
 				
 				new SimilarityFinder(pathway, inputFile, geneName, siteValues);
 			} // end of similarGenes
+			
+			else { // sorting samples
+				
+				List<List<String>> list = pathway.getMapedGeneData().get(entryID);
+				TreeMap<Float, String> sortingMap = new TreeMap<Float, String>();
+				String geneCode = null;
+				List<String> ids = ParseKGML.getTabInfo(activeTab).getSamplesIDs();
+				float sum;
+	        	int invalid = 0;
+	        	float value;
+		        
+		        for (Entry<String, Genes> item : pathway.getMapedGeneLabel().entrySet()){
+		        	if (item.getValue().getText().equals(geneName)){
+		        		geneCode = item.getKey();
+		        		continue;
+		        	}
+		        }
+				
+				if (type.equals('M')){
+					
+					List<Integer> significantSites = new ArrayList<Integer>();
+		            significantSites = pathway.getSelectedSites(geneCode);
+		        	
+		        	for (int i = 0; i < list.get(0).size() ; i ++){
+	                	sum = 0; value = 0; invalid = 0;
+	                	if (significantSites == null){
+	    					for (int j = 0; j < list.size() ; j ++){
+	                    		if (!isNumeric(list.get(j).get(i))){
+	                    			invalid ++;
+	            					continue;
+	            				}
+	                    		sum += Float.parseFloat(list.get(j).get(i));
+	                    	}
+	                    	value = sum / (list.size() - invalid);
+	                    	sortingMap.put(value,ids.get(i));
+	    				}
+	    				else { // some sites are selected
+	    					for (int item : significantSites){
+	            				if (item != -1){
+	            					if (!isNumeric(list.get(item).get(i))){
+	            						invalid ++;
+	            						continue;
+	            					}
+	            					sum += Double.parseDouble(list.get(item).get(i));
+	            				}
+	            				
+	            			}
+	                		value = sum / (significantSites.size() - invalid);
+	                		sortingMap.put(value, ids.get(i));
+	    				}
+	                }
+					
+				} // end of if-methylation
+				
+				else { // if expression
+					for (int i = 0; i < list.get(0).size() ; i ++){
+	                	sum = 0; value = 0;
+	                	for (int j = 0; j < list.size() ; j ++){
+	                		if (!isNumeric(list.get(j).get(i))){
+	                			invalid ++;
+	        					continue;
+	        				}
+	                		sum += Float.parseFloat(list.get(j).get(i));
+	                	}
+	                	value = sum / (list.size() - invalid);
+	                	sortingMap.put(value, ids.get(i));
+	                }
+					
+				} // end of if-expression
+				
+				if (mc.getSource() == sortAscending){
+					DefaultComboBoxModel sortedIDs = new DefaultComboBoxModel(sortingMap.values().toArray());
+					
+					ControlPanel.samplesIDsCombo.setModel(sortedIDs);
+					ControlPanel.samplesIDsCombo.setSelectedIndex(pathway.getPointer());
+					sampleIDIndex = pathway.getSamplesIDs().indexOf(ControlPanel.samplesIDsCombo.getSelectedItem());
+					Genes.changeBgColor(sampleIDIndex,type);
+					if (pathway.getSamplesInfo() != null && pathway.getSamplesInfo().size() > 0){
+						ControlPanel.setSampleInfoLabel(sampleIDIndex);
+					}
+		      	    else {
+						Interface.setSampleInfoLabel(ControlPanel.samplesIDsCombo.getItemAt(pathway.getPointer()).toString(), true);
+					}
+				}
+				else if (mc.getSource() == sortDescending){
+					
+					Map<Float, String> descendingSortingMap = sortingMap.descendingMap();
+					DefaultComboBoxModel sortedIDs = new DefaultComboBoxModel(descendingSortingMap.values().toArray());
+					
+					ControlPanel.samplesIDsCombo.setModel(sortedIDs);
+					ControlPanel.samplesIDsCombo.setSelectedIndex(pathway.getPointer());
+					sampleIDIndex = pathway.getSamplesIDs().indexOf(ControlPanel.samplesIDsCombo.getSelectedItem());
+					Genes.changeBgColor(sampleIDIndex,type);
+					if (pathway.getSamplesInfo() != null && pathway.getSamplesInfo().size() > 0){
+						ControlPanel.setSampleInfoLabel(sampleIDIndex);
+					}
+		      	    else {
+						Interface.setSampleInfoLabel(ControlPanel.samplesIDsCombo.getItemAt(pathway.getPointer()).toString(), true);
+					}
+				}
+				
+			} // end of sortAscending
+			
 		} // end of actionPerformed
 	} // end of listenForClick
 
