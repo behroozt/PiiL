@@ -365,6 +365,11 @@ public class RightClickMenu {
 					
 					ControlPanel.samplesIDsCombo.setModel(sortedIDs);
 					ControlPanel.samplesIDsCombo.setSelectedIndex(pathway.getPointer());
+					ArrayList<String> sortedSamples = new ArrayList<String>();
+					for (String item : sortingMap.values()){
+						sortedSamples.add(item);
+					}
+					pathway.setSortedSampleIDs(sortedSamples);
 					sampleIDIndex = pathway.getSamplesIDs().indexOf(ControlPanel.samplesIDsCombo.getSelectedItem());
 					Genes.changeBgColor(sampleIDIndex,type);
 					if (pathway.getSamplesInfo() != null && pathway.getSamplesInfo().size() > 0){
@@ -378,10 +383,14 @@ public class RightClickMenu {
 					
 					Map<Float, String> descendingSortingMap = sortingMap.descendingMap();
 					DefaultComboBoxModel sortedIDs = new DefaultComboBoxModel(descendingSortingMap.values().toArray());
-					
 					ControlPanel.samplesIDsCombo.setModel(sortedIDs);
 					ControlPanel.samplesIDsCombo.setSelectedIndex(pathway.getPointer());
 					sampleIDIndex = pathway.getSamplesIDs().indexOf(ControlPanel.samplesIDsCombo.getSelectedItem());
+					ArrayList<String> sortedSamples = new ArrayList<String>();
+					for (String item : sortingMap.values()){
+						sortedSamples.add(item);
+					}
+					pathway.setSortedSampleIDs(sortedSamples);
 					Genes.changeBgColor(sampleIDIndex,type);
 					if (pathway.getSamplesInfo() != null && pathway.getSamplesInfo().size() > 0){
 						ControlPanel.setSampleInfoLabel(sampleIDIndex);

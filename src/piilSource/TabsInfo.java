@@ -59,6 +59,7 @@ public class TabsInfo {
 	LinkedHashMap<String, List<String>> idsInGroups;
 	HashMap<String, List<String>> idsInBaseGroup;
 	ArrayList<String> samplesIds;
+	ArrayList<String> orderedSamplesIds;
 	HashMap<String, Collection<String>> mapedGeneRegion;
 	String caption;
 	String pathwayCode;
@@ -118,6 +119,7 @@ public class TabsInfo {
 		mappedGeneSelectedSites = new HashMap<String, List<Integer>>();
 		samplesInfo = new HashMap<String, List<String>>();
 		samplesIds = new ArrayList<String>();
+		orderedSamplesIds = new ArrayList<String>();
 		viewMode = 0;
 		selectedGenes = 0;
 		groupingIndex = 0;
@@ -561,9 +563,11 @@ public class TabsInfo {
 			matcher = pattern.matcher(test[i]);
 			if (matcher.find()){
 				samplesIds.add(matcher.group(1));
+				orderedSamplesIds.add(matcher.group(1));
 			}
 			else {
 				samplesIds.add(test[i]);
+				orderedSamplesIds.add(test[i]);
 			}
 		}
 		
@@ -610,6 +614,14 @@ public class TabsInfo {
 
 	public List<String> getSamplesIDs(){
 		return samplesIds;
+	}
+	
+	public List<String> getOrderedSamplesIDs(){
+		return orderedSamplesIds;
+	}
+	
+	public void setSortedSampleIDs(ArrayList<String> list){
+		orderedSamplesIds = list;
 	}
 	
 	private byte searchPathway(String line, int numOfColumns){

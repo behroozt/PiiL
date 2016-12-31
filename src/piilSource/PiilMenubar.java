@@ -175,7 +175,7 @@ public class PiilMenubar extends JMenuBar{
 		menuHelp = new JMenu("Help");
 		reportAction = new JMenuItem("Report a bug / Send feedback");
 		aboutAction = new JMenuItem("About");
-		manualAction = new JMenuItem("Manual");
+		manualAction = new JMenuItem("User Manual");
 		citeUs = new JMenuItem("How to cite us");
 		checkUpdates = new JMenuItem("Check for updates");
 		
@@ -415,6 +415,7 @@ public class PiilMenubar extends JMenuBar{
 							
 								if (validInput == 0 && theTab.getMapedGeneLabel().size() > 0 && theTab.getMapedGeneData().size() > 0){
 									JMenuItem loadedFileItem = new JMenuItem(file.getName().toString());
+									Interface.tabPane.setBackgroundAt(Interface.tabPane.getSelectedIndex(), new Color(145,150,60));
 								
 									loadedFileItem.addActionListener(new ActionListener() {
 
@@ -454,6 +455,7 @@ public class PiilMenubar extends JMenuBar{
 													if (thisTab.getMapedGeneLabel().size() > 0) {ControlPanel.enableControlPanel(0);
 														thisTab.assignPointer(0);
 														loadSamplesInfo.setEnabled(true);
+														Interface.tabPane.setBackgroundAt(Interface.tabPane.getSelectedIndex(), new Color(145,150,60));
 
 													} else {
 														JOptionPane.showMessageDialog(Interface.bodyFrame,"The loaded data has no overlap with this pathway (make sure column separator is selected correctly).","Message", 0, icon);
@@ -524,6 +526,7 @@ public class PiilMenubar extends JMenuBar{
 							dialog.setVisible(true);
 							
 							if (validInput == 0 && theTab.getMapedGeneLabel().size() > 0 && theTab.getMapedGeneData().size() > 0){
+								Interface.tabPane.setBackgroundAt(Interface.tabPane.getSelectedIndex(), new Color(177,167,177));
 								JMenuItem loadedFileItem = new JMenuItem(file.getName().toString());
 								loadedFileItem.addActionListener(new ActionListener() {
 
@@ -551,6 +554,7 @@ public class PiilMenubar extends JMenuBar{
 														ControlPanel.enableControlPanel(0);
 														thisTab.assignPointer(0);
 														loadSamplesInfo.setEnabled(true);
+														Interface.tabPane.setBackgroundAt(Interface.tabPane.getSelectedIndex(), new Color(177,167,177));
 
 													} else {
 														JOptionPane.showMessageDialog(Interface.bodyFrame,"The loaded list has no overlap with this pathway (make sure column separator is selected correctly).","Message", 0, icon);
@@ -1015,7 +1019,7 @@ public class PiilMenubar extends JMenuBar{
 			
 			/* manual item clicked */
 			else if (ice.getSource() == manualAction){
-				String URL = "http://behroozt.github.io/PiiL/";
+				String URL = "http://behroozt.github.io/PiiL/tutorial.html";
 				try {
 					java.awt.Desktop.getDesktop().browse(java.net.URI.create(URL));
 				} catch (IOException e1) {

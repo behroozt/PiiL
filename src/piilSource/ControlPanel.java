@@ -43,14 +43,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
@@ -75,9 +79,12 @@ public class ControlPanel extends JPanel{
 	static ImagePanel colorMap;
 	static ImagePanel relationMap;
 	static ListenForCombo lForCombo;
+	static ListenForMouse lForMouse;
 	static JLabel metaDataLabel;
 	static int sampleIDIndex;
-
+	static ArrayList<String> sortedItems = new ArrayList<String>();
+	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
+	
 	public JPanel makeSidePanel() {
 		holderPanel = new JPanel();
 		holderPanel.setLayout(new BorderLayout());
@@ -94,6 +101,9 @@ public class ControlPanel extends JPanel{
 		relationMap = new ImagePanel(relationImage.getImage());
 		relationMap.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		metaDataLabel = new JLabel("Loaded Metadata");
+		
+		lForCombo = new ListenForCombo();
+		lForMouse = new ListenForMouse();
 		
 		metaDataLabel.setEnabled(false);
 		metaDataLabel.setBorder(BorderFactory.createRaisedBevelBorder());
@@ -150,6 +160,7 @@ public class ControlPanel extends JPanel{
 		
 		sampleTitle = new JLabel("Sample ID", JLabel.CENTER);
 		addComp(buttonsPanel, sampleTitle, 0, 7, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE,3,0);
+		sampleTitle.addMouseListener(lForMouse);
 		
 		samplesIDsCombo = new JComboBox();
 		samplesIDsCombo.setPreferredSize(new Dimension(135, 30));
@@ -206,9 +217,6 @@ public class ControlPanel extends JPanel{
 		c.anchor = GridBagConstraints.PAGE_START;
 		mapPanel.add(metaDataLabel,c);
 		
-		
-		
-		lForCombo = new ListenForCombo();
 		matchedGenesCombo.addItemListener(lForCombo);
 
 		ListenForButton lForButton = new ListenForButton();
@@ -298,6 +306,7 @@ public class ControlPanel extends JPanel{
 		if (samplesIDsCombo.getItemCount() > 0){
 			samplesIDsCombo.setSelectedIndex(tabPointer);
 			samplesIDsCombo.addItemListener(lForCombo);
+			
 			matchedGenesCombo.setSelectedIndex(pathway.getSelectedGeneIndex());
 			
 			if (pathway.getLoadSource().equals('H') || pathway.getLoadSource().equals('W')){
@@ -337,14 +346,14 @@ public class ControlPanel extends JPanel{
 		PiilMenubar.singleSampleView.setEnabled(true);
 		if (pathway.getMetaType().equals('M')){
 			PiilMenubar.selectSubset.setEnabled(true);
-			Interface.tabPane.setToolTipTextAt(activeTab, "Methylation data loaded");
+			Interface.tabPane.setToolTipTextAt(activeTab, "Methylation data loaded: " + pathway.getMetaFilePath().getName());
 			metaDataLabel.setText("DNA Methylation");
 			metaDataLabel.setEnabled(true);
 			
 		}
 		else if (pathway.getMetaType().equals('E')){
 			
-			Interface.tabPane.setToolTipTextAt(activeTab, "Expression data loaded");
+			Interface.tabPane.setToolTipTextAt(activeTab, "Expression data loaded: " + pathway.getMetaFilePath().getName());
 			metaDataLabel.setText("Gene Expression");
 			metaDataLabel.setEnabled(true);
 			PiilMenubar.selectSubset.setEnabled(false);
@@ -401,7 +410,7 @@ public class ControlPanel extends JPanel{
 	private static void fillSamplesIDs(int activeTab) {
 		samplesIDsCombo.removeAllItems();
 		
-		List<String> identifiers = ParseKGML.getTabInfo(activeTab).getSamplesIDs();
+		List<String> identifiers = ParseKGML.getTabInfo(activeTab).getOrderedSamplesIDs();
 		for (String sampleID : identifiers){
 			samplesIDsCombo.addItem(sampleID);
 		}
@@ -427,7 +436,7 @@ public class ControlPanel extends JPanel{
 		
 		playButton.setText("Play");
 		timerSpeed.setEnabled(false);
-		timerSpeed.setValue(2);	
+//		timerSpeed.setValue(2);	
 	}
 	
 	public static void startTimer(){
@@ -447,6 +456,7 @@ public class ControlPanel extends JPanel{
 		matchedGenesCombo.removeAllItems();
 		matchedGenesCombo.setPrototypeDisplayValue("XXXXXXXX");
 		samplesIDsCombo.removeItemListener(lForCombo);
+//		samplesIDsCombo.removeMouseListener(lForMouse);
 		samplesIDsCombo.removeAllItems();
 		samplesIDsCombo.setPrototypeDisplayValue("XXXXXXXX");
 		matchedNumberLabel.setForeground(new Color(185,185,185));
@@ -486,7 +496,7 @@ public class ControlPanel extends JPanel{
 		TabsInfo thisTab = ParseKGML.getTabInfo(tab);
 		
 		String info = " ";
-		String id = thisTab.getSamplesIDs().get(tabPointer);
+		String id = thisTab.getOrderedSamplesIDs().get(tabPointer);
 		
 		List<String> metaValues = thisTab.getSamplesInfo().get(id);
 		
@@ -558,7 +568,7 @@ public class ControlPanel extends JPanel{
 				stopTimer();
 				int newPointer = currentTab.assignPointer(0);
 				playButton.setEnabled(true);
-				timerSpeed.setValue(2);
+//				timerSpeed.setValue(2);
 				setIndexLabel(newPointer);
 				samplesIDsCombo.setSelectedIndex(newPointer);
 				if (currentTab.getSamplesInfo() != null && currentTab.getSamplesInfo().size() > 0){
@@ -657,5 +667,45 @@ public class ControlPanel extends JPanel{
 			}
 		}
 	} // end of ListenForCombo
+	
+	private class ListenForMouse implements MouseListener{
+
+		@Override
+		public void mouseClicked(MouseEvent mc) {
+			
+			if (mc.getClickCount() == 2){
+				
+				for (int i = 0 ; i < samplesIDsCombo.getModel().getSize(); i++){
+					sortedItems.add(i,samplesIDsCombo.getModel().getElementAt(i).toString());
+				}
+					
+				JOptionPane.showMessageDialog(Interface.bodyFrame, "Double click another tab with the same samples to apply active tab's samples order to the other one.","Tarnsfer samples order", 0, icon);
+			}
+			
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent mr) {
+			
+		}
+	} // end of ListenForMouse
 
 }

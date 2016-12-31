@@ -151,6 +151,7 @@ public class ParseKGML {
         Interface.tabPane.addTab(newTabCaption,newScrollPane);
         int tabIndex = Interface.tabPane.getTabCount() - 1;
         Interface.tabPane.setSelectedIndex(tabIndex);
+        
         String nameWithoutExtension = extractName(newTabCaption);
         Interface.tabInfoTracker.add(new TabsInfo(newTabCaption, loadedFile, loadSource, nameWithoutExtension));
 	}

@@ -25,6 +25,10 @@ import java.awt.FlowLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -59,6 +63,7 @@ public class SDFilter extends JDialog{
 		filterPanel.add(filterLabel);
 		filterPanel.add(sdValue);
 		filterPanel.add(applyButton);
+		
 		applyButton.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent arg0) {
@@ -75,14 +80,8 @@ public class SDFilter extends JDialog{
 						SwingWorker<Void, Void> analyzeWorker = new SwingWorker<Void, Void>() {
 							protected Void doInBackground() {
 								Genes.setSignificantSites();
-								if (activeTab.getViewMode() == 1){
-									Genes.changeBgColor(activeTab.getPointer(), 'M');
-								}
-								else {
-//									PiilMenubar.singleSampleView.doClick();
-//									Genes.changeBgColor(activeTab.getPointer(), 'M');
-//									activeTab.setViewMode((byte) 2);
-								}
+								Genes.changeBgColor(activeTab.getPointer(), 'M');
+								
 								return null;
 							}
 

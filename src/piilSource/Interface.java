@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.ComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -175,14 +176,15 @@ public class Interface extends JFrame{
 			   
 			   protected void installDefaults() {
 			       super.installDefaults();
-			       highlight = Color.pink;
+			       highlight = Color.RED;
 			       lightHighlight = new Color(185,185,185);
+			       
 			       shadow = Color.red;
 			       darkShadow = Color.cyan;
-			       focus = Color.BLUE;
+			       focus = new Color(215,12,0);
 			   }
 			});
-
+		
 		ChangeListener changeListener = new ChangeListener() {
 			
 			public void stateChanged(ChangeEvent changeEvent) {
@@ -220,8 +222,8 @@ public class Interface extends JFrame{
 		
 		tabPane.addChangeListener(changeListener);
 		tabPane.addMouseListener(new MouseListener() {
-			
-			public void mouseReleased(MouseEvent arg0) {}
+			int sampleIDIndex;
+			public void mouseReleased(MouseEvent arg0) {}		
 		
 			public void mousePressed(MouseEvent arg0) {}
 			
@@ -232,8 +234,23 @@ public class Interface extends JFrame{
 			public void mouseClicked(MouseEvent mc) {
 				if (mc.getClickCount() == 2){
 					TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
+					
 					if (pathway.getMetaFilePath() != null){
-						JOptionPane.showMessageDialog(bodyFrame, "Meta data loaded: " + pathway.getMetaFilePath().getName(), "Meta data information", JOptionPane.INFORMATION_MESSAGE, icon);
+						ControlPanel.samplesIDsCombo.removeAllItems();
+						ArrayList<String> identifiers = ControlPanel.sortedItems;
+						for (String sampleID : identifiers){
+							ControlPanel.samplesIDsCombo.addItem(sampleID);
+						}
+						pathway.setSortedSampleIDs(identifiers);
+						ControlPanel.samplesIDsCombo.setSelectedIndex(pathway.getPointer());
+						sampleIDIndex = pathway.getSamplesIDs().indexOf(ControlPanel.samplesIDsCombo.getSelectedItem());
+						Genes.changeBgColor(sampleIDIndex,pathway.metaType);
+						if (pathway.getSamplesInfo() != null && pathway.getSamplesInfo().size() > 0){
+							ControlPanel.setSampleInfoLabel(sampleIDIndex);
+						}
+			      	    else {
+							Interface.setSampleInfoLabel(ControlPanel.samplesIDsCombo.getItemAt(pathway.getPointer()).toString(), true);
+						}
 					}
 					
 				}
