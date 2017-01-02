@@ -415,7 +415,7 @@ public class PiilMenubar extends JMenuBar{
 							
 								if (validInput == 0 && theTab.getMapedGeneLabel().size() > 0 && theTab.getMapedGeneData().size() > 0){
 									JMenuItem loadedFileItem = new JMenuItem(file.getName().toString());
-									Interface.tabPane.setBackgroundAt(Interface.tabPane.getSelectedIndex(), new Color(145,150,60));
+									Interface.tabPane.setBackgroundAt(Interface.tabPane.getSelectedIndex(), new Color(154,205,50));
 								
 									loadedFileItem.addActionListener(new ActionListener() {
 
@@ -455,7 +455,7 @@ public class PiilMenubar extends JMenuBar{
 													if (thisTab.getMapedGeneLabel().size() > 0) {ControlPanel.enableControlPanel(0);
 														thisTab.assignPointer(0);
 														loadSamplesInfo.setEnabled(true);
-														Interface.tabPane.setBackgroundAt(Interface.tabPane.getSelectedIndex(), new Color(145,150,60));
+														Interface.tabPane.setBackgroundAt(Interface.tabPane.getSelectedIndex(), new Color(154,205,50));
 
 													} else {
 														JOptionPane.showMessageDialog(Interface.bodyFrame,"The loaded data has no overlap with this pathway (make sure column separator is selected correctly).","Message", 0, icon);
@@ -526,7 +526,7 @@ public class PiilMenubar extends JMenuBar{
 							dialog.setVisible(true);
 							
 							if (validInput == 0 && theTab.getMapedGeneLabel().size() > 0 && theTab.getMapedGeneData().size() > 0){
-								Interface.tabPane.setBackgroundAt(Interface.tabPane.getSelectedIndex(), new Color(177,167,177));
+								Interface.tabPane.setBackgroundAt(Interface.tabPane.getSelectedIndex(), new Color(221,160,221));
 								JMenuItem loadedFileItem = new JMenuItem(file.getName().toString());
 								loadedFileItem.addActionListener(new ActionListener() {
 
@@ -554,7 +554,7 @@ public class PiilMenubar extends JMenuBar{
 														ControlPanel.enableControlPanel(0);
 														thisTab.assignPointer(0);
 														loadSamplesInfo.setEnabled(true);
-														Interface.tabPane.setBackgroundAt(Interface.tabPane.getSelectedIndex(), new Color(177,167,177));
+														Interface.tabPane.setBackgroundAt(Interface.tabPane.getSelectedIndex(), new Color(221,160,221));
 
 													} else {
 														JOptionPane.showMessageDialog(Interface.bodyFrame,"The loaded list has no overlap with this pathway (make sure column separator is selected correctly).","Message", 0, icon);
