@@ -168,7 +168,7 @@ public class BarChart extends ApplicationFrame {
                     	}
                     	value = sum / (list.size() - invalid);
                     	dataset.addValue(value, group, sampleID);
-                    	System.out.println(sampleID + " " + value + " " + group);
+//                    	System.out.println(sampleID + " " + value + " " + group);
         			}
         			
         		}
@@ -213,7 +213,7 @@ public class BarChart extends ApplicationFrame {
                         	}
                         	value = sum / (list.size() - invalid);
                         	dataset.addValue(value, group, sampleID);
-                        	System.out.println(sampleID + " " + value + " " + group);
+//                        	System.out.println(sampleID + " " + value + " " + group);
                         
         				}
         				else { // some sites are selected
@@ -229,7 +229,7 @@ public class BarChart extends ApplicationFrame {
                 			} // for each significant site
                     		value = sum / (significantSites.size() - invalid);
                     		dataset.addValue(value, group, sampleID);
-                    		System.out.println(sampleID + " " + value + " " + group);
+//                    		System.out.println(sampleID + " " + value + " " + group);
         				} // some sites are selected
         				
         			} // for each sampleID in each group
