@@ -418,35 +418,6 @@ public class Genes {
 		}
 	}
 	
-//	public static Color findColor(double value, List<List<String>> values){
-//		Statistics expressionValues = new Statistics(values.get(0));
-//		double theMean = expressionValues.getMean();
-//		double theMedian = expressionValues.getMedian();
-//		double r = 0,b = 0,g = 0;
-//		double logDifference = Math.log10(value+1) - Math.log10(theMedian);
-//		double foldDifference = 255 / ranges[2];
-//		
-//		if (logDifference == Double.NEGATIVE_INFINITY || logDifference == Double.POSITIVE_INFINITY || Double.isNaN(logDifference)){
-////			changeTextColor(Color.WHITE);
-//			return Color.BLACK;
-//		}
-//		
-//		if (logDifference == 0){
-//			r=255; b=255; g=255;
-//		}
-//		else if (logDifference < 0) {
-//			
-//			r= 255; b = 255 - Math.round(logDifference * -foldDifference); g = 255 - Math.round(logDifference * -foldDifference);
-//		}
-//		else if (logDifference > 0){
-//			b = 255; r = 255 - Math.round(logDifference * foldDifference); g = 255 - Math.round(logDifference * foldDifference);
-//		}
-//		
-//		Color expressionColor = new Color(r < 0 ? 0 : (int) (r),g < 0 ? 0 : (int) (g), b < 0 ? 0 : (int) (b));
-////		changeTextColor(expressionColor);
-//		return expressionColor;
-//	}
-	
 	private void setBgColor(double value, List<List<String>> values) {
 		Color bgColor = null;
 		if (value == -1){
@@ -537,38 +508,7 @@ public class Genes {
 		
 		
 	}
-	
-//	private Color getExpressionLevel(double value, List<List<String>> values) {
-//		
-//		Statistics expressionValues = new Statistics(values.get(0));
-//		double theMean = expressionValues.getMean();
-//		double theMedian = expressionValues.getMedian();
-//		double r = 0,b = 0,g = 0;
-//		double logDifference = Math.log10(value+1) - Math.log10(theMedian);
-//		double foldDifference = 255 / ranges[2];
-//		
-//		if (logDifference == Double.NEGATIVE_INFINITY || logDifference == Double.POSITIVE_INFINITY || Double.isNaN(logDifference)){
-//			changeTextColor(Color.WHITE);
-//			return Color.BLACK;
-//		}
-//		
-//		if (logDifference == 0){
-//			r=255; b=255; g=255;
-//		}
-//		else if (logDifference < 0) {
-//			
-//			r= 255; b = 255 - Math.round(logDifference * -foldDifference); g = 255 - Math.round(logDifference * -foldDifference);
-//		}
-//		else if (logDifference > 0){
-//			b = 255; r = 255 - Math.round(logDifference * foldDifference); g = 255 - Math.round(logDifference * foldDifference);
-//		}
-//		
-//		Color expressionColor = new Color(r < 0 ? 0 : (int) (r),g < 0 ? 0 : (int) (g), b < 0 ? 0 : (int) (b));
-//		
-//		changeTextColor(expressionColor);
-//		return expressionColor;
-//	}
-	
+
 	private void changeTextColor(Color myColor) {
 		
 		if (myColor.getRed() == 255){
@@ -661,34 +601,6 @@ public class Genes {
 		}
 	}
 	
-//	public static Color paintLabel(double value, List<List<String>> values, int increase) {
-//		
-//		Statistics expressionValues = new Statistics(values.get(0));
-//		double theMean = expressionValues.getMean();
-//		double theMedian = expressionValues.getMedian();
-//		double r = 0,b = 0,g = 0;
-//		double logDifference =  (Math.log10(value+increase) / Math.log10(2.0) ) -  (Math.log10(theMedian) / Math.log10(2.0));
-//		double foldDifference = 255 / ranges[2];
-//		
-//		if (logDifference == Double.NEGATIVE_INFINITY || logDifference == Double.POSITIVE_INFINITY || Double.isNaN(logDifference)){
-//			return Color.BLACK;
-//		}
-//		
-//		if (logDifference == 0){
-//			r=255; b=255; g=255;
-//		}
-//		else if (logDifference < 0) {
-//			
-//			r= 255; b = 255 - Math.round(logDifference * -foldDifference); g = 255 - Math.round(logDifference * -foldDifference);
-//		}
-//		else if (logDifference > 0){
-//			b = 255; r = 255 - Math.round(logDifference * foldDifference); g = 255 - Math.round(logDifference * foldDifference);
-//		}
-//		
-//		Color expressionColor = new Color(r < 0 ? 0 : (int) (r),g < 0 ? 0 : (int) (g), b < 0 ? 0 : (int) (b));
-//		
-//		return expressionColor;
-//	}
 
 	public void addExpandedLabels(JLabel[] extraLabels) {
 		int expansionSize = extraLabels.length;
