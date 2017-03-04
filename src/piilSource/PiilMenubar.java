@@ -99,7 +99,7 @@ public class PiilMenubar extends JMenuBar{
 	byte validInput;
 	JLabel waitMessage = new JLabel();
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
-	final Double version = 0.11;
+	final Double version = 0.13;
 	String latestVersion;
 	
 	public PiilMenubar(){
