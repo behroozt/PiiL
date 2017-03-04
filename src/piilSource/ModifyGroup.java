@@ -60,7 +60,7 @@ public class ModifyGroup extends JOptionPane{
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 	
 	ModifyGroup(){
-		pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
+		pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0);
 		
 		myPanel = new JPanel();
 		myPanel.setLayout(new FlowLayout());

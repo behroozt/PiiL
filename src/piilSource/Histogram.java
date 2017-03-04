@@ -55,7 +55,7 @@ public class Histogram extends ApplicationFrame {
 	JPanel histogramPanel, buttonsPanel;
 	JButton exportButton, closeButton;
 	int activeTab = Interface.tabPane.getSelectedIndex();
-	TabsInfo pathway = ParseKGML.getTabInfo(activeTab);
+	TabsInfo pathway = ParseKGML.getTabInfo(activeTab,0);
 	List<Integer> significantSites;
 	String geneName;
 	String chartLabel = "";
@@ -129,7 +129,7 @@ public class Histogram extends ApplicationFrame {
     	double value;
     	
     	List<String> categories = new ArrayList<String>();
-        List<String> ids = ParseKGML.getTabInfo(activeTab).getSamplesIDs();
+        List<String> ids = ParseKGML.getTabInfo(activeTab,0).getSamplesIDs();
 
         for (int i =0; i < ids.size(); i++){
         	categories.add(ids.get(i));
@@ -237,7 +237,7 @@ public class Histogram extends ApplicationFrame {
 		chartLabel = metaLabel + " values of all samples - " + s;
 		
 		if (pathway.getViewMode() == 2){
-			String grpTag = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getSamplesInfo().get("-1").get(ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getGroupingIndex());
+			String grpTag = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0).getSamplesInfo().get("-1").get(ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0).getGroupingIndex());
 			chartLabel += " - grouped by: " + grpTag; 
 		}
 		JFreeChart jfreechart = ChartFactory.createHistogram(chartLabel, null, null, intervalxydataset, PlotOrientation.VERTICAL, true, true, false);

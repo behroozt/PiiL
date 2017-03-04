@@ -47,19 +47,19 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class ColorCodeManager extends JDialog{
+public class RangeEditor extends JDialog{
 	
 	JPanel colorPanel, containerPanel;
 	RangeSlider ranger;
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
-	TabsInfo theTab = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
+	TabsInfo theTab = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0);
 	Character metaType = theTab.getMetaType();
 	float[] ranges = theTab.getRanges();
 	SpinnerModel spinRange = new SpinnerNumberModel(ranges[2], 1.0, 10.0, 0.1);
 	JSpinner foldSpinner;
 	JLabel methylationLabel, expressionLabel;
 	
-	public ColorCodeManager(){
+	public RangeEditor(){
 		ranger = new RangeSlider();		
 		Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
 		foldSpinner = new JSpinner(spinRange);

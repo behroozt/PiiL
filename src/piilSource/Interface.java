@@ -64,11 +64,28 @@ public class Interface extends JFrame{
 	static JButton editFields;
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 	static JScrollPane toolbox, informationPane;
-	static ArrayList<TabsInfo> tabInfoTracker;
+	static ArrayList<List<TabsInfo>> tabInfoTracker;
+	static Color hypoColor, hyperColor;
 	
 	public static void main(String[] args) {
 		new Interface();
 		
+	}
+	
+	public static void setHypoColor(Color c){
+		hypoColor = c;
+	}
+	
+	public static void setHyperColor(Color c){
+		hyperColor = c;
+	}
+	
+	public static Color getHypoColor(){
+		return hypoColor;
+	}
+	
+	public static Color getHyperColor(){
+		return hyperColor;
 	}
 	
 	public Interface(){
@@ -96,20 +113,23 @@ public class Interface extends JFrame{
 		bodyFrame.setSize(scrWidth, scrHeight);
 		bodyFrame.setTitle(" PiiL - Pathway interactive visualization tooL ");
 		
+		hyperColor = new Color(255,0,0);
+		hypoColor = new Color(0,0,255);
+		
 		bodyFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);	
 		
-		bodyFrame.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);		
-		bodyFrame.addWindowListener(new java.awt.event.WindowAdapter() {
-		    @Override
-		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-		        if (JOptionPane.showConfirmDialog(bodyFrame, 
-		            "Are you sure to quit PiiL?", "Closing confirmation", 
-		            JOptionPane.YES_NO_OPTION,
-		            JOptionPane.QUESTION_MESSAGE, icon) == JOptionPane.YES_OPTION){
-		            System.exit(0);
-		        }
-		    }
-		});
+//		bodyFrame.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);		
+//		bodyFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+//		    @Override
+//		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+//		        if (JOptionPane.showConfirmDialog(bodyFrame, 
+//		            "Are you sure to quit PiiL?", "Closing confirmation", 
+//		            JOptionPane.YES_NO_OPTION,
+//		            JOptionPane.QUESTION_MESSAGE, icon) == JOptionPane.YES_OPTION){
+//		            System.exit(0);
+//		        }
+//		    }
+//		});
 		
 		sampleInfoPanel = new JPanel();
 		sampleInfoPanel.setPreferredSize(new Dimension(1000, 45));
@@ -200,7 +220,7 @@ public class Interface extends JFrame{
 					}
 					else {
 						if (tabPane.getTabCount() > 0) {
-							TabsInfo thisTab = ParseKGML.getTabInfo(selectedTab);
+							TabsInfo thisTab = ParseKGML.getTabInfo(selectedTab,0);
 							int tabPointer = thisTab.getPointer();
 							
 							if (thisTab.getMapedGeneLabel().size() > 0) {
@@ -233,7 +253,7 @@ public class Interface extends JFrame{
 			
 			public void mouseClicked(MouseEvent mc) {
 				if (mc.getClickCount() == 2){
-					TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
+					TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0);
 					
 					if (pathway.getMetaFilePath() != null){
 						ControlPanel.samplesIDsCombo.removeAllItems();
@@ -267,7 +287,7 @@ public class Interface extends JFrame{
 		gridConstraints.insets = new Insets(1,15,4,1);
 		
 		bodyFrame.add(backgroundPanel,BorderLayout.CENTER);
-		new Splash(3000);	
+//		new Splash(3000);	
 		bodyFrame.setIconImage(createImage("/resources/icon.png").getImage());
 		bodyFrame.setVisible(true);
 	}
@@ -287,7 +307,7 @@ public class Interface extends JFrame{
 		String groups = "";
 		String grpTag = null;
 		for (String group : hints ){
-			int members = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getIDsInGroups().get(group).size();
+			int members = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0).getIDsInGroups().get(group).size();
 			groups += (String) group + " (" + members + ") " + ", ";
 		}
 		
@@ -295,7 +315,7 @@ public class Interface extends JFrame{
 		if (baseIndex != -1){
 			groups = groups + " (the base group)";
 		}
-		grpTag = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getSamplesInfo().get("-1").get(ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getGroupingIndex());
+		grpTag = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0).getSamplesInfo().get("-1").get(ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0).getGroupingIndex());
 		sampleInfoLabel.setText(" Samples grouped by '" + grpTag + "' (top to buttom): " + groups);
 		
 		sampleInfoLabel.setEnabled(enable);

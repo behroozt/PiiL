@@ -63,7 +63,7 @@ public class BarChart extends ApplicationFrame {
 	String metaLabel;
 	String geneName;
 	int activeTab = Interface.tabPane.getSelectedIndex();
-	TabsInfo pathway = ParseKGML.getTabInfo(activeTab);
+	TabsInfo pathway = ParseKGML.getTabInfo(activeTab,0);
 	List<Integer> significantSites;
 	String chartLabel = "";
 	
@@ -129,7 +129,7 @@ public class BarChart extends ApplicationFrame {
         }
 
         List<String> categories = new ArrayList<String>();
-        List<String> ids = ParseKGML.getTabInfo(activeTab).getSamplesIDs();
+        List<String> ids = ParseKGML.getTabInfo(activeTab,0).getSamplesIDs();
 
         for (int i =0; i < ids.size(); i++){
         	categories.add(ids.get(i));
@@ -295,7 +295,7 @@ public class BarChart extends ApplicationFrame {
 		chartLabel = metaLabel + " values of all samples - " + title;
 		
 		if (pathway.getViewMode() == 2){
-			String grpTag = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getSamplesInfo().get("-1").get(ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getGroupingIndex());
+			String grpTag = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0).getSamplesInfo().get("-1").get(ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0).getGroupingIndex());
 			chartLabel += " - grouped by: " + grpTag; 
 		}
 		

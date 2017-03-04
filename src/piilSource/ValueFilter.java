@@ -55,11 +55,11 @@ public class ValueFilter extends JDialog{
 	JTextField firstLower, firstUpper, secondLower, secondUpper;
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 	TabsInfo activeTab;
-	JDialog dialog = new JDialog(Interface.bodyFrame, "Analyzing data",ModalityType.APPLICATION_MODAL);
+//	JDialog dialog = new JDialog(Interface.bodyFrame, "Analyzing data",ModalityType.APPLICATION_MODAL);
 	JButton applyButton = new JButton("Apply");
 	JButton applyCloseButton = new JButton("Apply and Close");
 	JButton cancelButton = new JButton("Cancel");
-	TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
+	TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0);
 	GridBagConstraints gc = new GridBagConstraints();
 	
 	public ValueFilter(){

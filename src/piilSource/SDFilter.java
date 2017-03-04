@@ -54,7 +54,7 @@ public class SDFilter extends JDialog{
 	JButton applyButton = new JButton("Apply");
 	
 	public SDFilter(){
-		activeTab  = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
+		activeTab  = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0);
 		filterPanel = new JPanel();
 		filterPanel.setLayout(new FlowLayout());
 		filterLabel = new JLabel("Exclude CpG sites with standard deviation (over all samples) lower than ");

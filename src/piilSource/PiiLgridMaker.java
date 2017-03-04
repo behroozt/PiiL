@@ -76,7 +76,7 @@ public class PiiLgridMaker {
 	PiiLgridMaker(File file){
 		
 		if (Interface.tabInfoTracker == null){
-        	Interface.tabInfoTracker = new ArrayList<TabsInfo>();
+        	Interface.tabInfoTracker = new ArrayList<List<TabsInfo>>();
         }
 		genes = new ArrayList<String>();
 		nodeHandler = new HashMap<String, Nodes>();
@@ -109,7 +109,7 @@ public class PiiLgridMaker {
 		}
 		
 		int tabIndex = Interface.tabPane.getSelectedIndex();
-		TabsInfo pathway = Interface.tabInfoTracker.get(tabIndex);
+		TabsInfo pathway = Interface.tabInfoTracker.get(tabIndex).get(0);
 		pathway.setNodes(nodeHandler);
 		pathway.setGenes(geneHandler);
 		pathway.setMaxX(maxX);
@@ -141,7 +141,7 @@ public class PiiLgridMaker {
 		}
 		
 		int tabIndex = Interface.tabPane.getSelectedIndex();
-		TabsInfo pathway = Interface.tabInfoTracker.get(tabIndex);
+		TabsInfo pathway = Interface.tabInfoTracker.get(tabIndex).get(0);
 		pathway.setNodes(nodeHandler);
 		pathway.setGenes(geneHandler);
 		pathway.setMaxX(maxX);
@@ -372,7 +372,10 @@ public class PiiLgridMaker {
         int tabIndex = Interface.tabPane.getTabCount() - 1;
         Interface.tabPane.setSelectedIndex(tabIndex);
         String nameWithoutExtension = extractName(newTabCaption);
-        Interface.tabInfoTracker.add(new TabsInfo(newTabCaption, loadedFile, loadSource, nameWithoutExtension));
+        TabsInfo newOne = new TabsInfo(newTabCaption, loadedFile, loadSource, nameWithoutExtension);
+        List<TabsInfo> newList = new ArrayList<TabsInfo>();
+        newList.add(newOne);
+        Interface.tabInfoTracker.add(newList);
 	}
 	
 	private String extractName(String name) {

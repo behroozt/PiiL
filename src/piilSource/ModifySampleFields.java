@@ -41,7 +41,7 @@ public class ModifySampleFields{
 	JPanel myPanel;
 	JLabel choose;
 	JScrollPane checkBoxPane;
-	TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
+	TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0);
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 	JButton selectAll;
 	List<String> options;

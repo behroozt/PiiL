@@ -61,6 +61,14 @@ public class CheckInputFile {
 	String[] header;
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 	int samplesRowNumber, dataRowNumber;
+	String splitor;
+	
+	public CheckInputFile(String separator, int sampleRow, int dataRow){
+		samplesRowNumber = sampleRow;
+		dataRowNumber = dataRow;
+		splitor = separator;
+		
+	}
 	
 	public CheckInputFile(File input, Character type) {
 		
@@ -80,7 +88,6 @@ public class CheckInputFile {
 		else {
 			inputTypeCombo = new JComboBox(expressionInputTypes);
 		}
-		
 		
 		addComp(myPanel, fileLabel, 0, 0, 2, 1, GridBagConstraints.EAST, GridBagConstraints.NONE);
 		addComp(myPanel, separatorLabel, 0, 1, 1, 1, GridBagConstraints.EAST, GridBagConstraints.NONE);
@@ -128,6 +135,8 @@ public class CheckInputFile {
 		else {
 			samplesRowNumber = Integer.parseInt(idRowSpinner.getValue().toString());
 			dataRowNumber = Integer.parseInt(dataRowSpinner.getValue().toString());
+			splitor = findSeparator();
+			
 		}
 		
 	}
@@ -145,6 +154,10 @@ public class CheckInputFile {
 	}
 	
 	public String getSeparator(){
+		return splitor;
+	}
+	
+	public String findSeparator(){
 		String splitBy;
 		String separator = separatorCombo.getSelectedItem().toString();
 		if (separator.equals("tab")){

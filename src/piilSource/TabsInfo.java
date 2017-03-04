@@ -124,7 +124,7 @@ public class TabsInfo {
 		selectedGenes = 0;
 		groupingIndex = 0;
 		baseGroupIndex = -1;
-		ranges = new float[] {0,10,4}; // {methylationLow, methylationHigh, expressionFold}
+		ranges = new float[] {0,10,2}; // {methylationLow, methylationHigh, expressionFold}
 		sdThreshold = 0;
 		selectedGeneIndex = 0;
 		selectedGenePointer = new Point(0, 0);
@@ -542,13 +542,12 @@ public class TabsInfo {
 		return sampleInfoFiles.get(fileName);
 	}
 	
-	public byte getGenesList(File file, CheckInputFile input) throws IOException{
+	public byte getGenesList(File file, CheckInputFile input, boolean paint) throws IOException{
 		
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		String line = null;
 		byte validity = 0;
 		dataSplitor = input.getSeparator();
-		
 		// skip lines to get to samples ids line
 		for (int i = 0 ; i < (input.getSampleRow() - 1); i++){
 			br.readLine();
@@ -559,6 +558,7 @@ public class TabsInfo {
 		int numOfColumns = test.length;
 		Pattern pattern = Pattern.compile("\"([^\"]*)\"");
 		Matcher matcher;
+		
 		for (int i = 1; i < test.length ; i++){
 			matcher = pattern.matcher(test[i]);
 			if (matcher.find()){
@@ -587,21 +587,26 @@ public class TabsInfo {
 				return validity;
 			}
 		}
-		
 		br.close();
 		
 		if (getMapedGeneLabel().size() > 0 ) {
+			if (paint){
+				ControlPanel.enableControlPanel(0);
+				assignPointer(0);
+				PiilMenubar.loadSamplesInfo.setEnabled(true);
+			}
 			
-			ControlPanel.enableControlPanel(0);
-			assignPointer(0);
-			PiilMenubar.loadSamplesInfo.setEnabled(true);
 			
 			if (loadedFilesMap == null){
 				loadedFilesMap = new HashMap<String, File>();
 			}
+			
 			loadedFilesMap.put(file.getName(), file);
 			Character metaType = this.getMetaType();
-			Genes.changeBgColor(0, metaType);
+			if (paint){
+				
+				Genes.changeBgColor(0, metaType);
+			}
 			
 		}
 		else {
@@ -750,6 +755,10 @@ public class TabsInfo {
 
 	public void setNodes(HashMap<String, Nodes> nodeHandler) {
 		nodes = nodeHandler;
+	}
+	
+	public HashMap<String, Nodes> getNodes(){
+		return nodes;
 	}
 
 	public void setGenes(HashMap<String, Genes> geneHandler) {

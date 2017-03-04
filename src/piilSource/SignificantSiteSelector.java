@@ -59,7 +59,7 @@ public class SignificantSiteSelector {
 	JFileChooser fileChooser;
 	File selectedFile;
 	ArrayList<String> significantSites;
-	TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
+	TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0);
 	
 	
 	public SignificantSiteSelector(File file) {
@@ -103,6 +103,7 @@ public class SignificantSiteSelector {
 						else {
 							fileLabel.setText(newFile.getName() + " was selected.");
 							selectedFile = newFile;
+							PiilMenubar.setLastOpenedDir(fileChooser.getSelectedFile().getAbsolutePath());
 						}
 					}
 				}

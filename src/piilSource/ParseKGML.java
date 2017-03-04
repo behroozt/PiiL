@@ -67,7 +67,7 @@ public class ParseKGML {
 
 	public ParseKGML(Document xmlDoc, String tabCaption, File file, Character source) {
 		if (Interface.tabInfoTracker == null){
-        	Interface.tabInfoTracker = new ArrayList<TabsInfo>();
+        	Interface.tabInfoTracker = new ArrayList<List<TabsInfo>>();
         }
 		geneHandler = new HashMap<String, Genes>();
 		edgeItems = new ArrayList<Edges>();
@@ -80,8 +80,8 @@ public class ParseKGML {
 
 	}
 
-	public static TabsInfo getTabInfo(int selectedTab){
-		return Interface.tabInfoTracker.get(selectedTab);
+	public static TabsInfo getTabInfo(int selectedTab, int level){
+		return Interface.tabInfoTracker.get(selectedTab).get(level);
 	}
 	
 	public static void closedTab(int selectedTab){
@@ -96,14 +96,13 @@ public class ParseKGML {
 		relationsList = kgmlInput.getElementsByTagName("relation");
 		
 		if (elementsList.getLength() > 0){
-			
 			openNewTab(caption);
 			int tabIndex = Interface.tabPane.getSelectedIndex();
 			makeNodes(elementsList);
 			makeLabels(elementsList);
 			makeEdges(relationsList);
 			
-			TabsInfo pathway = Interface.tabInfoTracker.get(tabIndex);
+			TabsInfo pathway = Interface.tabInfoTracker.get(tabIndex).get(0);
 			pathway.setNodes(nodeHandler);
 			pathway.setGenes(geneHandler);
 			pathway.setDocument(kgmlInput);
@@ -112,10 +111,12 @@ public class ParseKGML {
 			pathway.setMaxX(maxX);
 			pathway.setMaxY(maxY);
 			
+			
 			for (Entry<String, Genes> node : geneHandler.entrySet()){
 				JLabel element = node.getValue().getLabel();
 				Interface.panelHolder.get(tabIndex).add(element,BorderLayout.CENTER);
 			}
+			
 			JLabel star = new JLabel();
 			JLabel extraStar = new JLabel();
 			star.setOpaque(true);
@@ -151,9 +152,11 @@ public class ParseKGML {
         Interface.tabPane.addTab(newTabCaption,newScrollPane);
         int tabIndex = Interface.tabPane.getTabCount() - 1;
         Interface.tabPane.setSelectedIndex(tabIndex);
-        
         String nameWithoutExtension = extractName(newTabCaption);
-        Interface.tabInfoTracker.add(new TabsInfo(newTabCaption, loadedFile, loadSource, nameWithoutExtension));
+        TabsInfo newOne = new TabsInfo(newTabCaption, loadedFile, loadSource, nameWithoutExtension);
+        List<TabsInfo> newList = new ArrayList<TabsInfo>();
+        newList.add(newOne);
+        Interface.tabInfoTracker.add(newList);
 	}
 
 	private void makeLabels(NodeList allNodes) {

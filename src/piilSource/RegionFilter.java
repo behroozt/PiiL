@@ -48,7 +48,7 @@ public class RegionFilter extends JDialog{
 	TabsInfo activeTab;
 	JDialog dialog = new JDialog(Interface.bodyFrame, "Analyzing data",ModalityType.APPLICATION_MODAL);
 	JButton applyButton = new JButton("Apply");
-	TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
+	TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0);
 	
 	public RegionFilter(){
 		

@@ -491,7 +491,7 @@ public class GeneRegions extends JFrame{
 		}
 
 		private void fillSamplesIDs() {
-			List<String> identifiers = ParseKGML.getTabInfo(activeTab).getSamplesIDs();
+			List<String> identifiers = ParseKGML.getTabInfo(activeTab,0).getSamplesIDs();
 			
 			for (String sampleID : identifiers){
 				samplesIDsCombo.addItem(sampleID);

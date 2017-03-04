@@ -161,7 +161,7 @@ public class JOptionPaneMultiInput {
 		
 		String[] currentLine;
 		boolean matchingID = false;
-		TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
+		TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0);
 		BufferedReader br = new BufferedReader(new FileReader(selectedFile));
 		String line = null;
 		String inputFileHeader = br.readLine();

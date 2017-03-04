@@ -89,7 +89,7 @@ public class Genes {
 	
 	public void setSelectedStatus(Point point){
 		if (matchTag) {
-			TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex());
+			TabsInfo pathway = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0);
 			if (selected) {
 				selected = false;
 				pathway.setSelectedGenesCount(-1);
@@ -146,7 +146,7 @@ public class Genes {
 	public static void setSignificantSites(){
 		int fail = 0,pass =0, geneNum = 0;
 		int activeTab = Interface.tabPane.getSelectedIndex();
-		TabsInfo thisTab = ParseKGML.getTabInfo(activeTab);
+		TabsInfo thisTab = ParseKGML.getTabInfo(activeTab,0);
 		List<List<String>> data;
 		
 		HashMap<String, List<Integer>> selection = new HashMap<String, List<Integer>>();
@@ -179,8 +179,9 @@ public class Genes {
 	
 
 	public static void changeBgColor(int newPointer,Character type) {
+		
 		int activeTab = Interface.tabPane.getSelectedIndex();
-		TabsInfo thisTab = ParseKGML.getTabInfo(activeTab);
+		TabsInfo thisTab = ParseKGML.getTabInfo(activeTab,0);
 		ranges = thisTab.getRanges();
 		HashMap<String, Genes> matchedGenes = thisTab.getMapedGeneLabel();
 		String value = null;
@@ -290,6 +291,7 @@ public class Genes {
 			}
 		}
 		else if (type.equals('E')){
+			
 			for (Entry<String, Genes> oneNode : matchedGenes.entrySet()){
 				data = thisTab.getDataForGene(oneNode.getKey());
 				value = data.get(0).get(newPointer);
@@ -303,6 +305,33 @@ public class Genes {
 			}
 		}
 	} // end of changeBgColor
+	
+	public static void changeSecondBoxBgColor(int newPointer,Character type) {
+		int activeTab = Interface.tabPane.getSelectedIndex();
+		TabsInfo methylationPathway = ParseKGML.getTabInfo(activeTab,0);
+		TabsInfo expressionPathway = ParseKGML.getTabInfo(activeTab,1);
+		List<List<String>> data;
+		String value;
+		Color bgColor;
+		HashMap<String, Genes> matchedGenes = methylationPathway.getMapedGeneLabel();
+		for (Entry<String, Genes> oneNode : matchedGenes.entrySet()){
+			Genes geneNode = oneNode.getValue();
+			JLabel geneLabel = geneNode.getLabel();
+			geneLabel.setVisible(true);
+			JLabel[] expandedOnes = geneNode.getExpandedLabels();
+			data = expressionPathway.getDataForGene(oneNode.getKey());
+			value = data.get(0).get(newPointer);
+			if (isNumeric(value)){
+				bgColor = findColor(Double.parseDouble(value), data);
+				expandedOnes[0].setBackground(bgColor);
+			}
+			else {
+				bgColor = findColor(-1, data);
+				expandedOnes[0].setBackground(bgColor);
+				
+			}
+		}
+	}
 
 	private static boolean isNumeric(String str) {
 		try {  
@@ -347,6 +376,77 @@ public class Genes {
 		borderStyle = BorderFactory.createMatteBorder(2,2,2,2,new Color(0,170,0));
 	}
 	
+	public static Color findColor(double value, List<List<String>> values){
+		Statistics expressionValues = new Statistics(values.get(0));
+//		double theMean = expressionValues.getMean();
+		double theMedian = expressionValues.getMedian();
+		
+		double logDifference = Math.log10(value+1) - Math.log10(theMedian);
+		double foldDifference = ranges[2];
+		
+		if (logDifference == Double.NEGATIVE_INFINITY || logDifference == Double.POSITIVE_INFINITY || Double.isNaN(logDifference)){
+			return Color.BLACK;
+		}
+		
+		double val = logDifference / foldDifference;
+		Color back = Color.WHITE;
+		Color overExpressed = Interface.getHypoColor();
+		Color underExpressed = Interface.getHyperColor();
+		
+		if (val > 1) val = 1;
+		if (val < -1 ) val = -1;
+		
+		if (val > 0) {
+	   
+			float r = (float) (overExpressed.getRed() * val + back.getRed() * (1 - val));
+			float g = (float) (overExpressed.getGreen() * val + back.getGreen() * (1 - val));
+			float b = (float) (overExpressed.getBlue() * val + back.getBlue() * (1 - val));
+			Color bg = new Color((int) r, (int) g, (int) b);
+			return bg;
+		}
+		else if (val == 0){
+			return back;
+		}
+		else {
+			val = -val;
+			float r = (float) (underExpressed.getRed() * val + back.getRed() * (1 - val));
+			float g = (float) (underExpressed.getGreen() * val + back.getGreen() * (1 - val));
+			float b = (float) (underExpressed.getBlue() * val + back.getBlue() * (1 - val));
+	   
+			Color bg = new Color((int) r, (int) g, (int) b);
+			return bg;
+		}
+	}
+	
+//	public static Color findColor(double value, List<List<String>> values){
+//		Statistics expressionValues = new Statistics(values.get(0));
+//		double theMean = expressionValues.getMean();
+//		double theMedian = expressionValues.getMedian();
+//		double r = 0,b = 0,g = 0;
+//		double logDifference = Math.log10(value+1) - Math.log10(theMedian);
+//		double foldDifference = 255 / ranges[2];
+//		
+//		if (logDifference == Double.NEGATIVE_INFINITY || logDifference == Double.POSITIVE_INFINITY || Double.isNaN(logDifference)){
+////			changeTextColor(Color.WHITE);
+//			return Color.BLACK;
+//		}
+//		
+//		if (logDifference == 0){
+//			r=255; b=255; g=255;
+//		}
+//		else if (logDifference < 0) {
+//			
+//			r= 255; b = 255 - Math.round(logDifference * -foldDifference); g = 255 - Math.round(logDifference * -foldDifference);
+//		}
+//		else if (logDifference > 0){
+//			b = 255; r = 255 - Math.round(logDifference * foldDifference); g = 255 - Math.round(logDifference * foldDifference);
+//		}
+//		
+//		Color expressionColor = new Color(r < 0 ? 0 : (int) (r),g < 0 ? 0 : (int) (g), b < 0 ? 0 : (int) (b));
+////		changeTextColor(expressionColor);
+//		return expressionColor;
+//	}
+	
 	private void setBgColor(double value, List<List<String>> values) {
 		Color bgColor = null;
 		if (value == -1){
@@ -362,59 +462,112 @@ public class Genes {
 		borderStyle = BorderFactory.createLineBorder(new Color(139,69,19), 2);
 	}
 	
-	private Color getColor(double val) {
-		
-		double r = 0,b = 0,g = 0;
+	private Color getColor(double val1){
 		
 		double whiteValue = ((ranges[1] - ranges[0]) / 20) + (ranges[0]/10);
-		
-		double difference = 255 / (whiteValue - (ranges[0]/10));
-		
-		if (val == whiteValue){
-			r = 255; b=255; g = 255;
+		double val = (val1 * 2) -1;
+		Color back = Color.WHITE;
+		Color hyper = Interface.getHyperColor();
+		Color hypo = Interface.getHypoColor();
+		if (val > 0) {
+	   
+			float r = (float) (hyper.getRed() * val + back.getRed() * (1 - val));
+			float g = (float) (hyper.getGreen() * val + back.getGreen() * (1 - val));
+			float b = (float) (hyper.getBlue() * val + back.getBlue() * (1 - val));
+			Color bg = new Color((int) r, (int) g, (int) b);
+			changeTextColor(bg);
+			return bg;
 		}
-		else if (val < whiteValue){
-			b= 255; r = 255 - Math.round(difference * (whiteValue - val)); g = 255 - Math.round(difference * (whiteValue - val));
+		else if (val == whiteValue){
+			return back;
 		}
-		else if (val > whiteValue){ 
-			r = 255; b = 255 - Math.round(difference * (val - whiteValue)); g = 255 - Math.round(difference * (val - whiteValue));
+		else {
+			val = -val;
+			float r = (float) (hypo.getRed() * val + back.getRed() * (1 - val));
+			float g = (float) (hypo.getGreen() * val + back.getGreen() * (1 - val));
+			float b = (float) (hypo.getBlue() * val + back.getBlue() * (1 - val));
+	   
+			Color bg = new Color((int) r, (int) g, (int) b);
+			changeTextColor(bg);
+			return bg;
 		}
-		
-		Color myColor = new Color(r < 0 ? 0 : (int) (r),g < 0 ? 0 : (int) (g), b < 0 ? 0 : (int) (b));
-		
-		changeTextColor(myColor);
-	    return myColor;
 	}
+
 	
 	private Color getExpressionLevel(double value, List<List<String>> values) {
-		
 		Statistics expressionValues = new Statistics(values.get(0));
-		double theMean = expressionValues.getMean();
+//		double theMean = expressionValues.getMean();
 		double theMedian = expressionValues.getMedian();
-		double r = 0,b = 0,g = 0;
+		
 		double logDifference = Math.log10(value+1) - Math.log10(theMedian);
-		double foldDifference = 255 / ranges[2];
+		double foldDifference = ranges[2];
 		
 		if (logDifference == Double.NEGATIVE_INFINITY || logDifference == Double.POSITIVE_INFINITY || Double.isNaN(logDifference)){
-			changeTextColor(Color.WHITE);
 			return Color.BLACK;
 		}
 		
-		if (logDifference == 0){
-			r=255; b=255; g=255;
+		double val = logDifference / foldDifference;
+		Color back = Color.WHITE;
+		Color overExpressed = Interface.getHypoColor();
+		Color underExpressed = Interface.getHyperColor();
+		if (val > 1) val = 1;
+		if (val < -1) val = -1;
+		if (val > 0) {
+	   
+			float r = (float) (overExpressed.getRed() * val + back.getRed() * (1 - val));
+			float g = (float) (overExpressed.getGreen() * val + back.getGreen() * (1 - val));
+			float b = (float) (overExpressed.getBlue() * val + back.getBlue() * (1 - val));
+			Color bg = new Color((int) r, (int) g, (int) b);
+			changeTextColor(bg);
+			return bg;
 		}
-		else if (logDifference < 0) {
-			
-			r= 255; b = 255 - Math.round(logDifference * -foldDifference); g = 255 - Math.round(logDifference * -foldDifference);
+		else if (val == 0){
+			return back;
 		}
-		else if (logDifference > 0){
-			b = 255; r = 255 - Math.round(logDifference * foldDifference); g = 255 - Math.round(logDifference * foldDifference);
+		else {
+			val = -val;
+			float r = (float) (underExpressed.getRed() * val + back.getRed() * (1 - val));
+			float g = (float) (underExpressed.getGreen() * val + back.getGreen() * (1 - val));
+			float b = (float) (underExpressed.getBlue() * val + back.getBlue() * (1 - val));
+	   
+			Color bg = new Color((int) r, (int) g, (int) b);
+			changeTextColor(bg);
+			return bg;
 		}
 		
-		Color expressionColor = new Color(r < 0 ? 0 : (int) (r),g < 0 ? 0 : (int) (g), b < 0 ? 0 : (int) (b));
-		changeTextColor(expressionColor);
-		return expressionColor;
+		
 	}
+	
+//	private Color getExpressionLevel(double value, List<List<String>> values) {
+//		
+//		Statistics expressionValues = new Statistics(values.get(0));
+//		double theMean = expressionValues.getMean();
+//		double theMedian = expressionValues.getMedian();
+//		double r = 0,b = 0,g = 0;
+//		double logDifference = Math.log10(value+1) - Math.log10(theMedian);
+//		double foldDifference = 255 / ranges[2];
+//		
+//		if (logDifference == Double.NEGATIVE_INFINITY || logDifference == Double.POSITIVE_INFINITY || Double.isNaN(logDifference)){
+//			changeTextColor(Color.WHITE);
+//			return Color.BLACK;
+//		}
+//		
+//		if (logDifference == 0){
+//			r=255; b=255; g=255;
+//		}
+//		else if (logDifference < 0) {
+//			
+//			r= 255; b = 255 - Math.round(logDifference * -foldDifference); g = 255 - Math.round(logDifference * -foldDifference);
+//		}
+//		else if (logDifference > 0){
+//			b = 255; r = 255 - Math.round(logDifference * foldDifference); g = 255 - Math.round(logDifference * foldDifference);
+//		}
+//		
+//		Color expressionColor = new Color(r < 0 ? 0 : (int) (r),g < 0 ? 0 : (int) (g), b < 0 ? 0 : (int) (b));
+//		
+//		changeTextColor(expressionColor);
+//		return expressionColor;
+//	}
 	
 	private void changeTextColor(Color myColor) {
 		
@@ -436,60 +589,106 @@ public class Genes {
 		}
 	}
 	
-	public static Color paintLabel(double val){
-		
-		if (val == 0){
-			return Color.DARK_GRAY;
-		}
-		double r = 0,b = 0,g = 0;
+	public static Color paintLabel(double val1){
 		
 		double whiteValue = ((ranges[1] - ranges[0]) / 20) + (ranges[0]/10);
-		
-		double difference = 255 / (whiteValue - (ranges[0]/10));
-		
-		if (val == whiteValue){
-			r = 255; b=255; g = 255;
+		double val = (val1 * 2) -1;
+		Color back = Color.WHITE;
+		Color hyper = Interface.getHyperColor();
+		Color hypo = Interface.getHypoColor();
+		if (val > 0) {
+	   
+			float r = (float) (hyper.getRed() * val + back.getRed() * (1 - val));
+			float g = (float) (hyper.getGreen() * val + back.getGreen() * (1 - val));
+			float b = (float) (hyper.getBlue() * val + back.getBlue() * (1 - val));
+			Color bg = new Color((int) r, (int) g, (int) b);
+			return bg;
 		}
-		else if (val < whiteValue){
-			b= 255; r = 255 - Math.round(difference * (whiteValue - val)); g = 255 - Math.round(difference * (whiteValue - val));
+		else if (val == whiteValue){
+			return back;
 		}
-		else if (val > whiteValue){ 
-			r = 255; b = 255 - Math.round(difference * (val - whiteValue)); g = 255 - Math.round(difference * (val - whiteValue));
+		else {
+			val = -val;
+			float r = (float) (hypo.getRed() * val + back.getRed() * (1 - val));
+			float g = (float) (hypo.getGreen() * val + back.getGreen() * (1 - val));
+			float b = (float) (hypo.getBlue() * val + back.getBlue() * (1 - val));
+	   
+			Color bg = new Color((int) r, (int) g, (int) b);
+			return bg;
 		}
-		
-		Color myColor = new Color(r < 0 ? 0 : (int) (r),g < 0 ? 0 : (int) (g), b < 0 ? 0 : (int) (b));
-		
-		return myColor;
 	}
 	
 	public static Color paintLabel(double value, List<List<String>> values, int increase) {
-		
 		Statistics expressionValues = new Statistics(values.get(0));
-		double theMean = expressionValues.getMean();
+//		double theMean = expressionValues.getMean();
 		double theMedian = expressionValues.getMedian();
-		double r = 0,b = 0,g = 0;
+		
 		double logDifference =  (Math.log10(value+increase) / Math.log10(2.0) ) -  (Math.log10(theMedian) / Math.log10(2.0));
-		double foldDifference = 255 / ranges[2];
+//		double logDifference =  Math.log10(value+increase) -  Math.log10(theMedian);
+		double foldDifference = ranges[2];
 		
 		if (logDifference == Double.NEGATIVE_INFINITY || logDifference == Double.POSITIVE_INFINITY || Double.isNaN(logDifference)){
 			return Color.BLACK;
 		}
 		
-		if (logDifference == 0){
-			r=255; b=255; g=255;
-		}
-		else if (logDifference < 0) {
-			
-			r= 255; b = 255 - Math.round(logDifference * -foldDifference); g = 255 - Math.round(logDifference * -foldDifference);
-		}
-		else if (logDifference > 0){
-			b = 255; r = 255 - Math.round(logDifference * foldDifference); g = 255 - Math.round(logDifference * foldDifference);
-		}
+		double val = logDifference / foldDifference;
+		Color back = Color.WHITE;
+		Color overExpressed = Interface.getHypoColor();
+		Color underExpressed = Interface.getHyperColor();
 		
-		Color expressionColor = new Color(r < 0 ? 0 : (int) (r),g < 0 ? 0 : (int) (g), b < 0 ? 0 : (int) (b));
+		if (val > 1) val = 1;
+		if (val < -1) val = -1;
 		
-		return expressionColor;
+		if (val > 0) {
+	   
+			float r = (float) (overExpressed.getRed() * val + back.getRed() * (1 - val));
+			float g = (float) (overExpressed.getGreen() * val + back.getGreen() * (1 - val));
+			float b = (float) (overExpressed.getBlue() * val + back.getBlue() * (1 - val));
+			Color bg = new Color((int) r, (int) g, (int) b);
+			return bg;
+		}
+		else if (val == 0){
+			return back;
+		}
+		else {
+			val = -val;
+			float r = (float) (underExpressed.getRed() * val + back.getRed() * (1 - val));
+			float g = (float) (underExpressed.getGreen() * val + back.getGreen() * (1 - val));
+			float b = (float) (underExpressed.getBlue() * val + back.getBlue() * (1 - val));
+	   
+			Color bg = new Color((int) r, (int) g, (int) b);
+			return bg;
+		}
 	}
+	
+//	public static Color paintLabel(double value, List<List<String>> values, int increase) {
+//		
+//		Statistics expressionValues = new Statistics(values.get(0));
+//		double theMean = expressionValues.getMean();
+//		double theMedian = expressionValues.getMedian();
+//		double r = 0,b = 0,g = 0;
+//		double logDifference =  (Math.log10(value+increase) / Math.log10(2.0) ) -  (Math.log10(theMedian) / Math.log10(2.0));
+//		double foldDifference = 255 / ranges[2];
+//		
+//		if (logDifference == Double.NEGATIVE_INFINITY || logDifference == Double.POSITIVE_INFINITY || Double.isNaN(logDifference)){
+//			return Color.BLACK;
+//		}
+//		
+//		if (logDifference == 0){
+//			r=255; b=255; g=255;
+//		}
+//		else if (logDifference < 0) {
+//			
+//			r= 255; b = 255 - Math.round(logDifference * -foldDifference); g = 255 - Math.round(logDifference * -foldDifference);
+//		}
+//		else if (logDifference > 0){
+//			b = 255; r = 255 - Math.round(logDifference * foldDifference); g = 255 - Math.round(logDifference * foldDifference);
+//		}
+//		
+//		Color expressionColor = new Color(r < 0 ? 0 : (int) (r),g < 0 ? 0 : (int) (g), b < 0 ? 0 : (int) (b));
+//		
+//		return expressionColor;
+//	}
 
 	public void addExpandedLabels(JLabel[] extraLabels) {
 		int expansionSize = extraLabels.length;
@@ -503,7 +702,7 @@ public class Genes {
 
 	public static void highlightGenes() {
 		int activeTab = Interface.tabPane.getSelectedIndex();
-		TabsInfo thisTab = ParseKGML.getTabInfo(activeTab);
+		TabsInfo thisTab = ParseKGML.getTabInfo(activeTab,0);
 		HashMap<String, Genes> matchedGenes = thisTab.getMapedGeneLabel();
 		for (Entry<String, Genes> oneNode : matchedGenes.entrySet()){
 			JLabel geneLabel = oneNode.getValue().getLabel();

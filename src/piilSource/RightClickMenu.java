@@ -66,7 +66,7 @@ public class RightClickMenu {
 	public RightClickMenu(Component component, int x, int y, String nodeID, Point point) {
 		
 		activeTab = Interface.tabPane.getSelectedIndex();
-		pathway = ParseKGML.getTabInfo(activeTab);
+		pathway = ParseKGML.getTabInfo(activeTab,0);
 		type = pathway.getMetaType();
 		entryID = nodeID;
 		expansionSide = new Point(point);
@@ -296,7 +296,7 @@ public class RightClickMenu {
 				List<List<String>> list = pathway.getMapedGeneData().get(entryID);
 				TreeMap<Float, String> sortingMap = new TreeMap<Float, String>();
 				String geneCode = null;
-				List<String> ids = ParseKGML.getTabInfo(activeTab).getSamplesIDs();
+				List<String> ids = ParseKGML.getTabInfo(activeTab,0).getSamplesIDs();
 				float sum;
 	        	int invalid = 0;
 	        	float value;
@@ -407,6 +407,7 @@ public class RightClickMenu {
 
 	public void multiSampleView(Genes gene) {
 		JLabel label = pathway.getMapedGeneLabel().get(entryID).getLabel();
+		float threshold = pathway.getSDThreshold();
 		Character type = pathway.getMetaType();
 		List<List<String>> data = pathway.getDataForGene(entryID);
 		int pointer = pathway.getPointer();
@@ -432,6 +433,7 @@ public class RightClickMenu {
 		JLabel[] extraLabels = new JLabel[expansionSize];
 		
 		for (int i = 1; i < (expansionSize+1); i++) {
+			int newPointer = pointer + i;
 			int newX = 0, newY = 0;
 			JLabel newOne = new JLabel();
 			if (nw.contains(expansionSide)){
@@ -457,17 +459,111 @@ public class RightClickMenu {
 			
 			newOne.setBounds(newX, newY, width, height);
 			double sum = 0;
-			for (int j = 0 ; j < data.size(); j++){
-				if (!isNumeric(data.get(j).get(pointer + i))){
-					continue;
-				}
-				sum += Double.parseDouble(data.get(j).get(pointer + i));
-			}
+			String value = data.get(0).get(newPointer);
+			
 			if (type.equals('M')){
-				bgColor = Genes.paintLabel(sum/data.size());
+				double average = 0;
+				int validSites = 0; 
+				int multiRegion = data.size();
+				if (multiRegion == 1){
+					
+					
+					if (pathway.getSelectedSites(entryID) == null){
+						
+						if (!isNumeric(value)){
+							bgColor = Color.LIGHT_GRAY;
+						}
+						else {
+							bgColor = Genes.paintLabel(Double.parseDouble(value));
+						}
+					}
+					else {
+						
+						if (pathway.getSelectedSites(entryID).get(0) == -1){
+							bgColor = Color.LIGHT_GRAY;
+						}
+						else {
+							bgColor = Genes.paintLabel(Double.parseDouble(value));
+						}
+					}
+				} // end of multiple Regions
+				
+				else { // there are multiple regions
+					
+					sum = 0 ; average = 0; validSites = 0;
+					
+					if (threshold == 0){
+						if ( pathway.getSelectedSites(entryID) != null ){
+							if (pathway.getSelectedSites(entryID).get(0) == -1){
+								// none of the sites have passed SD filtering
+								validSites = 0;
+							}
+							else {
+								for (int index : pathway.getSelectedSites(entryID)){
+									String val = data.get(index).get(newPointer);
+									
+									if (!isNumeric(val)){
+										continue;
+									}
+									sum += Double.parseDouble(val);
+									validSites ++;
+								}
+							}
+						}
+						else {
+							for (int j = 0; j < multiRegion; j++){
+								String val = data.get(j).get(newPointer);
+								
+								if (!isNumeric(val)){
+									continue;
+								}
+								sum += Double.parseDouble(val);
+								validSites ++;
+							}
+						}
+					}
+					
+					else if ( (threshold > 0)){  // there is an SD filter
+						if (pathway.getSelectedSites(entryID) == null){
+							continue;
+						}
+						if (pathway.getSelectedSites(entryID).get(0) == -1){
+							// none of the sites have passed SD filtering
+							validSites = 0;
+						}
+						else {
+							for (int k : pathway.getSelectedSites(entryID)){
+								String val = data.get(k).get(newPointer);
+								
+								if (!isNumeric(val)){
+									continue;
+								}
+								sum += Double.parseDouble(val);
+								validSites ++;
+							}
+						}
+						
+					}
+					
+					if (validSites == 0) validSites = 1;
+					average = sum / validSites;
+					
+					if (Double.isNaN(average) | (average == 0)){
+						bgColor = Color.LIGHT_GRAY;
+					}
+					else {
+						bgColor = Genes.paintLabel(average);
+					}
+				}
+				
 			}
-			else {
-				bgColor = Genes.paintLabel(sum/data.size(), data, 1);
+			else { // type = 'E'
+				if (!isNumeric(value)){
+					bgColor = Color.BLACK;
+				}
+				else {
+					bgColor = Genes.findColor(Double.parseDouble(value), data);
+				}
 			}
 			
 			newOne.setBackground(bgColor);

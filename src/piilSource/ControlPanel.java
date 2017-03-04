@@ -241,13 +241,17 @@ public class ControlPanel extends JPanel{
 		
 	    public void actionPerformed(ActionEvent evt) {
 	    	int activeTab = Interface.tabPane.getSelectedIndex();
-	    	TabsInfo pathway = ParseKGML.getTabInfo(activeTab);
+	    	TabsInfo pathway = ParseKGML.getTabInfo(activeTab,0);
 	    	int numberOfSamples = pathway.getSamplesIDs().size();
 	    	Character type = pathway.getMetaType();
 	    	int newPointer = pathway.movePointerForward();
 	    	samplesIDsCombo.setSelectedIndex(newPointer);
 	    	sampleIDIndex = pathway.getSamplesIDs().indexOf(samplesIDsCombo.getSelectedItem());
 	    	Genes.changeBgColor(sampleIDIndex,type);
+	    	if (Interface.tabInfoTracker.get(activeTab).size() > 1){
+				Genes.changeSecondBoxBgColor(sampleIDIndex, 'E');
+				Interface.bodyFrame.repaint();
+			}
 	    	setIndexLabel(newPointer);
       	  	
       	  	if (pathway.getSamplesInfo() != null && pathway.getSamplesInfo().size() > 0){
@@ -294,8 +298,7 @@ public class ControlPanel extends JPanel{
 	public static void enableControlPanel(int tabPointer) {
 		
 		int activeTab = Interface.tabPane.getSelectedIndex();
-		TabsInfo pathway = ParseKGML.getTabInfo(activeTab);
-		
+		TabsInfo pathway = ParseKGML.getTabInfo(activeTab,0);
 		matchedGenesCombo.removeItemListener(lForCombo);
 		fillMatchedGenes(activeTab);
 		samplesIDsCombo.removeItemListener(lForCombo);
@@ -319,12 +322,12 @@ public class ControlPanel extends JPanel{
 					theComponent.setEnabled(true);
 				}
 			}
-		}		
+		}
 		else {
 			matchedGenesCombo.setEnabled(true);
 		}
 		
-		if (ParseKGML.getTabInfo(activeTab).getSamplesInfo().size() > 0){
+		if (ParseKGML.getTabInfo(activeTab,0).getSamplesInfo().size() > 0){
 			ControlPanel.setSampleInfoLabel(tabPointer);
 			Interface.editFields.setEnabled(true);
 			PiilMenubar.groupWiseView.setEnabled(true);
@@ -344,21 +347,20 @@ public class ControlPanel extends JPanel{
 		colorMap.setVisible(true);
 		PiilMenubar.multiSampleView.setEnabled(true);
 		PiilMenubar.singleSampleView.setEnabled(true);
+		
 		if (pathway.getMetaType().equals('M')){
 			PiilMenubar.selectSubset.setEnabled(true);
 			Interface.tabPane.setToolTipTextAt(activeTab, "Methylation data loaded: " + pathway.getMetaFilePath().getName());
 			metaDataLabel.setText("DNA Methylation");
 			metaDataLabel.setEnabled(true);
-			
 		}
 		else if (pathway.getMetaType().equals('E')){
-			
 			Interface.tabPane.setToolTipTextAt(activeTab, "Expression data loaded: " + pathway.getMetaFilePath().getName());
 			metaDataLabel.setText("Gene Expression");
 			metaDataLabel.setEnabled(true);
 			PiilMenubar.selectSubset.setEnabled(false);
-			
 		}
+		
 		if (pathway.getIDsInGroups() != null && pathway.getIDsInGroups().size() > 0){
 			PiilMenubar.groupWiseView.setEnabled(true);
 			if (pathway.getViewMode() == 2){
@@ -369,7 +371,7 @@ public class ControlPanel extends JPanel{
 
 	private static void setMatchedGene(String geneName) {
 		int tab = Interface.tabPane.getSelectedIndex();
-		TabsInfo pathway = ParseKGML.getTabInfo(tab);
+		TabsInfo pathway = ParseKGML.getTabInfo(tab,0);
 		
 		Rectangle bounds = null;
 		JLabel oneNode;
@@ -396,7 +398,7 @@ public class ControlPanel extends JPanel{
 
 	private static void setIndexLabel(int tabPointer) {
 		int activeTab = Interface.tabPane.getSelectedIndex();
-		TabsInfo tab = ParseKGML.getTabInfo(activeTab);
+		TabsInfo tab = ParseKGML.getTabInfo(activeTab,0);
 		String totalSamples = Integer.toString(tab.getSamplesIDs().size());
 		if (tab.getSamplesIDs().size() > 0){
 			sampleIndexLabel.setText(Integer.toString(tabPointer + 1) + " of " + totalSamples);
@@ -410,7 +412,7 @@ public class ControlPanel extends JPanel{
 	private static void fillSamplesIDs(int activeTab) {
 		samplesIDsCombo.removeAllItems();
 		
-		List<String> identifiers = ParseKGML.getTabInfo(activeTab).getOrderedSamplesIDs();
+		List<String> identifiers = ParseKGML.getTabInfo(activeTab,0).getOrderedSamplesIDs();
 		for (String sampleID : identifiers){
 			samplesIDsCombo.addItem(sampleID);
 		}
@@ -419,7 +421,7 @@ public class ControlPanel extends JPanel{
 	private static void fillMatchedGenes(int activeTab) {
 		matchedGenesCombo.removeAllItems();
 		List<String> v = new ArrayList<String>();
-		HashMap<String, Genes> match = ParseKGML.getTabInfo(activeTab).getMapedGeneLabel();
+		HashMap<String, Genes> match = ParseKGML.getTabInfo(activeTab,0).getMapedGeneLabel();
 		for (Genes found : match.values()){
 			v.add(found.getText().toString());
 		}
@@ -427,7 +429,7 @@ public class ControlPanel extends JPanel{
 		for (String item : hashsetList){
 			matchedGenesCombo.addItem(item);
 		}
-		matchedGenesCombo.setSelectedIndex(Interface.tabInfoTracker.get(Interface.tabPane.getSelectedIndex()).getSelectedGeneIndex());
+		matchedGenesCombo.setSelectedIndex(Interface.tabInfoTracker.get(Interface.tabPane.getSelectedIndex()).get(0).getSelectedGeneIndex());
 		
 	}
 
@@ -464,8 +466,8 @@ public class ControlPanel extends JPanel{
 		
 		if (enabled){
 //			Object[] hints = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getIDsInGroups().keySet().toArray();
-			List<String> hints = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getShowableGroups();
-			Interface.setSampleInfoLabel(hints, true, ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getBaseGroupIndex());
+			List<String> hints = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0).getShowableGroups();
+			Interface.setSampleInfoLabel(hints, true, ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0).getBaseGroupIndex());
 			PiilMenubar.groupWiseView.setEnabled(true);
 			
 		}
@@ -493,7 +495,7 @@ public class ControlPanel extends JPanel{
 	public static String setSampleInfoLabel(int tabPointer) {
 		
 		int tab = Interface.tabPane.getSelectedIndex();
-		TabsInfo thisTab = ParseKGML.getTabInfo(tab);
+		TabsInfo thisTab = ParseKGML.getTabInfo(tab,0);
 		
 		String info = " ";
 		String id = thisTab.getOrderedSamplesIDs().get(tabPointer);
@@ -523,7 +525,7 @@ public class ControlPanel extends JPanel{
 
 		public void actionPerformed(ActionEvent bc) {
 			int activeTab = Interface.tabPane.getSelectedIndex();
-			TabsInfo currentTab = ParseKGML.getTabInfo(activeTab);
+			TabsInfo currentTab = ParseKGML.getTabInfo(activeTab,0);
 			Character type = currentTab.getMetaType();
 			int currentPointer = currentTab.getPointer();
 			int index = currentTab.getSamplesIDs().size() - 1;
@@ -644,10 +646,14 @@ public class ControlPanel extends JPanel{
 				if (ce.getStateChange() == ItemEvent.SELECTED){
 					int activeTab = Interface.tabPane.getSelectedIndex();
 					int newPointer = samplesIDsCombo.getSelectedIndex();
-					TabsInfo pathway = ParseKGML.getTabInfo(activeTab);
+					TabsInfo pathway = ParseKGML.getTabInfo(activeTab,0);
 					pathway.assignPointer(newPointer);
 					sampleIDIndex = pathway.getSamplesIDs().indexOf(samplesIDsCombo.getSelectedItem());
 					Genes.changeBgColor(sampleIDIndex,pathway.getMetaType());
+					if (Interface.tabInfoTracker.get(activeTab).size() > 1){
+						Genes.changeSecondBoxBgColor(sampleIDIndex, 'E');
+						Interface.bodyFrame.repaint();
+					}
 					setIndexLabel(newPointer);
 					samplesIDsCombo.setSelectedIndex(newPointer);
 					samplesIDsCombo.setToolTipText("Sample ID: " + samplesIDsCombo.getSelectedItem().toString());
