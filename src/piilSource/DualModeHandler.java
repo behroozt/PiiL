@@ -261,9 +261,11 @@ public class DualModeHandler extends JDialog{
 							methylationTab.setMetaType('M');
 							methylationTab.setMetaFilePath(mSelectedFile);
 							methylationTab.setSplitor(getSeparator(mSeparatorCombo));
+							methylationTab.setViewMode((byte) 3);
 							expressionTab.setMetaType('E');
 							expressionTab.setMetaFilePath(eSelectedFile);
 							expressionTab.setSplitor(getSeparator(eSeparatorCombo));
+							expressionTab.setViewMode((byte) 3);
 							
 							SwingWorker<Void, Void> methylLoader = new SwingWorker<Void, Void>() {
 									protected Void doInBackground() {
@@ -282,7 +284,7 @@ public class DualModeHandler extends JDialog{
 											
 											JLabel label = expressionTab.getMapedGeneLabel().get(nodeID).getLabel();
 											
-											List<List<String>> data = expressionTab.getDataForGene(nodeID);
+											
 											int pointer = methylationTab.getPointer();
 											int x = (int) label.getBounds().getX();
 											int y = (int) label.getBounds().getY();
@@ -295,12 +297,19 @@ public class DualModeHandler extends JDialog{
 											int newY = y+ 9;
 											JLabel newOne = new JLabel();
 											newOne.setBounds(newX, newY, width, height);
-											String value = data.get(0).get(pointer);
-											if (!isNumeric(value)){
-												bgColor = Color.BLACK;
+											
+											if (expressionTab.getDataForGene(nodeID) == null){
+												bgColor = Color.decode("#BFFFBF");
 											}
 											else {
-												bgColor = Genes.findColor(Double.parseDouble(value), data);
+												List<List<String>> data = expressionTab.getDataForGene(nodeID);
+												String value = data.get(0).get(pointer);
+												if (!isNumeric(value)){
+													bgColor = Color.BLACK;
+												}
+												else {
+													bgColor = Genes.findColor(Double.parseDouble(value), data);
+												}
 											}
 																						
 											newOne.setBackground(bgColor);
@@ -311,7 +320,7 @@ public class DualModeHandler extends JDialog{
 											geneNode.addExpandedLabels(extraLabels);
 											
 										}
-//										
+									
 										DrawShapes shapes = new DrawShapes(methylationTab.getGraphicsItems(), methylationTab.getEdges());
 										shapes.setPreferredSize(new Dimension((int) methylationTab.getMaxX(), (int) methylationTab.getMaxY()));
 										Component[] components = Interface.panelHolder.get(currentTab).getComponents();
@@ -333,6 +342,7 @@ public class DualModeHandler extends JDialog{
 										Interface.bodyFrame.repaint();
 										Interface.scrollPaneHolder.get(currentTab).getVerticalScrollBar().setUnitIncrement(16);
 										Interface.scrollPaneHolder.get(currentTab).getHorizontalScrollBar().setUnitIncrement(16);
+										
 									}
 							};
 							methylLoader.execute();

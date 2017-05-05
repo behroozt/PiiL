@@ -319,8 +319,14 @@ public class Genes {
 			JLabel geneLabel = geneNode.getLabel();
 			geneLabel.setVisible(true);
 			JLabel[] expandedOnes = geneNode.getExpandedLabels();
+			
+			if (expressionPathway.getDataForGene(oneNode.getKey()) == null){
+//				expandedOnes[0].setBackground(Color.decode("#BFFFBF"));
+				continue;
+			}
 			data = expressionPathway.getDataForGene(oneNode.getKey());
 			value = data.get(0).get(newPointer);
+			
 			if (isNumeric(value)){
 				bgColor = findColor(Double.parseDouble(value), data);
 				expandedOnes[0].setBackground(bgColor);

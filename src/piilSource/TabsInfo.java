@@ -80,7 +80,7 @@ public class TabsInfo {
 	List<Shape> graphicNode;
 	float scrollX;
 	float scrollY;
-	byte viewMode; // 0 for single, 1 for multiple, 2 for group-wise
+	byte viewMode; // 0 for single, 1 for multiple, 2 for group-wise, 3 for Dual(expression and methylation together)
 	int selectedGenes;
 	int groupingIndex;
 	List<String> showableGroups;
@@ -151,8 +151,21 @@ public class TabsInfo {
 	}
 	
 	public void setSelectedGenePointer(Point position){
-		Component star  = Interface.panelHolder.get(Interface.tabPane.getSelectedIndex()).getComponent(Interface.panelHolder.get(Interface.tabPane.getSelectedIndex()).getComponentCount()-3);
-		Component extraStar  = Interface.panelHolder.get(Interface.tabPane.getSelectedIndex()).getComponent(Interface.panelHolder.get(Interface.tabPane.getSelectedIndex()).getComponentCount()-2);
+		int activeTab = Interface.tabPane.getSelectedIndex();
+		Component star = null;
+		Component extraStar = null;
+		
+		if (Interface.tabInfoTracker.get(activeTab).size() > 1){
+			TabsInfo pathway = ParseKGML.getTabInfo(activeTab,1);
+			int secondLayer = pathway.getMapedGeneLabel().size();
+			star  = Interface.panelHolder.get(Interface.tabPane.getSelectedIndex()).getComponent(Interface.panelHolder.get(Interface.tabPane.getSelectedIndex()).getComponentCount()-(secondLayer+3));
+			extraStar  = Interface.panelHolder.get(Interface.tabPane.getSelectedIndex()).getComponent(Interface.panelHolder.get(Interface.tabPane.getSelectedIndex()).getComponentCount()-(secondLayer+2));
+		}
+		else {
+			star  = Interface.panelHolder.get(Interface.tabPane.getSelectedIndex()).getComponent(Interface.panelHolder.get(Interface.tabPane.getSelectedIndex()).getComponentCount()-3);
+			extraStar  = Interface.panelHolder.get(Interface.tabPane.getSelectedIndex()).getComponent(Interface.panelHolder.get(Interface.tabPane.getSelectedIndex()).getComponentCount()-2);
+		}
+		
 		star.setBackground(Color.MAGENTA);
 		extraStar.setBackground(Color.MAGENTA);
 		star.setBounds((int)position.getX()-5, (int)position.getY()-5, 10, 10);
