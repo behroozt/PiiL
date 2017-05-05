@@ -631,7 +631,10 @@ public class PiilMenubar extends JMenuBar{
 														Interface.bodyFrame.setJMenuBar(menubar);
 														Interface.editFields.setVisible(true);
 														Interface.editFields.setEnabled(true);
-														groupWiseView.setEnabled(true);
+														if (pathway.getViewMode() != 3){
+															groupWiseView.setEnabled(true);
+														}
+														
 													}
 												} catch (IOException e) {
 													// TODO Auto-generated catch block
@@ -646,7 +649,10 @@ public class PiilMenubar extends JMenuBar{
 								Interface.bodyFrame.setJMenuBar(menubar);
 								Interface.editFields.setVisible(true);
 								Interface.editFields.setEnabled(true);
-								groupWiseView.setEnabled(true);
+								if (pathway.getViewMode() != 3){
+									groupWiseView.setEnabled(true);
+								}
+								
 							}
 							
 						} catch (IOException e1) {

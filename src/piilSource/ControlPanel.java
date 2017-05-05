@@ -330,7 +330,13 @@ public class ControlPanel extends JPanel{
 		if (ParseKGML.getTabInfo(activeTab,0).getSamplesInfo().size() > 0){
 			ControlPanel.setSampleInfoLabel(tabPointer);
 			Interface.editFields.setEnabled(true);
-			PiilMenubar.groupWiseView.setEnabled(true);
+			if (pathway.getViewMode() != 3){
+				PiilMenubar.groupWiseView.setEnabled(true);	
+			} else {
+				PiilMenubar.groupWiseView.setEnabled(false);	
+			}
+			
+			
 		}
 		else {
 			if (samplesIDsCombo.getSelectedItem() != null){
@@ -362,7 +368,10 @@ public class ControlPanel extends JPanel{
 		}
 		
 		if (pathway.getIDsInGroups() != null && pathway.getIDsInGroups().size() > 0){
-			PiilMenubar.groupWiseView.setEnabled(true);
+			if (pathway.getViewMode() != 3){
+				PiilMenubar.groupWiseView.setEnabled(true);	
+			}
+			
 			if (pathway.getViewMode() == 2){
 				ControlPanel.disableControlPanel(true);
 			}
@@ -468,7 +477,9 @@ public class ControlPanel extends JPanel{
 //			Object[] hints = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex()).getIDsInGroups().keySet().toArray();
 			List<String> hints = ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0).getShowableGroups();
 			Interface.setSampleInfoLabel(hints, true, ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0).getBaseGroupIndex());
-			PiilMenubar.groupWiseView.setEnabled(true);
+			if (ParseKGML.getTabInfo(Interface.tabPane.getSelectedIndex(),0).getViewMode() != 3){
+				PiilMenubar.groupWiseView.setEnabled(true);	
+			}
 			
 		}
 		else {
