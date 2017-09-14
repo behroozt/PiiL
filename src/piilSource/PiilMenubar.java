@@ -184,7 +184,7 @@ public class PiilMenubar extends JMenuBar{
 		reportAction = new JMenuItem("Report a bug / Send feedback");
 		aboutAction = new JMenuItem("About");
 		manualAction = new JMenuItem("User Manual");
-		citeUs = new JMenuItem("How to cite us");
+		citeUs = new JMenuItem("Cite PiiL's publication");
 		checkUpdates = new JMenuItem("Check for updates");
 		
 		openKGML.add(openWebAction);
@@ -1177,7 +1177,9 @@ public class PiilMenubar extends JMenuBar{
 			
 			/* how to cite item clicked */
 			else if (ice.getSource() == citeUs){
-				JOptionPane.showMessageDialog(Interface.bodyFrame, "Please cite our publication.", "Cite us", JOptionPane.QUESTION_MESSAGE,icon);
+				JOptionPane.showMessageDialog(Interface.bodyFrame, "\"" +
+						"Moghadam, Behrooz Torabi, et al.\"PiiL: visualization of DNA methylation and gene expression data in gene pathways.\" BMC Genomics 18.1 (2017): 571.\"", 
+						"Please cite our publication", JOptionPane.QUESTION_MESSAGE,icon);
 			}
 			
 			else if (ice.getSource() == checkUpdates){
