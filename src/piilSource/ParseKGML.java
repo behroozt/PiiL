@@ -46,10 +46,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.BevelBorder;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+
 
 public class ParseKGML {
 	
@@ -59,7 +59,6 @@ public class ParseKGML {
 	HashMap<String, Nodes> nodeHandler;
 	HashMap<String, Genes> geneHandler;
 	List<Edges> edgeItems;
-//	static ArrayList<TabsInfo> tabInfoTracker;
 	final ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icon.png"));
 	private String caption;
 	private File loadedFile;
@@ -307,8 +306,8 @@ public class ParseKGML {
 				relationValue = "unknown";
 			}
 			else{
-				relationName = allEdges.item(i).getChildNodes().item(0).getAttributes().getNamedItem("name").getNodeValue();
-				relationValue = allEdges.item(i).getChildNodes().item(0).getAttributes().getNamedItem("value").getNodeValue();
+				relationName = allEdges.item(i).getChildNodes().item(1).getAttributes().getNamedItem("name").getNodeValue();
+				relationValue = allEdges.item(i).getChildNodes().item(1).getAttributes().getNamedItem("value").getNodeValue();
 			}
 			
 			Nodes nodeFrom = (Nodes) nodeHandler.get(nodeFromID);
@@ -432,9 +431,11 @@ public class ParseKGML {
 		Stroke lineStroke = new BasicStroke();
 		Color lineColor;
 		
+		
 		for (int i = 0; i < allNodes.getLength(); i ++){
 			
 			entryType = allNodes.item(i).getAttributes().getNamedItem("type").getNodeValue();
+			
 			if (i == 0){				
 				graphicLabel = elementsList.item(i).getParentNode().getAttributes().getNamedItem("title").getNodeValue();
 			}
@@ -442,29 +443,44 @@ public class ParseKGML {
 				graphicLabel = "no_name";
 			}
 			else {
-				graphicLabel = elementsList.item(i).getFirstChild().getAttributes().getNamedItem("name").getNodeValue();
+//				graphicLabel = elementsList.item(i).getFirstChild().getAttributes().getNamedItem("name").getNodeValue();
+				graphicLabel = elementsList.item(i).getChildNodes().item(1).getAttributes().getNamedItem("name").getNodeValue();
 			}
 			
 			entryID = allNodes.item(i).getAttributes().getNamedItem("id").getNodeValue();
 			entryName = allNodes.item(i).getAttributes().getNamedItem("name").getNodeValue();
 			entryLink = "nolink";
-			graphicShape = allNodes.item(i).getFirstChild().getAttributes().getNamedItem("type").getNodeValue();
+			
+//			graphicShape = allNodes.item(i).getFirstChild().getAttributes().getNamedItem("type").getNodeValue();
+			graphicShape = allNodes.item(i).getChildNodes().item(1).getAttributes().getNamedItem("type").getNodeValue();
+			
 			if(graphicShape.equals("line")){
-				coords = allNodes.item(i).getFirstChild().getAttributes().getNamedItem("coords").getNodeValue();
-				fgColor = allNodes.item(i).getFirstChild().getAttributes().getNamedItem("fgcolor").getNodeValue();
+//				coords = allNodes.item(i).getFirstChild().getAttributes().getNamedItem("coords").getNodeValue();
+//				fgColor = allNodes.item(i).getFirstChild().getAttributes().getNamedItem("fgcolor").getNodeValue();
+				coords = allNodes.item(i).getChildNodes().item(1).getAttributes().getNamedItem("coords").getNodeValue();
+				fgColor = allNodes.item(i).getChildNodes().item(1).getAttributes().getNamedItem("fgcolor").getNodeValue();
+				
 				String[] parts = coords.split(",");
 				Shape relationEdge = ArrowEdge.createArrow(Float.parseFloat(parts[0]), Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Float.parseFloat(parts[3]));
 				Edges edge = new Edges(null, null, "line", "line", "0", relationEdge, lineStroke, Color.decode(fgColor));
 				edgeItems.add(edge);
 				continue;
 			}
-			x = Float.parseFloat(allNodes.item(i).getFirstChild().getAttributes().getNamedItem("x").getNodeValue());
-			y = Float.parseFloat(allNodes.item(i).getFirstChild().getAttributes().getNamedItem("y").getNodeValue());
-			width = Float.parseFloat(allNodes.item(i).getFirstChild().getAttributes().getNamedItem("width").getNodeValue());
-			height = Float.parseFloat(allNodes.item(i).getFirstChild().getAttributes().getNamedItem("height").getNodeValue());
 			
-			bgColor = allNodes.item(i).getFirstChild().getAttributes().getNamedItem("bgcolor").getNodeValue();
-			fgColor = allNodes.item(i).getFirstChild().getAttributes().getNamedItem("fgcolor").getNodeValue();
+//			x = Float.parseFloat(allNodes.item(i).getFirstChild().getAttributes().getNamedItem("x").getNodeValue());
+//			y = Float.parseFloat(allNodes.item(i).getFirstChild().getAttributes().getNamedItem("y").getNodeValue());
+//			width = Float.parseFloat(allNodes.item(i).getFirstChild().getAttributes().getNamedItem("width").getNodeValue());
+//			height = Float.parseFloat(allNodes.item(i).getFirstChild().getAttributes().getNamedItem("height").getNodeValue());
+			x = Float.parseFloat(allNodes.item(i).getChildNodes().item(1).getAttributes().getNamedItem("x").getNodeValue());
+			y = Float.parseFloat(allNodes.item(i).getChildNodes().item(1).getAttributes().getNamedItem("y").getNodeValue());
+			width = Float.parseFloat(allNodes.item(i).getChildNodes().item(1).getAttributes().getNamedItem("width").getNodeValue());
+			height = Float.parseFloat(allNodes.item(i).getChildNodes().item(1).getAttributes().getNamedItem("height").getNodeValue());
+			
+//			bgColor = allNodes.item(i).getFirstChild().getAttributes().getNamedItem("bgcolor").getNodeValue();
+//			fgColor = allNodes.item(i).getFirstChild().getAttributes().getNamedItem("fgcolor").getNodeValue();
+			bgColor = allNodes.item(i).getChildNodes().item(1).getAttributes().getNamedItem("bgcolor").getNodeValue();
+			fgColor = allNodes.item(i).getChildNodes().item(1).getAttributes().getNamedItem("fgcolor").getNodeValue();
+
 			
 			if (x > maxX){ maxX = x;}
 			if (y > maxY){ maxY = y;}
@@ -488,7 +504,8 @@ public class ParseKGML {
 			
 			/* reocrd the nodes */
 			if (entryType.equals("group")){
-				String componentID = allNodes.item(i).getChildNodes().item(1).getAttributes().getNamedItem("id").getNodeValue();
+//				String componentID = allNodes.item(i).getChildNodes().item(1).getAttributes().getNamedItem("id").getNodeValue();
+				String componentID = allNodes.item(i).getChildNodes().item(3).getAttributes().getNamedItem("id").getNodeValue();
 				newEntry = new Nodes(x, y, width, height, bgColor, fgColor, entryName, entryType, entryLink, graphicLabel, componentID);
 			}
 			else {

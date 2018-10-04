@@ -21,7 +21,6 @@ package piilSource;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -33,8 +32,6 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.BorderFactory;
-import javax.swing.ComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -44,7 +41,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
@@ -136,7 +132,6 @@ public class Interface extends JFrame{
 		sampleInfoPanel.setLayout(new GridBagLayout());
 		sampleInfoLabel = new JLabel(" Sample's Information");
 		sampleInfoLabel.setEnabled(false);
-//		sampleInfoLabel.setPreferredSize(new Dimension(5000,18));
 		informationPane = new JScrollPane(sampleInfoLabel);
 		informationPane.setPreferredSize(new Dimension(950,40));
 		informationPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -280,8 +275,6 @@ public class Interface extends JFrame{
 		
 		addComp(sampleInfoPanel, informationPane, 0, 0, 4, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH);
 		addComp(sampleInfoPanel, editFields, 4, 0, 1, 1, 0,0, GridBagConstraints.EAST, GridBagConstraints.BOTH);
-//		sampleInfoPanel.add(informationPane, BorderLayout.WEST);
-//		sampleInfoPanel.add(editFields, BorderLayout.EAST);
 		drawingPanel.add(sampleInfoPanel, BorderLayout.NORTH);
 		drawingPanel.add(tabPane);
 		gridConstraints.insets = new Insets(1,15,4,1);

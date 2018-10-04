@@ -19,24 +19,19 @@
 package piilSource;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -50,14 +45,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
-import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -69,7 +62,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.xml.parsers.DocumentBuilder;
@@ -542,13 +534,23 @@ public class OpenFromWeb extends JDialog{
 							protected Void doInBackground() {
 								
 								final Document xmlDoc = getDocument(downloaded.toString());
+								
 	        					if (xmlDoc != null){
 	        						new ParseKGML(xmlDoc,tabCaption, downloaded, 'W');
 	        					}
 								return null;
 							}
 							private Document getDocument(String docString) {
-								try {			
+								try {
+									
+//									DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+//						             
+//						            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+//						            Document document = documentBuilder.parse(docString);
+//						             
+//						            document.getDocumentElement().normalize();
+//						            return document;
+									
 									DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 									factory.setIgnoringComments(true);
 								
@@ -560,7 +562,6 @@ public class OpenFromWeb extends JDialog{
 									// Provides access to the documents data	             
 									DocumentBuilder builder = factory.newDocumentBuilder();
 								
-									// Takes the document      
 									return builder.parse(new InputSource(docString));						
 								}
 								catch (Exception e){

@@ -45,14 +45,12 @@ import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
-import org.jfree.chart.axis.SymbolAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.ApplicationFrame;
-import org.jfree.ui.RefineryUtilities;
 
 
 public class BarChart extends ApplicationFrame {
@@ -168,7 +166,6 @@ public class BarChart extends ApplicationFrame {
                     	}
                     	value = sum / (list.size() - invalid);
                     	dataset.addValue(value, group, sampleID);
-//                    	System.out.println(sampleID + " " + value + " " + group);
         			}
         			
         		}
@@ -213,7 +210,6 @@ public class BarChart extends ApplicationFrame {
                         	}
                         	value = sum / (list.size() - invalid);
                         	dataset.addValue(value, group, sampleID);
-//                        	System.out.println(sampleID + " " + value + " " + group);
                         
         				}
         				else { // some sites are selected
@@ -229,7 +225,6 @@ public class BarChart extends ApplicationFrame {
                 			} // for each significant site
                     		value = sum / (significantSites.size() - invalid);
                     		dataset.addValue(value, group, sampleID);
-//                    		System.out.println(sampleID + " " + value + " " + group);
         				} // some sites are selected
         				
         			} // for each sampleID in each group
