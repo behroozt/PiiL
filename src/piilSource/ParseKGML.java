@@ -289,7 +289,7 @@ public class ParseKGML {
 		
 		float arrowStartX = 0, arrowStartY = 0, arrowEndX = 0, arrowEndY = 0;
 		float nodeFromX,nodeFromY, nodeToX, nodeToY, nodeFromWidth, nodeFromHeight, nodeToWidth, nodeToHeight;
-		String nodeFromID, nodeToID, componentID, relationName, type, relationValue;
+		String nodeFromID, nodeToID, componentID, relationName = null, type, relationValue = null;
 		Nodes component;
 		Shape relationEdge;
 		Stroke lineStroke = new BasicStroke();
@@ -306,8 +306,11 @@ public class ParseKGML {
 				relationValue = "unknown";
 			}
 			else{
-				relationName = allEdges.item(i).getChildNodes().item(1).getAttributes().getNamedItem("name").getNodeValue();
-				relationValue = allEdges.item(i).getChildNodes().item(1).getAttributes().getNamedItem("value").getNodeValue();
+				if (allEdges.item(i).getChildNodes().getLength() > 1){
+					relationName = allEdges.item(i).getChildNodes().item(1).getAttributes().getNamedItem("name").getNodeValue();
+					relationValue = allEdges.item(i).getChildNodes().item(1).getAttributes().getNamedItem("value").getNodeValue();
+				}
+				
 			}
 			
 			Nodes nodeFrom = (Nodes) nodeHandler.get(nodeFromID);
